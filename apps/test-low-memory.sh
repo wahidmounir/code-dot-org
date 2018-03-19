@@ -3,7 +3,9 @@ set -e
 
 # 'npm test' normally does all three of these things.
 # We break them up here so they each run in isolation.
-GRUNT_CMD="node --max_old_space_size=4096 `npm bin`/grunt"
+
+GRUNT_CMD="`npm bin`/grunt"
+export NODE_OPTIONS="--max-old-space-size=4096"
 
 if [ -n "$CIRCLECI" ]; then
   mkdir -p log
