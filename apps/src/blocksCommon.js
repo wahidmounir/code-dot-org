@@ -1,7 +1,7 @@
 /**
  * Defines blocks useful in multiple blockly apps
  */
-var commonMsg = require('@cdo/locale');
+import commonMsg from '@cdo/locale';
 
 /**
  * Install extensions to Blockly's language and JavaScript generator
