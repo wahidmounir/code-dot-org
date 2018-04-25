@@ -2,11 +2,9 @@ import $ from 'jquery';
 import processMarkdown from 'marked';
 import renderer, { makeRenderer } from "./util/StylelessRenderer";
 import FeedbackBlocks from './feedbackBlocks';
-
 import { trySetLocalStorage } from './utils';
-
-var parseXmlElement = require('./xml').parseElement;
-var msg = require('@cdo/locale');
+import {parseElement as parseXmlElement} from './xml';
+import msg from '@cdo/locale';
 
 /**
  * @overview A helper class for all actions associated with the Authored
