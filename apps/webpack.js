@@ -5,6 +5,7 @@ var LiveReloadPlugin = require('webpack-livereload-plugin');
 var envConstants = require('./envConstants');
 var UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 var WebpackNotifierPlugin = require('webpack-notifier');
+var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 // Certain packages ship in ES6 and need to be transpiled for our purposes -
 // especially for tests, which run on PhantomJS with _zero_ ES6 support.
@@ -241,6 +242,7 @@ function create(options) {
       }),
       new webpack.IgnorePlugin(/^serialport$/),
       new webpack.optimize.OccurrenceOrderPlugin(true),
+      new HardSourceWebpackPlugin(),
     ].concat(plugins),
     watch: watch,
     keepalive: watch,
