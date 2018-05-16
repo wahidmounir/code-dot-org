@@ -209,13 +209,9 @@ class LevelsController < ApplicationController
     if params[:name]
       # Clone existing level and open edit page
       old_level = Level.find(params[:level_id])
-      @level = old_level.dup
+
       begin
-        @level.update!(name: params[:name])
-        if old_level.try(:dsl_text)
-          new_dsl = old_level.dsl_text.sub("name '#{old_level.name}'", "name '#{params[:name]}'")
-          @level.update!(dsl_text: new_dsl)
-        end
+        @level = old_level.clone_with_name(params[:name])
       rescue ArgumentError => e
         render(status: :not_acceptable, text: e.message) && return
       rescue ActiveRecord::RecordInvalid => invalid
@@ -273,6 +269,8 @@ class LevelsController < ApplicationController
       {soft_buttons: []},
       {contained_level_names: []},
       {examples: []},
+      {reference_links: []},
+      :map_reference,
 
       # Minecraft-specific
       {available_blocks: []},
@@ -294,6 +292,9 @@ class LevelsController < ApplicationController
     multiselect_params.each do |param|
       params[:level][param].delete_if(&:empty?) if params[:level][param].is_a? Array
     end
+
+    # Removes empty reference links which are autosaved as "" by the form
+    params[:level][:reference_links].delete_if {|link| link == ""} if params[:level][:reference_links]
 
     permitted_params.concat(Level.permitted_params)
     params[:level].permit(permitted_params)

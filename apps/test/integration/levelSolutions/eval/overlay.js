@@ -1,4 +1,4 @@
-var TestResults = require('@cdo/apps/constants.js').TestResults;
+import {TestResults} from '@cdo/apps/constants';
 var blockUtils = require('@cdo/apps/block_utils');
 
 var solutionXml = blockUtils.mathBlockXml('overlay', {
@@ -39,8 +39,6 @@ module.exports = {
         var user = document.getElementById('user');
         var g = user.querySelector('g');
         var circles = user.querySelectorAll('circle');
-        // todo (brent) - somewhere i need more complex tests that overlay images that
-        // have been rotated/scaled/translated
         assert(circles.length === 2);
         assert(circles[0].getAttribute('stroke') === 'blue', "blue circle on the bottom");
         assert(circles[1].getAttribute('stroke') === 'red', "red circle on the bottom");

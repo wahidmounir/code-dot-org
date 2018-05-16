@@ -132,6 +132,8 @@ module LevelsHelper
     # Always pass user age limit
     view_options(is_13_plus: current_user && !current_user.under_13?)
 
+    view_options(user_id: current_user.id) if current_user
+
     view_options(server_level_id: @level.id)
     if @script_level
       view_options(
@@ -231,9 +233,11 @@ module LevelsHelper
       shouldShowDialog: @level.properties['skip_dialog'].blank? && @level.properties['options'].try(:[], 'skip_dialog').blank?
     }
 
-    # Sets video options for this level
+    # Sets video and additional reference options for this level
     if @app_options[:level]
       @app_options[:level][:levelVideos] = @level.related_videos.map(&:summarize)
+      @app_options[:level][:mapReference] = @level.map_reference
+      @app_options[:level][:referenceLinks] = @level.reference_links
     end
 
     if current_user
@@ -260,10 +264,10 @@ module LevelsHelper
   # Helper that renders the _apps_dependencies partial with a configuration
   # appropriate to the level being rendered.
   def render_app_dependencies
-    use_droplet = app_options[:droplet]
+    use_droplet = @level.uses_droplet?
     use_netsim = @level.game == Game.netsim
     use_applab = @level.game == Game.applab
-    use_gamelab = @level.game == Game.gamelab
+    use_gamelab = @level.game.app == Game::GAMELAB
     use_weblab = @level.game == Game.weblab
     use_phaser = @level.game == Game.craft
     use_blockly = !use_droplet && !use_netsim && !use_weblab
@@ -289,6 +293,7 @@ module LevelsHelper
     app_options[:level] ||= {}
     app_options[:level].merge! @level.properties.camelize_keys
     app_options.merge! view_options.camelize_keys
+    set_puzzle_position_options(app_options[:level])
     app_options
   end
 
@@ -321,6 +326,12 @@ module LevelsHelper
     end
   end
 
+  def set_puzzle_position_options(level_options)
+    script_level = @script_level
+    level_options['puzzle_number'] = script_level ? script_level.position : 1
+    level_options['stage_total'] = script_level ? script_level.stage_total : 1
+  end
+
   # Options hash for Weblab
   def weblab_options
     # Level-dependent options
@@ -332,10 +343,7 @@ module LevelsHelper
     level_options = l.weblab_level_options.dup
     app_options[:level] = level_options
 
-    # ScriptLevel-dependent option
-    script_level = @script_level
-    level_options['puzzle_number'] = script_level ? script_level.position : 1
-    level_options['stage_total'] = script_level ? script_level.stage_total : 1
+    set_puzzle_position_options(level_options)
 
     # Ensure project_template_level allows start_sources to be overridden
     level_options['startSources'] = @level.try(:project_template_level).try(:start_sources) || @level.start_sources
@@ -422,9 +430,14 @@ module LevelsHelper
     app_options[:level] = level_options
 
     # Locale-depdendent option
+    # For historical reasons, localized_instructions should happen independent
+    # of `should_localize?`
     level_options['instructions'] = l.localized_instructions unless l.localized_instructions.nil?
-    level_options['authoredHints'] = l.localized_authored_hints unless l.localized_authored_hints.nil?
-    level_options['failureMessageOverride'] = l.localized_failure_message_override unless l.localized_failure_message_override.nil?
+    if l.should_localize?
+      level_options['markdownInstructions'] = l.localized_markdown_instructions unless l.localized_markdown_instructions.nil?
+      level_options['authoredHints'] = l.localized_authored_hints unless l.localized_authored_hints.nil?
+      level_options['failureMessageOverride'] = l.localized_failure_message_override unless l.localized_failure_message_override.nil?
+    end
 
     # Script-dependent option
     script = @script
@@ -542,7 +555,7 @@ module LevelsHelper
       app_options[:firebaseAuthToken] = firebase_auth_token
       app_options[:firebaseChannelIdSuffix] = CDO.firebase_channel_id_suffix
     end
-    app_options[:canResetAbuse] = true if current_user && current_user.permission?(UserPermission::RESET_ABUSE)
+    app_options[:canResetAbuse] = true if current_user && current_user.permission?(UserPermission::PROJECT_VALIDATOR)
     app_options[:isSignedIn] = !current_user.nil?
     app_options[:isTooYoung] = !current_user.nil? && current_user.under_13? && current_user.terms_version.nil?
     app_options[:pinWorkspaceToBottom] = true if l.enable_scrolling?
@@ -581,7 +594,7 @@ module LevelsHelper
   end
 
   def build_copyright_strings
-    # TODO(brent): These would ideally also go in _javascript_strings.html right now, but it can't
+    # These would ideally also go in _javascript_strings.html right now, but it can't
     # deal with params.
     {
       thank_you: URI.escape(I18n.t('footer.thank_you')),
@@ -767,6 +780,7 @@ module LevelsHelper
   def redirect_under_13_without_tos_teacher(level)
     # Note that Game.applab includes both App Lab and Maker Toolkit.
     return false unless level.game == Game.applab || level.game == Game.gamelab
+    return false if level.is_a? GamelabJr
 
     if current_user && current_user.under_13? && current_user.terms_version.nil?
       error_message = current_user.teachers.any? ? I18n.t("errors.messages.teacher_must_accept_terms") : I18n.t("errors.messages.too_young")

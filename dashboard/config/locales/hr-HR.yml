@@ -51,7 +51,7 @@
   add_teacher_form:
     code:
       label: 'Dodajte učitelja:'
-      placeholder: "Šifra odjeljenja (ABCDEF)"
+      placeholder: Šifra odjeljenja (ABCDEF)
       instructions: Please enter the code shared with you by your teacher. It's a
         6 letter code like "ABCDEF".
       instructions_short: Enter your 6 letter section code
@@ -152,6 +152,10 @@
     field_is_required: potrebno
     accept_terms: You must agree to create an account
     error: An error occurred.
+    email_preference_question: Can we email you about updates to our courses, local
+      learning opportunities, or other computer science news?
+    email_preference_yes: Da
+    email_preference_no: Ne
   school_info:
     title: School Information (optional)
     school_country: School Country
@@ -181,7 +185,7 @@
     remember: Zapamti me
     submit: Prijava
   signin:
-    try_heading: "Želite probati kodiranje bez prijave?"
+    try_heading: Želite probati kodiranje bez prijave?
     try_hoc: Prvo isprobaj Sat programiranja
     try_20hours: Probajte naš 20-satni Uvod u informatiku
   signinsection:
@@ -202,6 +206,7 @@
       email: E-mail adresa
       submit: Pošalji
     reset_errors:
+      captcha_required: Please fill out the CAPTCHA to reset your password.
       invalid_email: It looks like you may have signed up with an invalid email address.
         Please email support@code.org to receive a password recovery link.
     change_form:
@@ -230,7 +235,7 @@
     remove: "(remove section)"
     type:
       picture: Picture Password
-      word: Secret Words
+      word: Tajna riječ
       email: E-mail
       google_classroom: Google Classroom
       clever: Clever
@@ -416,6 +421,7 @@
     confirm_secret_words: Confirm that it is you by entering your current secret words
     enter_parent_email: Enter your parent or guardian's email address (for password
       recovery)
+    update: Update Account
   user_level:
     completed: Završen
     tried: Pokušan
@@ -601,7 +607,7 @@
     try_hour_of_code: Pokušajte sat vremena programiranja!
   gender:
     male: Muško
-    female: "Žensko"
+    female: Žensko
     none: Radije ne bih odgovorio
   user_type:
     student: Učenik
@@ -734,8 +740,8 @@
       body: Isprobajte osnove informatike. Milijuni su im dali šansu.
     flappy:
       title: Flappy kôd
-      body: "Želite li napisati vlastitu igru u manje od 10 minuta? Isprobajte naš
-        tutorijal izrade Flappy kôda!"
+      body: Želite li napisati vlastitu igru u manje od 10 minuta? Isprobajte naš
+        tutorijal izrade Flappy kôda!
     20-hour:
       title: Ubrzani tečaj
       body: Ovaj 20-satni tečaj objašnjava iosnovne koncepte programiranja i nformatike.
@@ -755,6 +761,9 @@
         and games with objects and characters that interact with each other.
       audience: Ages 13+
       cta: Learn how
+    hoc-encryption:
+      title: Simple Encryption
+      body: Students will learn techniques to create and crack encrypted messages.
     weblab:
       title: Web Lab (beta)
       body: Web Lab is a programming environment where you can make simple web pages
@@ -775,6 +784,10 @@
     minecraft2016:
       title: Minecraft
       body: Program animals and other Minecraft creatures in your own version of Minecraft.
+    hero:
+      title: Minecraft
+      body: Minecraft is back for the Hour of Code with a brand new activity! Journey
+        through Minecraft with code.
     sports:
       title: Sports
       body: Make a basketball game or mix and match across sports.
@@ -811,7 +824,7 @@
     activity_count: U proteklih <b>%{days}</b> dana, učenici su napravili <b>%{count}</b>
       aplikacija i slika pisanjem vlastitih računalnih programa. Kliknite na slike
       i snimke ekrana da biste vidjeli svaki program na djelu.
-    want_to_make_your_own: "Želite li napraviti svoj vlastiti?"
+    want_to_make_your_own: Želite li napraviti svoj vlastiti?
     how_to_save: On the last level of these tutorials, click "Finish" and "Save" to
       save your work to the gallery.
     more: Više &rarr;
@@ -856,6 +869,9 @@
     hide_survey_last_answer: This survey is anonymous.  Please visit the teacher dashboard
       for aggregate results.  Note that results are only visible if at least five
       students submitted the survey.
+    survey_submission_thankyou: Thank you for submitting this survey! The survey has
+      been cleared so that your responses stay anonymous. Note that your teacher will
+      still be able to see responses for the whole class, but without names attached.
   level_group-submittable:
     wrong_title: Hvala ti
     wrong_body: Thank you for submitting answers.
@@ -1127,6 +1143,11 @@
     csp_ap_1: 'Chapter 1: AP Tech Setup'
     csp_ap_2: 'Chapter 2: AP Explore Performance Task'
     csp_ap_3: 'Chapter 3: AP Create Performance Task'
+    csp_postap_1: 'Chapter 1: Manipulating and Visualizing Data'
+    csp_postap_2: 'Chapter 2: Apps and Databases'
+    csp2_1_2018: 'Unit 2: Digital Information'
+    csp3_1_2018: 'Unit 3: Intro to Programming'
+    csp4_1_2018: 'Unit 4: Big Data and Privacy'
     dlp: Reflection Prompts
   external_links:
     disclaimer: Disclaimer
@@ -1269,3 +1290,8 @@
       anything_else_s: Is there anything else you’d like to tell us about your experience
         at this workshop?
   courses_category: Full Courses
+  cookie_banner:
+    message: By continuing to browse our site or clicking "I agree," you agree to
+      the storing of cookies on your computer or device.
+    more_information: See Code.org's Privacy Policy.
+    accept: Slažem se

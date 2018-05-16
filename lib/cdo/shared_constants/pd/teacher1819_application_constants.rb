@@ -19,37 +19,38 @@ module Teacher1819ApplicationConstants
     section_1_about_you: {
       country: 'Country',
       title: 'Title',
-      first_name: 'First Name',
-      preferred_first_name: 'Preferred First Name',
-      last_name: 'Last Name',
-      account_email: 'Account Email',
+      first_name: 'First name',
+      preferred_first_name: 'Preferred first name',
+      last_name: 'Last name',
+      account_email: 'Account email',
       alternate_email: 'If you use another email, enter it here:',
       phone: 'Phone',
-      address: 'Home Address',
+      address: 'Home address',
       city: 'City',
       state: 'State',
-      zip_code: 'Zip Code',
-      gender_identity: 'Gender Identity',
+      zip_code: 'Zip code',
+      gender_identity: 'Gender identity',
       race: 'Race',
     },
 
     section_2_your_school: {
       school: 'School',
-      school_name: 'School Name',
-      school_address: 'School Address',
+      school_name: 'School name',
+      school_district_name: 'School district name',
+      school_address: 'School address',
       school_city: 'City',
       school_state: 'State',
-      school_zip_code: 'Zip Code',
+      school_zip_code: 'Zip code',
       school_type: 'My school is a',
 
       principal_first_name: "Principal's first name",
       principal_last_name: "Principal's last name",
-      principal_title: "Principal's Title",
+      principal_title: "Principal's title",
       principal_email: "Principal's email address",
       principal_confirm_email: "Confirm principal's email address",
       principal_phone_number: "Principal's phone number",
       current_role: 'What is your current role at your school?',
-      grades_at_school: 'What grades are served at your school? (Select all that apply)',
+      grades_at_school: 'What grades are served at your school? (select all that apply)',
       grades_teaching: 'What grades are you teaching this year (2017-18)? (select all that apply)',
       grades_expect_to_teach: clean_multiline(
         'Based on current plans for the 2018-19 school year, what grade(s) do you expect
@@ -64,6 +65,8 @@ module Teacher1819ApplicationConstants
         'Does your school district require any specific licenses, certifications, or endorsements to teach computer science?',
       have_cs_license:
         'Do you have the required licenses, certifications, or endorsements to teach computer science in your district?',
+      what_license_required:
+        'What license, certification, or endorsement is required?',
       subjects_licensed_to_teach:
         'Which subject area(s) are you currently licensed to teach? (select all that apply)',
       taught_in_past: clean_multiline(
@@ -98,9 +101,9 @@ module Teacher1819ApplicationConstants
          is not available for grades K-5. (select all that apply)'
       ),
       csd_course_hours_per_week:
-        'How many course hours per week will your school offer CS Discoveries per class?',
+        'How many course hours per week will your school offer CS Discoveries for each class? [(Click here for guidance on required number of hours.)](https://support.code.org/hc/en-us/articles/360002245611)',
       csd_course_hours_per_year:
-        'Approximately how many course hours per school year will your school offer CS Discoveries?',
+        'Approximately how many course hours per school year will your school offer CS Discoveries? [(Click here for guidance on required number of hours.)](https://support.code.org/hc/en-us/articles/360002245611)',
       csd_terms_per_year: 'How many terms will this course span in one school year?',
 
       csp_which_grades: clean_multiline(
@@ -109,9 +112,9 @@ module Teacher1819ApplicationConstants
          is not available for grades K-8. (select all that apply)'
       ),
       csp_course_hours_per_week:
-        'How many course hours per week will your school offer CS Principles?',
+        'How many course hours per week will your school offer CS Principles? [(Click here for guidance on required number of hours.)](https://support.code.org/hc/en-us/articles/360002245611)',
       csp_course_hours_per_year:
-        'Approximately how many course hours per school year will your school offer CS Principles?',
+        'Approximately how many course hours per school year will your school offer CS Principles? [(Click here for guidance on required number of hours.)](https://support.code.org/hc/en-us/articles/360002245611)',
       csp_terms_per_year: 'How many terms will this course span in one school year?',
       csp_how_offer: 'How will you offer CS Principles?',
       csp_ap_exam: clean_multiline(
@@ -164,7 +167,8 @@ module Teacher1819ApplicationConstants
       wont_replace_existing_course: 'Will this replace an existing CS course?',
       diversity_recruitment: 'Principal has committed to recruiting diverse students',
       free_lunch_percent: 'Percent of students that receive free/reduced lunch',
-      underrepresented_minority_percent: 'Percent of students that are underrepresented minorities'
+      underrepresented_minority_percent: 'Percent of students that are underrepresented minorities',
+      can_pay_fee: 'Can the school or teacher pay the summer workshop program fee?'
     }
   }.freeze
 
@@ -183,6 +187,7 @@ module Teacher1819ApplicationConstants
     previous_yearlong_cdo_pd: YES_NO,
     committed: YES_NO,
     able_to_attend_single: YES_NO,
+    able_to_attend_multiple: YES_NO,
     csp_which_grades: YES_NO,
     csp_course_hours_per_year: YES_NO,
     csd_which_grades: YES_NO,
@@ -194,7 +199,7 @@ module Teacher1819ApplicationConstants
     underrepresented_minority_percent: [5, 0],
     wont_replace_existing_course: [5, 0],
     taught_in_past: [2, 0],
-    csp_ap_exam: [2, 0]
+    csp_how_offer: [2, 0]
   }.freeze
 
   ALL_LABELS = PAGE_LABELS.values.reduce(:merge).freeze
@@ -205,6 +210,19 @@ module Teacher1819ApplicationConstants
   ).freeze
   CRITERIA_SCORE_QUESTIONS_CSD = (
     VALID_SCORES.select {|_, v| v == YES_NO}.keys -
-      [:csp_ap_exam, :csp_which_grades, :csp_course_hours_per_year]
+      [:csp_how_offer, :csp_which_grades, :csp_course_hours_per_year]
   ).freeze
+
+  TEXT_FIELDS = {
+    other_with_text: 'Other:'.freeze,
+    other_please_list: 'Other (Please List):'.freeze,
+    other_please_explain: 'Other (Please Explain):'.freeze,
+    not_teaching_this_year: "I'm not teaching this year (Please Explain):".freeze,
+    not_teaching_next_year: "I'm not teaching next year (Please Explain):".freeze,
+    dont_know_if_i_will_teach_explain: "I don't know if I will teach this course (Please Explain):".freeze,
+    unable_to_attend: "No, I'm unable to attend (Please Explain):".freeze,
+    able_to_attend_single: "Yes, I'm able to attend".freeze,
+    no_explain: "No (Please Explain):".freeze,
+    no_pay_fee: "No, my school or I will not be able to pay the summer workshop program fee.".freeze
+  }.freeze
 end

@@ -6,7 +6,7 @@
   "filterSortByDisplayWeight": "Consigliati",
   "filterSortByPopularityRank": "Più popolari",
   "filterGrades": "Classi",
-  "filterGradesAll": "Per tutte le età",
+  "filterGradesAll": "Tutte le età",
   "filterGradesPre": "Pre-scolare",
   "filterGrades25": "Da 7 a 11 anni",
   "filterGrades68": "Da 11 a 13 anni",
@@ -45,10 +45,10 @@
   "filterHeaderHideFilters": "Utilizza",
   "filterHeaderTutorialCountSingle": "1 Risultato",
   "filterHeaderTutorialCountPlural": "{tutorial_count} risultati",
-  "roboticsButtonText": "Visualizza le attività robotiche",
+  "roboticsButtonText": "Robotica e Circuiti",
   "roboticsText": "Hai dei robot? Utilizza queste attività e rendi tangibile un Ora di Codice per gli studenti di qualsiasi età!",
-  "tutorialSetNoTutorials": "La tua ricerca ha prodotto alcun risultato. \nPer favore prova a rimuovere alcuni filtri per visualizzare ulteriori attività.",
-  "tutorialDetailsTeacherNotes": "Annotazioni del prof",
+  "tutorialSetNoTutorials": "La tua ricerca non ha prodotto risultati. \nPer favore prova a rimuovere alcuni filtri per visualizzare ulteriori attività.",
+  "tutorialDetailsTeacherNotes": "Guida per l'insegnante (in inglese)",
   "tutorialDetailsShortLink": "Link breve",
   "tutorialDetailInternationalLanguages": "Linguaggi",
   "tutorialDetailStandards": "Livelli di riferimento",
@@ -58,5 +58,5 @@
   "hideAllTutorialsButton": "Nascondi attività per molte lingue",
   "noTutorialsYourLanguage": "Non sono presenti attività nella tua lingua. Prova delle attività in altre lingue cliccando sul pulsante qui sotto.",
   "bottomGuidelinesLink": "Clicca qui per vedere i nostri criteri e le linee guida per le lezioni dell'Ora del Codice.",
-  "bottomSpecialNeedsLink": "Clicca qui per ulteriori informazioni sul supporto agli studenti con esigenze speciali."
+  "bottomSpecialNeedsLink": "Clicca qui per ulteriori informazioni sul supporto agli studenti con Bisogni Educativi Speciali."
 }

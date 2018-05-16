@@ -17,6 +17,38 @@ const SCHOOL_TYPES_HAVING_NAMES = [
   'organization',
 ];
 
+function getCountryCodeForCountry(countryName) {
+  return COUNTRIES.find(pair => pair.value === countryName).label;
+}
+
+export function setSchoolInfoFormData(signupForm, formData) {
+  let schoolInfoDataMap;
+  const ncesSchoolElement = signupForm.find(el => el.name === 'nces_school_s');
+  if (ncesSchoolElement && ncesSchoolElement.value !== '-1') {
+    schoolInfoDataMap = [
+      {from: 'nces_school_s', to: 'school_id'},
+      {from: 'country_s', to: 'country', transform: getCountryCodeForCountry},
+    ];
+    // Remove school type from the data to be submitted
+    formData.splice(formData.findIndex(el => el.name === 'user[school_info_attributes][school_type]'), 1);
+  } else {
+    schoolInfoDataMap = [
+      {from: 'country_s', to: 'country', transform: getCountryCodeForCountry},
+      {from: 'school_name_s', to: 'school_name'},
+      {from: 'school_state_s', to: 'school_state'},
+      {from: 'school_zip_s', to: 'school_zip'},
+      {from: 'registration_location', to: 'full_address'},
+    ];
+  }
+  signupForm.forEach( function (el) {
+    const match = schoolInfoDataMap.find(x => x.from === el.name);
+    if (match) {
+      const value = match.transform ? match.transform(el.value) : el.value;
+      formData.push({name: "user[school_info_attributes][" + match.to + "]", value: value});
+    }
+  });
+}
+
 window.SignupManager = function (options) {
   this.options = options;
   var self = this;
@@ -49,6 +81,7 @@ window.SignupManager = function (options) {
     } else {
       url = "/";
     }
+
     window.location.href = url;
   }
 
@@ -66,7 +99,8 @@ window.SignupManager = function (options) {
       "age",
       "gender",
       "terms_of_service_version",
-      "school_info.zip"
+      "school_info.zip",
+      "email_preference_opt_in"
     ];
 
     var fieldsWithErrors = 0;
@@ -78,7 +112,9 @@ window.SignupManager = function (options) {
           // We have a custom inline message for user_type errors already set in the DOM.
           if (field === "terms_of_service_version") {
             errorField.text(self.options.acceptTermsString);
-          } else if (field === "school_info.zip") {
+          } else if (field === 'email_preference_opt_in') {
+            errorField.text(self.options.emailPreferenceOptInString);
+          }  else if (field === "school_info.zip") {
             errorField = $('#school-zip').find('.error_in_field');
             errorField.text(err.responseJSON.errors[field][0]);
           } else if (field !== "user_type") {
@@ -95,6 +131,7 @@ window.SignupManager = function (options) {
     if (fieldsWithErrors === 0) {
       $('#signup-error').show();
     }
+
   }
 
   $("#user_user_type").change(function () {
@@ -121,6 +158,7 @@ window.SignupManager = function (options) {
     $("#name-student").fadeIn();
     $("#name-teacher").hide();
     setSchoolInfoVisibility(false);
+    $(".email-preference").hide();
 
     // Show correct terms below form.
     $("#student-terms").fadeIn();
@@ -133,10 +171,6 @@ window.SignupManager = function (options) {
   function onCountryChange(_, event) {
     schoolData.country = event ? event.value : '';
     updateAutocompleteSchoolFields(schoolData);
-  }
-
-  function getCountryCodeForCountry(countryName) {
-    return COUNTRIES.find(pair => pair.value === countryName).label;
   }
 
   function onSchoolTypeChange(event) {
@@ -164,7 +198,7 @@ window.SignupManager = function (options) {
     ReactDOM.render(
       <div>
         <h5 style={{fontWeight: "bold"}}>
-          {i18n.schoolInformationOptionalHeader()}
+          {i18n.schoolInformationHeader()}
         </h5>
         <hr/>
         <CountryAutocompleteDropdown
@@ -221,6 +255,7 @@ window.SignupManager = function (options) {
     $("#name-student").hide();
     $("#name-teacher").fadeIn();
     setSchoolInfoVisibility(true);
+    $(".email-preference").fadeIn();
 
     // Show correct terms below form.
     $("#student-terms").hide();
@@ -263,23 +298,7 @@ window.SignupManager = function (options) {
 
     // Data transformations for school info
     const signupForm = $(".signupform").serializeArray();
-    const schoolInfoDataMap = [
-      {from: 'nces_school_s', to: 'school_id'},
-      {from: 'country_s', to: 'country', transform: getCountryCodeForCountry},
-      {from: 'school_name_s', to: 'school_name'},
-      {from: 'school_state_s', to: 'school_state'},
-      {from: 'school_zip_s', to: 'school_zip'},
-      {from: 'registration_location', to: 'full_address'},
-    ];
-    signupForm.forEach( function (el) {
-      const match = schoolInfoDataMap.find(x => x.from === el.name);
-      if (match) {
-        const value = match.transform ? match.transform(el.value) : el.value;
-        if (!(match.to === 'school_id' && value === '-1')) { // skip passing "not found" school id value
-          formData.push({name: "user[school_info_attributes][" + match.to + "]", value: value});
-        }
-      }
-    });
+    setSchoolInfoFormData(signupForm, formData);
 
     if (isTeacherSelected()) {
       // Teachers get age 21 in the form data.

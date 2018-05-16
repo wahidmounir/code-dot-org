@@ -14,14 +14,18 @@ let schoolData = {
 const SCHOOL_NOT_FOUND = "-1";
 
 function renderSchoolDropdown() {
-  ReactDOM.render (
-    <SchoolAutocompleteDropdownWithLabel
-      setField={schoolDropdownOnChange}
-      value={schoolData.nces}
-      showErrorMsg={schoolData.showDropdownError}
-    />,
-    $('#school-selector')[0]
-  );
+  const schoolSelector = $('#school-selector')[0];
+
+  if (schoolSelector) {
+    ReactDOM.render (
+      <SchoolAutocompleteDropdownWithLabel
+        setField={schoolDropdownOnChange}
+        value={schoolData.nces}
+        showErrorMsg={schoolData.showDropdownError}
+      />,
+      schoolSelector
+    );
+  }
 }
 
 function schoolDropdownOnChange(field, event) {
@@ -30,10 +34,10 @@ function schoolDropdownOnChange(field, event) {
   schoolData.nces = val;
   schoolData.showDropdownError = !val;
 
-  if (val === SCHOOL_NOT_FOUND){
+  if (val === SCHOOL_NOT_FOUND) {
     $('#school-name-field').show();
     $('#hoc-event-location-field').show();
-  } else if (val){
+  } else if (val) {
     $('#school-name-field').hide();
     $('#hoc-event-location-field').hide();
   }
@@ -43,11 +47,12 @@ function schoolDropdownOnChange(field, event) {
 
 $(document).ready(function () {
 
-  new google.maps.places.SearchBox(document.getElementById('hoc-event-location'));
+  const hocEventLocationElement = document.getElementById('hoc-event-location');
+  if (hocEventLocationElement) {
+    new google.maps.places.SearchBox(hocEventLocationElement);
+  }
 
-  $('#hoc-signup-form select').selectize({
-    plugins: ['fast_click']
-  });
+  $('#hoc-signup-form select').selectize();
 
   renderSchoolDropdown();
 
@@ -95,7 +100,7 @@ $(document).ready(function () {
       // continue button goes to census questions on click
       $('#continue-btn').show();
       $('#submit-btn').hide();
-    } else if (($('#hoc-event-type').val() === 'in_school')){
+    } else if (($('#hoc-event-type').val() === 'in_school')) {
       // in-school & NOT US
       $('#school-autocomplete').hide();
       $('#school-name-field').show();

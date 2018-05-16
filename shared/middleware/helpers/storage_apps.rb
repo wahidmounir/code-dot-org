@@ -140,17 +140,20 @@ class StorageApps
 
   # Determine if the current user can view the project
   def get_sharing_disabled(channel_id, current_user_id)
-    user_storage_owner_id, _ = storage_decrypt_channel_id(channel_id)
-    owner_id = user_storage_ids_table.where(id: user_storage_owner_id).first[:user_id]
+    owner_storage_id, storage_app_id = storage_decrypt_channel_id(channel_id)
+    owner_user_id = user_storage_ids_table.where(id: owner_storage_id).first[:user_id]
 
     # Sharing of a project is not disabled for the project owner
     # or the teachers of the project owner
-    if current_user_id == owner_id
+    # or if the current user paired with the owner
+    if current_user_id == owner_user_id
       return false
-    elsif teaches_student?(owner_id, current_user_id)
+    elsif teaches_student?(owner_user_id, current_user_id)
       return false
+    elsif get_user_sharing_disabled(owner_user_id)
+      !users_paired_on_level?(storage_app_id, current_user_id, owner_user_id, owner_storage_id)
     else
-      return get_user_sharing_disabled(owner_id)
+      return false
     end
 
   # Default to sharing disabled if there is an error
@@ -158,13 +161,30 @@ class StorageApps
     true
   end
 
-  def increment_abuse(channel_id)
+  def users_paired_on_level?(storage_app_id, current_user_id, owner_user_id, owner_storage_id)
+    channel_tokens_table = DASHBOARD_DB[:channel_tokens]
+    level_id_row = channel_tokens_table.where(storage_app_id: storage_app_id, storage_id: owner_storage_id).first
+    return false if level_id_row.nil?
+    level_id = level_id_row[:level_id]
+
+    user_levels_table = DASHBOARD_DB[:user_levels]
+    owner_user_level_id = user_levels_table.select(:id).where(user_id: owner_user_id, level_id: level_id)
+    current_user_level_id = user_levels_table.select(:id).where(user_id: current_user_id, level_id: level_id)
+
+    paired_user_levels_table = DASHBOARD_DB[:paired_user_levels]
+    paired_level_row = paired_user_levels_table.where(driver_user_level_id: owner_user_level_id, navigator_user_level_id: current_user_level_id).first
+    return false if paired_level_row.nil?
+
+    return true
+  end
+
+  def increment_abuse(channel_id, amount = 10)
     _owner, id = storage_decrypt_channel_id(channel_id)
 
     row = @table.where(id: id).exclude(state: 'deleted').first
     raise NotFound, "channel `#{channel_id}` not found" unless row
 
-    new_score = row[:abuse_score] + (JSON.parse(row[:value])['frozen'] ? 0 : 10)
+    new_score = row[:abuse_score] + (JSON.parse(row[:value])['frozen'] ? 0 : amount)
 
     update_count = @table.where(id: id).exclude(state: 'deleted').update({abuse_score: new_score})
     raise NotFound, "channel `#{channel_id}` not found" if update_count == 0
@@ -227,5 +247,59 @@ class StorageApps
         projectType: row[:project_type],
       }
     )
+  end
+
+  #
+  # Given an encrypted channel id, attempt to determine the channel's
+  # project type.
+  # This isn't always possible - we aren't consistent about storing project
+  # type information with the channel.
+  #
+  # @param [String] channel_id - an encrypted channel id
+  # @return [String] The discovered project type, or 'unknown' if the type
+  #   can't be determiend with given information.
+  # @raise [NotFound] if the channel does not exist or is not shareable.
+  #
+  def project_type_from_channel_id(channel_id)
+    project_type_from_merged_row(get(channel_id))
+  end
+
+  private
+
+  #
+  # Discovering a channel's project type is a real mess.  We don't usually
+  # need to do this because the project type is usually part of the URL,
+  # but for a few APIs this is needed.
+  #
+  # @param [Hash] row - A storage_apps merged row value as returned by
+  #   `merged_row_value` or `get`.
+  # @returns [String] The discovered project type, or 'unknown' if the type
+  #   can't be determined with given information.
+  #
+  def project_type_from_merged_row(row)
+    # We can derive channel project type from a few places.
+    #
+    # 1. The `project_type` column in the storage_apps table.
+    #    This is often NULL for "hidden" levels, which includes project-backed
+    #    script levels.
+    return row[:projectType] if row[:projectType]
+
+    # 2. The projectType property in the `value` JSON column.
+    #    Apparently this is sometimes filled out _instead_ of the column.
+    return row['projectType'] if row['projectType']
+
+    # 3. The level property in the `value` JSON column.
+    #    These are consistently values like "/projects/gamelab" or
+    #    "/projects/calc" and can be used to reconstruct a project type if
+    #    the `project_type` column doesn't have it.
+    level = row['level']
+    match_data = /^#{'/projects/'}([^\/]+)$/.match(level)
+    return match_data[1] if match_data
+
+    # Some number of projects don't contain a project type in any of these
+    # places.  We suspect a number of them are pixelation widget projects.
+    # Others have no content on S3, and may be just-created stub projects.
+    # Report these as 'unknown'.
+    'unknown'
   end
 end

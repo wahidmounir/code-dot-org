@@ -13,8 +13,10 @@ describe("Summary", () => {
     router: fakeRouter
   };
 
+  const regionalPartnerFilter = {value: 1, label: "A Great Organization"};
+
   const createSummary = () => (shallow(
-    <Summary regionalPartnerName="A Great Organization" />,
+    <Summary regionalPartnerFilter={regionalPartnerFilter} />,
     { context },
   ));
 
@@ -26,7 +28,7 @@ describe("Summary", () => {
   it("Generates 5 tables after hearing from server", () => {
     let server = sinon.fakeServer.create();
 
-    server.respondWith("GET", '/api/v1/pd/applications?regional_partner_filter=none',
+    server.respondWith("GET", '/api/v1/pd/applications',
       [
         200,
         {"Content-Type": "application/json"},

@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '~> 2.5'
 
 # Force HTTPS for github-source gems.
 # This is a temporary workaround - remove when bundler version is >=2.0
@@ -58,7 +59,13 @@ end
 gem 'rack-cache'
 
 group :development, :test do
-  gem 'rerun', '~> 0.10.0'
+  gem 'rerun'
+
+  # Ref: https://github.com/e2/ruby_dep/issues/24
+  # https://github.com/e2/ruby_dep/issues/25
+  # https://github.com/e2/ruby_dep/issues/30
+  gem 'ruby_dep', '~> 1.3.1'
+
   gem 'shotgun'
   gem 'thin'
   # Use debugger
@@ -83,16 +90,15 @@ group :development, :test do
 
   # For UI testing.
   gem 'chromedriver-helper', '~> 0.0.7'
-  gem 'colorize'
   gem 'cucumber', '~> 2.4.0'
-  gem 'eyes_selenium', '3.5.4'
+  gem 'eyes_selenium', '3.14.2'
   gem 'minitest', '~> 5.5'
   gem 'minitest-around'
-  gem 'minitest-reporters'
+  gem 'minitest-reporters', '~> 1.2.0.beta3'
   gem 'net-http-persistent'
   gem 'rinku'
   gem 'rspec'
-  gem 'selenium-webdriver', '~> 3.0.3'
+  gem 'selenium-webdriver', '3.8.0'
   gem 'spring'
   gem 'spring-commands-testunit'
 
@@ -112,7 +118,8 @@ gem 'factory_girl_rails', group: [:development, :staging, :test, :adhoc]
 # For pegasus PDF generation.
 gem 'open_uri_redirections', require: false, group: [:development, :staging, :test]
 
-gem 'gctools'
+# Ref: https://github.com/tmm1/gctools/pull/17
+gem 'gctools', github: 'wjordan/gctools', ref: 'ruby-2.5'
 gem 'puma'
 gem 'unicorn', '~> 5.1.0'
 
@@ -138,31 +145,35 @@ gem 'jbuilder', '~> 2.5'
 
 # Authentication and permissions.
 gem 'cancancan', '~> 1.15.0'
-gem 'devise', '~> 4.2.0'
+gem 'devise', '~> 4.4.0'
 gem 'devise_invitable', '~> 1.6.0'
 
 # Ref: https://github.com/instructure/ims-lti/pull/90
 gem 'ims-lti', github: 'wjordan/ims-lti', ref: 'oauth_051'
 # Ref: https://github.com/Clever/omniauth-clever/pull/7
 gem 'omniauth-clever', '~> 1.2.1', github: 'Clever/omniauth-clever'
-gem 'omniauth-facebook', '~> 4.0.0.rc1'
+gem 'omniauth-facebook', '~> 4.0.0'
 gem 'omniauth-google-oauth2', '~> 0.3.1'
 # Ref: https://github.com/joel/omniauth-windowslive/pull/16
 # Ref: https://github.com/joel/omniauth-windowslive/pull/17
 gem 'omniauth-windowslive', '~> 0.0.11', github: 'wjordan/omniauth-windowslive', ref: 'cdo'
 
 gem 'bootstrap-sass', '~> 2.3.2.2'
-gem 'haml'
+
+# Ref: https://github.com/haml/haml/issues/940
+# https://github.com/haml/haml/issues/982
+# https://github.com/haml/haml/issues/985
+gem 'haml', github: 'wjordan/haml', ref: 'cdo'
 
 gem 'jquery-ui-rails', '~> 6.0.1'
 
-gem 'nokogiri', '~> 1.6.1'
+gem 'nokogiri', '~> 1.8.2'
 
 gem 'highline', '~> 1.6.21'
 
 gem 'honeybadger' # error monitoring
 
-gem 'newrelic_rpm', '~> 3.16.0', group: [:staging, :development, :production] # perf/error/etc monitoring
+gem 'newrelic_rpm', '~> 4.8.0', group: [:staging, :development, :production] # perf/error/etc monitoring
 
 gem 'redcarpet', '~> 3.3.4'
 
@@ -193,7 +204,7 @@ gem 'marked-rails' # js-based md renderer used for levelbuilder md preview
 
 gem 'twilio-ruby' # SMS API for send-to-phone feature
 
-gem 'font-awesome-rails', '~> 4.6.3'
+gem 'font-awesome-rails', '~> 4.6.3' # NOTE: apps/src/applab/Exporter.js depends on the font file names from this version!
 gem 'sequel', '~> 4.30'
 gem 'user_agent_parser'
 
@@ -207,7 +218,7 @@ gem 'aws-sdk', '~> 2'
 # Lint tools
 group :development, :staging do
   gem 'haml_lint', require: false
-  gem 'rubocop', '0.46.0', require: false
+  gem 'rubocop', '~> 0.52', require: false
   gem 'scss_lint', require: false
 end
 
@@ -267,3 +278,22 @@ gem 'auto_strip_attributes', '~> 2.1'
 
 # Used to sort UTF8 strings properly
 gem 'sort_alphabetical', github: 'grosser/sort_alphabetical'
+
+gem 'StreetAddress', require: "street_address"
+
+gem 'recaptcha', require: 'recaptcha/rails'
+
+gem 'loofah', ' ~> 2.2.1'
+
+# Install pg gem only on specific production hosts.
+require_pg = -> do
+  require 'socket'
+  %w[production-daemon production-console].include?(Socket.gethostname)
+end
+
+install_if require_pg do
+  gem 'pg', require: false
+end
+
+gem 'activerecord-import'
+gem 'colorize'

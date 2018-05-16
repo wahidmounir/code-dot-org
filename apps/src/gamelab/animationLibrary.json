@@ -1337,6 +1337,24 @@
         "y": 398
       }
     },
+    "category_backgrounds/desert_road": {
+      "name": "desert_road",
+      "frameCount": 1,
+      "frameSize": {
+        "x": 400,
+        "y": 400
+      },
+      "looping": true,
+      "frameDelay": 2,
+      "jsonLastModified": "2018-03-22 22:03:22 UTC",
+      "pngLastModified": "2018-03-22 22:03:21 UTC",
+      "version": "nfgysU3t3P8XnUBAf9LjIy2JTHtdXpTj",
+      "sourceUrl": "/api/v1/animation-library/nfgysU3t3P8XnUBAf9LjIy2JTHtdXpTj/category_backgrounds/desert_road.png",
+      "sourceSize": {
+        "x": 400,
+        "y": 400
+      }
+    },
     "category_backgrounds/desk": {
       "name": "desk",
       "frameCount": 1,
@@ -1350,24 +1368,6 @@
       "pngLastModified": "2017-04-18 05:59:30 UTC",
       "version": "7kvGjCcLmnUx.opLtCmARizKURFQiypj",
       "sourceUrl": "/api/v1/animation-library/7kvGjCcLmnUx.opLtCmARizKURFQiypj/category_backgrounds/desk.png",
-      "sourceSize": {
-        "x": 400,
-        "y": 400
-      }
-    },
-    "category_backgrounds/dessert_road": {
-      "name": "dessert_road",
-      "frameCount": 1,
-      "frameSize": {
-        "x": 400,
-        "y": 400
-      },
-      "looping": true,
-      "frameDelay": 2,
-      "jsonLastModified": "2017-04-18 05:59:31 UTC",
-      "pngLastModified": "2017-04-18 05:59:32 UTC",
-      "version": "h46slAPt12edVQZc7eR2ICn0kDPSY3ik",
-      "sourceUrl": "/api/v1/animation-library/h46slAPt12edVQZc7eR2ICn0kDPSY3ik/category_backgrounds/dessert_road.png",
       "sourceSize": {
         "x": 400,
         "y": 400
@@ -2633,8 +2633,8 @@
         "y": 836
       }
     },
-    "category_characters/green_monser": {
-      "name": "green_monser",
+    "category_characters/green_monster": {
+      "name": "green_monster",
       "frameCount": 1,
       "frameSize": {
         "x": 212,
@@ -2642,10 +2642,10 @@
       },
       "looping": true,
       "frameDelay": 2,
-      "jsonLastModified": "2017-04-18 06:03:58 UTC",
-      "pngLastModified": "2017-04-18 06:03:59 UTC",
-      "version": "vVIBJbA9KqlgUoUFzqrhmREcCpFBLePx",
-      "sourceUrl": "/api/v1/animation-library/vVIBJbA9KqlgUoUFzqrhmREcCpFBLePx/category_characters/green_monser.png",
+      "jsonLastModified": "2018-03-22 22:01:25 UTC",
+      "pngLastModified": "2018-03-22 22:01:24 UTC",
+      "version": "nM6uPuxJRB2q.Wba2oofSvfglG9x8r6C",
+      "sourceUrl": "/api/v1/animation-library/nM6uPuxJRB2q.Wba2oofSvfglG9x8r6C/category_characters/green_monster.png",
       "sourceSize": {
         "x": 212,
         "y": 287
@@ -6431,8 +6431,8 @@
         "y": 200
       }
     },
-    "category_food/purple_onoin": {
-      "name": "purple_onoin",
+    "category_food/radish": {
+      "name": "radish",
       "frameCount": 1,
       "frameSize": {
         "x": 464,
@@ -6440,10 +6440,10 @@
       },
       "looping": true,
       "frameDelay": 2,
-      "jsonLastModified": "2017-04-18 06:01:26 UTC",
-      "pngLastModified": "2017-04-18 06:01:27 UTC",
-      "version": "YtMuz.QhLFSIAK.YKJ48iq26yHRinvRz",
-      "sourceUrl": "/api/v1/animation-library/YtMuz.QhLFSIAK.YKJ48iq26yHRinvRz/category_food/purple_onoin.png",
+      "jsonLastModified": "2018-01-18 18:00:18 UTC",
+      "pngLastModified": "2018-01-18 18:00:19 UTC",
+      "version": "HYO0LezYHECv5.ncrkKJtQN9w3ZD2fra",
+      "sourceUrl": "/api/v1/animation-library/HYO0LezYHECv5.ncrkKJtQN9w3ZD2fra/category_food/radish.png",
       "sourceSize": {
         "x": 464,
         "y": 800
@@ -16562,7 +16562,8 @@
       "category_animals/bee"
     ],
     "beet": [
-      "category_food/beet"
+      "category_food/beet",
+      "category_food/radish"
     ],
     "bell": [
       "category_generic_items/bell"
@@ -17433,8 +17434,8 @@
     "category_backgrounds": [
       "category_backgrounds/city",
       "category_backgrounds/continuous_grass",
+      "category_backgrounds/desert_road",
       "category_backgrounds/desk",
-      "category_backgrounds/dessert_road",
       "category_backgrounds/farm_land",
       "category_backgrounds/floating_grass",
       "category_backgrounds/front_of_house",
@@ -17509,7 +17510,7 @@
       "category_characters/gray_robot_3",
       "category_characters/gray_robot_4",
       "category_characters/gray_robot_5",
-      "category_characters/green_monser",
+      "category_characters/green_monster",
       "category_characters/green_robot",
       "category_characters/happy_critter",
       "category_characters/kid_1",
@@ -17724,7 +17725,7 @@
       "category_food/pear",
       "category_food/pepper",
       "category_food/pizza_slice",
-      "category_food/purple_onoin",
+      "category_food/radish",
       "category_food/red_apple",
       "category_food/sliced_watermelon",
       "category_food/soda",
@@ -18836,7 +18837,7 @@
       "category_characters/gray_robot_3",
       "category_characters/gray_robot_4",
       "category_characters/gray_robot_5",
-      "category_characters/green_monser",
+      "category_characters/green_monster",
       "category_characters/green_robot",
       "category_characters/happy_critter",
       "category_characters/little_robot",
@@ -18892,11 +18893,11 @@
     "dalmatian": [
       "category_animals/dalmatian"
     ],
+    "desert_road": [
+      "category_backgrounds/desert_road"
+    ],
     "desk": [
       "category_backgrounds/desk"
-    ],
-    "dessert_road": [
-      "category_backgrounds/dessert_road"
     ],
     "diered1": [
       "category_gameplay/dieRed1"
@@ -19891,8 +19892,8 @@
     "gray_robot_5": [
       "category_characters/gray_robot_5"
     ],
-    "green_monser": [
-      "category_characters/green_monser"
+    "green_monster": [
+      "category_characters/green_monster"
     ],
     "green_robot": [
       "category_characters/green_robot"
@@ -21421,7 +21422,8 @@
       "category_characters/kid_at_desk"
     ],
     "onion": [
-      "category_food/onion"
+      "category_food/onion",
+      "category_food/radish"
     ],
     "open_book": [
       "category_generic_items/open_book"
@@ -22187,9 +22189,6 @@
     "purple_monster": [
       "category_characters/purple_monster"
     ],
-    "purple_onoin": [
-      "category_food/purple_onoin"
-    ],
     "purse": [
       "category_generic_items/purse"
     ],
@@ -22249,6 +22248,9 @@
       "category_vehicles/playerShip3_orange",
       "category_vehicles/playerShip3_red"
     ],
+    "radish": [
+      "category_food/radish"
+    ],
     "recorder": [
       "category_music/recorder"
     ],
@@ -22260,6 +22262,9 @@
     ],
     "red_apple": [
       "category_food/red_apple"
+    ],
+    "red_onion": [
+      "category_food/radish"
     ],
     "redsand": [
       "category_environment/redsand"

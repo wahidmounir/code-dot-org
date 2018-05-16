@@ -85,6 +85,11 @@ const styles = {
     position: 'relative',
     bottom: 4,
   },
+  scrollable:{
+    overflow: 'hidden',
+    overflowY: 'scroll',
+    maxHeight: '400px'
+  },
 };
 
 // TODO: possibly refactor AssetRow to make it work here instead of
@@ -92,10 +97,11 @@ const styles = {
 class AssetListItemUnwrapped extends React.Component {
   static propTypes = {
     asset: importableAssetShape,
+    projectId: PropTypes.string,
   };
 
   render() {
-    const {asset} = this.props;
+    const {asset, projectId} = this.props;
     return (
       <div style={styles.assetListItem}>
         <AssetThumbnail
@@ -103,6 +109,7 @@ class AssetListItemUnwrapped extends React.Component {
           name={asset.filename}
           iconStyle={styles.assetThumbnailIcon}
           style={styles.assetThumbnail}
+          projectId={projectId}
         />
         <div style={[styles.assetListItemText, styles.subtext]}>
           {asset.filename}
@@ -213,49 +220,53 @@ export class ImportScreensDialog extends React.Component {
         {...this.props}
       >
         <Body>
-          {importableScreens.length > 0 &&
-           <MultiCheckboxSelector
-             style={styles.section}
-             header="Screens"
-             items={importableScreens}
-             selected={this.state.selectedScreens}
-             onChange={selectedScreens => this.setState({selectedScreens})}
-             itemPropName="screen"
-             disabled={this.props.isImporting}
-           >
-             <ScreenListItem />
-           </MultiCheckboxSelector>}
-          {this.props.project.otherAssets.length > 0 &&
-           <MultiCheckboxSelector
-             style={styles.section}
-             header="Other Assets"
-             items={this.props.project.otherAssets}
-             selected={this.state.selectedAssets}
-             onChange={selectedAssets => this.setState({selectedAssets})}
-             itemPropName="asset"
-             disabled={this.props.isImporting}
-           >
-             <AssetListItem/>
-           </MultiCheckboxSelector>}
-          {nonImportableScreens.length > 0 &&
-           <div style={styles.section}>
-             <h2 style={multiCheckboxStyles.header}>Cannot Import</h2>
-             <p style={styles.subtext}>
-               Cannot import the following screens because they contain design elements
-               with IDs already used in your existing project. Fix the IDs in either
-               project so they aren't duplicated across different screens before trying
-               to import the following.
-             </p>
-             <ul style={multiCheckboxStyles.list}>
-               {nonImportableScreens.map(
-                  screen => (
-                    <li key={screen.id} style={multiCheckboxStyles.listItem}>
-                      <ScreenListItem screen={screen}/>
-                    </li>
-                  )
-                )}
-             </ul>
-           </div>}
+          <div style={styles.scrollable}>
+            {importableScreens.length > 0 &&
+             <MultiCheckboxSelector
+               style={styles.section}
+               header="Screens"
+               items={importableScreens}
+               selected={this.state.selectedScreens}
+               onChange={selectedScreens => this.setState({selectedScreens})}
+               itemPropName="screen"
+               disabled={this.props.isImporting}
+             >
+               <ScreenListItem />
+             </MultiCheckboxSelector>}
+            {this.props.project.otherAssets.length > 0 &&
+             <MultiCheckboxSelector
+               style={styles.section}
+               header="Other Assets"
+               items={this.props.project.otherAssets}
+               selected={this.state.selectedAssets}
+               onChange={selectedAssets => this.setState({selectedAssets})}
+               itemPropName="asset"
+               disabled={this.props.isImporting}
+             >
+               <AssetListItem
+                 projectId={this.props.project.id}
+               />
+             </MultiCheckboxSelector>}
+            {nonImportableScreens.length > 0 &&
+             <div style={styles.section}>
+               <h2 style={multiCheckboxStyles.header}>Cannot Import</h2>
+               <p style={styles.subtext}>
+                 Cannot import the following screens because they contain design elements
+                 with IDs already used in your existing project. Fix the IDs in either
+                 project so they aren't duplicated across different screens before trying
+                 to import the following.
+               </p>
+               <ul style={multiCheckboxStyles.list}>
+                 {nonImportableScreens.map(
+                    screen => (
+                      <li key={screen.id} style={multiCheckboxStyles.listItem}>
+                        <ScreenListItem screen={screen}/>
+                      </li>
+                    )
+                  )}
+               </ul>
+             </div>}
+          </div>
         </Body>
         {buttons}
       </Dialog>

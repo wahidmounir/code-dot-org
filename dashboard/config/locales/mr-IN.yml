@@ -149,7 +149,7 @@
       you up.
     user_type_label: Account Type
     user_type_teacher: Teacher
-    user_type_student: "विध्यार्थी"
+    user_type_student: विध्यार्थी
     field_is_required: is required
     accept_terms: You must agree to create an account
     error: An error occurred.
@@ -203,6 +203,7 @@
       email: Email address
       submit: Send me reset password instructions
     reset_errors:
+      captcha_required: Please fill out the CAPTCHA to reset your password.
       invalid_email: It looks like you may have signed up with an invalid email address.
         Please email support@code.org to receive a password recovery link.
     change_form:
@@ -373,7 +374,7 @@
       for %{student_name}"
     panel:
       answer_viewer: Answer Viewer
-      student: "विध्यार्थी"
+      student: विध्यार्थी
       viewing_solution: Viewing Solution
       try_it_yourself: Try it yourself
       section: Section
@@ -421,6 +422,7 @@
     confirm_secret_words: Confirm that it is you by entering your current secret words
     enter_parent_email: Enter your parent or guardian's email address (for password
       recovery)
+    update: Update Account
   user_level:
     completed: Completed
     tried: Tried
@@ -608,7 +610,7 @@
     female: Female
     none: Prefer not to answer
   user_type:
-    student: "विध्यार्थी"
+    student: विध्यार्थी
     teacher: Teacher
   footer:
     thank_you: We thank our <a href="https://code.org/about/donors">donors</a>, <a
@@ -751,6 +753,9 @@
         and games with objects and characters that interact with each other.
       audience: Ages 13+
       cta: Learn how
+    hoc-encryption:
+      title: Simple Encryption
+      body: Students will learn techniques to create and crack encrypted messages.
     weblab:
       title: Web Lab (beta)
       body: Web Lab is a programming environment where you can make simple web pages
@@ -770,6 +775,10 @@
     minecraft2016:
       title: Minecraft
       body: Program animals and other Minecraft creatures in your own version of Minecraft.
+    hero:
+      title: Minecraft
+      body: Minecraft is back for the Hour of Code with a brand new activity! Journey
+        through Minecraft with code.
     sports:
       title: Sports
       body: Make a basketball game or mix and match across sports.
@@ -851,6 +860,9 @@
     hide_survey_last_answer: This survey is anonymous.  Please visit the teacher dashboard
       for aggregate results.  Note that results are only visible if at least five
       students submitted the survey.
+    survey_submission_thankyou: Thank you for submitting this survey! The survey has
+      been cleared so that your responses stay anonymous. Note that your teacher will
+      still be able to see responses for the whole class, but without names attached.
   level_group-submittable:
     wrong_title: Thank you
     wrong_body: Thank you for submitting answers.
@@ -991,7 +1003,7 @@
     project_gallery: Project Gallery
     publish: Publish
     unpublish: Unpublish
-    share: "वाटा"
+    share: वाटा
     share_title: Share your project
     share_copy_link: 'Copy the link:'
     share_embed_description: You can paste the embed code into an HTML page to display
@@ -1004,7 +1016,7 @@
       to start a project.
     close: Close
     more: More
-    name: "नाव"
+    name: नाव
     updated: Updated
     project_type: Project Type
     help_text: Click <strong>Make an App</strong> or <strong>Draw Something</strong>

@@ -1,9 +1,10 @@
 import React from 'react';
 import JoinSection from './JoinSection';
+import {action} from '@storybook/addon-actions';
 
 export default storybook => {
   return storybook
-    .storiesOf('JoinSection', module)
+    .storiesOf('Homepages/JoinSection', module)
     .addStoryTable([
       {
         name: 'Join Section - no sections yet',
@@ -11,8 +12,8 @@ export default storybook => {
         story: () => (
           <JoinSection
             enrolledInASection={false}
-            updateSections={storybook.action('updateSections')}
-            updateSectionsResult={storybook.action('updateSectionsResult')}
+            updateSections={action('updateSections')}
+            updateSectionsResult={action('updateSectionsResult')}
           />
         )
       },
@@ -22,8 +23,8 @@ export default storybook => {
         story: () => (
           <JoinSection
             enrolledInASection={true}
-            updateSections={storybook.action('updateSections')}
-            updateSectionsResult={storybook.action('updateSectionsResult')}
+            updateSections={action('updateSections')}
+            updateSectionsResult={action('updateSectionsResult')}
           />
         )
       }

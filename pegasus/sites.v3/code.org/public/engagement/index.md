@@ -6,9 +6,8 @@ nav: employee_engagement_nav
 rightbar: blank
 ---
 
-<iframe width="750" height="563"
-src="http://videos.code.org/social/hour-of-code-vista.mp4">
-</iframe>
+
+<iframe width="750" height="493" src="https://www.youtube.com/embed/jdUkMM3fbfE" frameborder="0" allowfullscreen></iframe>
 
 Vista Equity Group hosts an Hour of Code with the Boys and Girls Club 
 

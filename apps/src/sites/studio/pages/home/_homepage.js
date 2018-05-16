@@ -10,10 +10,12 @@ import {Provider} from 'react-redux';
 import {getStore} from '@cdo/apps/redux';
 import {
   setValidGrades,
+  setStageExtrasScriptIds,
   setOAuthProvider,
   beginEditingNewSection,
 } from '@cdo/apps/templates/teacherDashboard/teacherSectionsRedux';
 import {updateQueryParam} from '@cdo/apps/code-studio/utils';
+import {measureVideoConnectivity} from '@cdo/apps/code-studio/measureVideoConnectivity';
 import LinkCleverAccountModal from '@cdo/apps/code-studio/LinkCleverAccountModal';
 
 $(document).ready(showHomepage);
@@ -22,14 +24,15 @@ function showHomepage() {
   const script = document.querySelector('script[data-homepage]');
   const homepageData = JSON.parse(script.dataset.homepage);
   const isTeacher = homepageData.isTeacher;
+  const isEnglish = homepageData.isEnglish;
   const announcementOverride = homepageData.announcement;
   const showUiTips = homepageData.showuitips;
   const userId = homepageData.userid;
   const showInitialTips = !homepageData.initialtipsdismissed;
   const query = queryString.parse(window.location.search);
-
   const store = getStore();
   store.dispatch(setValidGrades(homepageData.valid_grades));
+  store.dispatch(setStageExtrasScriptIds(homepageData.stageExtrasScriptIds));
   store.dispatch(setOAuthProvider(homepageData.provider));
 
   let courseId;
@@ -70,6 +73,8 @@ function showHomepage() {
     announcementId = announcementOverride.teacher_announce_id;
     announcementType = announcementOverride.teacher_announce_type;
   }
+
+  measureVideoConnectivity();
 
   ReactDOM.render (
     <Provider store={store}>
@@ -149,6 +154,14 @@ function showHomepage() {
             topCourse={homepageData.topCourse}
             queryStringOpen={query['open']}
             canViewAdvancedTools={homepageData.canViewAdvancedTools}
+            isEnglish={isEnglish}
+            ncesSchoolId={homepageData.ncesSchoolId}
+            censusQuestion={homepageData.censusQuestion}
+            showCensusBanner={homepageData.showCensusBanner}
+            teacherName={homepageData.teacherName}
+            teacherId={homepageData.teacherId}
+            teacherEmail={homepageData.teacherEmail}
+            schoolYear={homepageData.currentSchoolYear}
           />
         )}
         {!isTeacher && (
@@ -179,6 +192,7 @@ window.CleverTakeoverManager = function (options) {
         isOpen={true}
         handleCancel={cancel}
         handleSubmit={submit}
+        forceConnect={options.forceConnect === 'true'}
       />,
       linkCleverDiv[0]
     );

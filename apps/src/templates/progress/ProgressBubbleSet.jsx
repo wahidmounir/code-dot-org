@@ -28,11 +28,11 @@ const styles = {
     top: (DOT_SIZE + 4 + 6 - 10) / 2,
   },
   backgroundDiamond: {
-    top: (DIAMOND_DOT_SIZE + 4 + 6 - 10) / 2,
+    top: (DIAMOND_DOT_SIZE + 4 + 12 - 10) / 2,
   },
   backgroundPill: {
-    // pill has height of 18, border of 2, padding of 6
-    top: (18 + 4 + 12 - 10) / 2,
+    // pill has height of 18, border of 2, padding of 6, margin of 3
+    top: (18 + 4 + 12 + 6 - 10) / 2,
   },
   backgroundFirst: {
     left: 15
@@ -59,10 +59,20 @@ class ProgressBubbleSet extends React.Component {
     levels: PropTypes.arrayOf(levelType).isRequired,
     disabled: PropTypes.bool.isRequired,
     style: PropTypes.object,
+    //TODO: (ErinB) probably change to use just number during post launch clean-up.
+    selectedSectionId: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    selectedStudentId: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    hideToolTips: PropTypes.bool,
   };
 
   render() {
-    const { levels, disabled, style } = this.props;
+    const { levels, disabled, style, selectedSectionId, selectedStudentId } = this.props;
 
     return (
       <div style={{...styles.main, ...style}}>
@@ -91,6 +101,9 @@ class ProgressBubbleSet extends React.Component {
                 level={level}
                 disabled={disabled}
                 smallBubble={false}
+                selectedSectionId={selectedSectionId}
+                selectedStudentId={selectedStudentId}
+                hideToolTips={this.props.hideToolTips}
               />
             </div>
           </div>

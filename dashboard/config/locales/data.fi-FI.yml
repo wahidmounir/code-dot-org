@@ -29,11 +29,11 @@
         Jigsaw: Palapeli
         MazeStep: Sokkelo askeltila
         Wordsearch: Sanaetsintä
-        Webapp: Sovelluksien laboratorio
+        Webapp: Sovelluslabra
         ArtistEC: Taiteilija
         TextMatch: Tekstin yhdistäminen
         StudioEC: Pelilabra
-        Applab: Sovelluksien laboratorio
+        Applab: Sovelluslabra
         NetSim: Internet simulaattori
         Custom: Taiteilija
         CustomStudio: Pelilabra
@@ -301,120 +301,8 @@
         maze_3_3: Miten pääsisin possun luo? Varmistathan, etten törmää TNT-laatikoihin!
         maze_3_4: Argh! Kirjoita minulle ohjelma, jolla pääsen TNT-laatikoiden ohi
           possun luo.
-        bounce_1_basketball: Liitä lohko "kun nuoli vasemmalle" -lohkoon ja paina
-          "Suorita". Liikuta kättä käyttäen vasenta nuolta, kohteen saavuttamiseksi.
-        bounce_2_basketball: Liitä lohko "kun nuoli oikealle"- ja "kun nuoli vasemmalle"
-          -lohkoon. Liikuta kättä saavuttaaksesi molemmat kohteet.
-        bounce_5_basketball: Olemme lähettämässä pallon alas kohti kättä. Liitä "kun
-          pallo osuu käteen" lohkoon toinen lohko, varmistaaksesi että pallo osuu
-          lippuun.
-        bounce_6_basketball: Nyt lippu on yläreunassa. Sinun tulee liittää lohkot
-          kumpaankin "kun pallo osuu" lohkoon, jotta pystyt ratkaisemaan tämän tehtävän.
-        bounce_7_basketball: Liitä toimintolohko kuhunkin "kun" lohkoon. Pomputa palloa,
-          kunnes se osuu maaliin.
-        bounce_10_basketball: Yläreunassa on nyt maali. Liitä "lisää piste" ja "lisää
-          piste vastustajalle" lohkot "kun pallo osuu maaliin" ja "kun pallo ohittaa
-          käden" lohkoihin saadaksesi aikaan pelin. Kokeile, kuinka monta pistettä
-          pystyt keräämään, ennen kuin vastustajasi saa kaksi pistettä.
-        bounce_11_basketball: Voit nyt lisätä lohkoja "suoritettaessa" lohkoon. Sinun
-          tulee lisätä uusi "laukaise uusi pallo" lohko useampaan, kuin yhteen paikkaan.
-          Kokeile myös vaihtaa taustaa tai sekä käden ja pallon nopeutta ja katso
-          kuinka monta pistettä pystyt keräämään ennen kuin vastustajasi saa kaksi
-          pistettä!
-        bounce_12_basketball: Luo oma Koripallo-pelisi. Voit muuttaa kaikkia sääntöjä.
-          Kun olet valmis, napsauta Valmis antaaksesi ystäviesi kokeilla peliäsi heidän
-          puhelimissaan.
-        bounce_1_sports: Mene lipulle! Liitä lohko "kun nuoli vasemmalle" -lohkoon
-          ja paina "Suorita" liikuttaaksesi pelaajan lipulle.
-        bounce_2_sports: Nyt on kaksi lippua! Lisää lohko "kun vasen nuoli"- ja "kun
-          oikea nuoli" -lohkoihin saadaksesi pelaajan liikkumaan kahteen suuntaan.
-        bounce_5_sports: Jääkiekko kiekko aikoo lentää alas kohti pelaaja! Liittää
-          lohko "kun pallo osuu pelaaja" -lohkoon osuaksesi lippuun.
-        bounce_6_sports: Nyt lippu on yläreunassa. Sinun tulee liittää lohkot kumpaankin
-          "kun pallo osuu" lohkoon, jotta pystyt ratkaisemaan tämän tehtävän.
-        bounce_7_sports: Liitä toimintolohko kuhunkin "kun" lohkoon. Pomputa palloa,
-          kunnes se osuu maaliin.
-        bounce_10_sports: Yläreunassa on nyt maali. Liitä "lisää piste" ja "lisää
-          piste vastustajalle" lohkot "kun pallo osuu maaliin" ja "kun pallo ohittaa
-          käden" lohkoihin saadaksesi aikaan pelin. Kokeile, kuinka monta pistettä
-          pystyt keräämään, ennen kuin vastustajasi saa kaksi pistettä!
-        bounce_11_sports: Voit nyt lisätä lohkoja "suoritettaessa" lohkoon. Sinun
-          tulee lisätä uusi "laukaise uusi pallo" lohko useampaan, kuin yhteen paikkaan.
-          Kokeile myös vaihtaa taustaa tai sekä käden ja pallon nopeutta ja katso
-          kuinka monta pistettä pystyt keräämään ennen kuin vastustajasi saa kaksi
-          pistettä!
-        bounce_12_sports: 'Luo oma peli! Olet vastuussa täällä: Voi muokata kaikkia
-          sääntöjä, sekoita ja yhdistä urheilulaijeja, ole luova! Kun olet valmis,
-          napsauta Valmis ja voit jakaa pelisi niin, että kaverisikin voivat pelata
-          sitä omilla puhelimillaan.'
-        bounce_1: Liitä lohko "kun nuoli vasemmalle" -lohkoon ja paina Suorita. Liikuta
-          mailaa käyttäen vasenta nuolta, kunnes se osuu lippuun.
-        bounce_2: Liitä lohko "kun nuoli oikealle" -lohkoon ja paina Suorita. Liikuta
-          mailaa käyttäen oikeaa nuolta, kunnes se osuu lippuun.
-        bounce_3: Yritä nyt jotain vastaavaa "kun nuoli ylös"-lohkon kanssa. Liikuta
-          maila yläreunassa olevaan lippuun.
-        bounce_4: Tällä kertaa sinun täytyy lisätä neljä lohkoa. Liikuta mailaa, niin
-          että se osuu kaikkiin neljään lippuun ratkaistaksesi tämän tehtävän.
-        bounce_5: Nyt laukaisemme pallon alas kohti mailaa. Liitä "kun pallo osuu
-          mailaan" lohkoon toinen lohko, jonka ansiosta pallo osuu lippuun.
-        bounce_6: Nyt lippu on yläreunassa. Sinun tulee liittää lohkot kumpaankin
-          "kun pallo osuu" lohkoon, jotta pystyt ratkaisemaan tämän tehtävän.
-        bounce_7: Liitä toimintolohko kuhunkin "kun" lohkoon. Pumputa palloa, kunnes
-          se osuu maaliin.
-        bounce_10: Yläreunassa on nyt maali. Liitä "lisää piste" ja "lisää piste vastustajalle"
-          lohkot "kun pallo osuu maaliin" ja "kun pallo ohittaa mailan" lohkoihin
-          saadaksesi aikaan pelin. Kokeile, kuinka monta pistettä pystyt keräämään,
-          ennen kuin vastustajasi saa kaksi pistettä.
-        bounce_11: Voit nyt lisätä lohkoja "suoritettaessa" lohkoon. Sinun tulee lisätä
-          uusi "laukaise uusi pallo" lohko useampaan, kuin yhteen paikkaan. Kokeile
-          myös vaihtaa taustaa ja sekä mailan, että pallon nopeutta ja katso kuinka
-          monta pistettä pystyt keräämään ennen kuin vastustajasi saa kaksi pistettä.
-        bounce_12: Luo oma Bounce-pelisi. Voi muokata kaikkea ulkonäköön ja sääntöihin
-          liittyvää. Kun olet valmis, napsauta Valmis ja voit jakaa pelisi niin, että
-          kaverisikin voivat pelata sitä omilla älypuhelimillaan.
         Custom_builder: Piirrä haluamanlaisesi taso vetämällä lohkoja työkaluista
           työtilaan. Valitse "Suorita" kun olet valmis.
-        flappy_1: Liitä lohko "napsautuksella"-lohkoon ja paina "Suorita". Napsauta
-          ruutua siirtääksesi Flappy maaliin.
-        flappy_2: Olemme nyt lisänneet hieman maata. Liitä lohko "maahan osuttaessa"-lohkoon.
-          Koodisi tulee suorittaa "lopeta peli" kun Flappy törmää.
-        flappy_3: '"Suoritettaessa"-lohko antaa sinun ajaa koodia pelisi käynnistyessä.
-          Kokeile asettaa tason nopeus ja räpyttely.'
-        flappy_4: Flappy lentää esteiden läpi ellet kirjoita koodia joka saa hänet
-          törmäämään. Liitä lohko "esteeseen osuttaessa"-lohkoon. Koodisi täytyy sisältää
-          "lopeta peli" kun Flappy törmää ensimmäisiin putkiin.
-        flappy_5: Lisätään peliin tulostaulu ja lasketaan pisteitä kun Flappy ohittaa
-          esteitä. Lisää "ohitettaessa este"-lohko ja kokeile saada pisteitä lennättämällä
-          Flappy ensimmäisten putkien ohi.
-        flappy_6: Kokeile, pystytkö vielä saamaan pisteitä, jos laitat Flappyn räpyttelemään
-          pienemmän tai suuremman määrän.
-        flappy_7: Seuraavaksi, kokeile muuttaa taustakuvaa liittämällä toinen lohko
-          "suoritettaessa"-lohko.
-        flappy_8: Voit asettaa ulkoasuun liittyvät asiat koska tahansa, ei vain pelin
-          käynnistyessä. Kokeile asettaa SATUNNAINEN kohtaus kun muita tapahtumia
-          tapahtuu, esim. kun ohitat esteen.
-        flappy_9: 'Asioita sotkemaan: kun osutaan esteeseen, ei lopeteta peliä vaan
-          kokeile asettaa pisteet takaisin 0:aan.'
-        flappy_11: Luo oma Flappy-pelisi. Voit muuttaa kaikkia ulkoasuun ja sääntöihin
-          liittyviä asioita, myös painovoimaa. Kun olet valmis, napsauta Valmis antaaksesi
-          ystäviesi kokeilla peliäsi heidän puhelimissaan.
-        flappy_k1_1: Pelaa Flappy-peliä
-        flappy_k1_2: Liitä lohko "napsautuksella"-lohkoon ja paina "Suorita". Napsauta
-          ruutua siirtääksesi Flappy maaliin.
-        flappy_k1_3: Olemme nyt lisänneet hieman maata. Liitä lohko "maahan osuttaessa"-lohkoon.
-          Koodisi tulee suorittaa "lopeta peli" kun Flappy törmää.
-        flappy_k1_4: '"Suoritettaessa"-lohko antaa sinun ajaa koodia pelisi käynnistyessä.
-          Kokeile asettaa tason nopeus ja räpyttely.'
-        flappy_k1_5: Flappy lentää esteiden läpi ellet kirjoita koodia joka saa hänet
-          törmäämään. Liitä lohko "esteeseen osuttaessa"-lohkoon. Koodisi täytyy sisältää
-          "lopeta peli" kun Flappy törmää ensimmäisiin putkiin.
-        flappy_k1_6: Lisätään peliin tulostaulu ja lasketaan pisteitä kun Flappy ohittaa
-          esteitä. Lisää "ohitettaessa este"-lohko ja kokeile saada pisteitä lennättämällä
-          Flappy ensimmäisten putkien ohi.
-        flappy_k1_7: Kokeile voitko saada useita pisteitä esteiden ohittamisesta
-        flappy_k1_8: Seuraavaksi, kokeile muuttaa taustakuvaa liittämällä toinen lohko
-          "suoritettaessa"-lohko.
-        flappy_k1_9: Kokeile muuttaa pelaajaa liittämällä "aseta pelaaja"-lohko "suoritettaessa"-lohkoon.
         jigsaw_1: Klikkaa lohkoa
         jigsaw_2: Vedä lohko kohteeseen
         jigsaw_3: Asettele lohkot kuvaksi
@@ -713,6 +601,7 @@
         C4_unplugged_forloops: Silmukat
         C4_unplugged_parameters: Parametroitu sävellys
         C4_unplugged_binary: Binääri
+        CSF_a_b_artist_loops: Loops in Artist
         CSF_artist_angles: Kulmat Taiteilijassa
         CSF_collector_k1_blocks: 'TK perusteet: Keräilijä'
         CSF_collector_repeat_loops: Kerääjä toisto silmukat
@@ -739,12 +628,18 @@
         infinity_playlab_intro: Pelilabra - Johdanto
         infinity_playlab_events: Pelilabra - Tapahtumia
         infinity_playlab_repeat_forever: Pelilabra - Ikuinen Toisto
+        csd_concept_how_computers_work: Introducing How Computers Work
         csd_concept_computer: Mikä tekee tietokoneesta tietokoneen?
-        csd_concept_binary_data: 'How Computers Work: Binary & Data'
+        csd_concept_binary_data: 'Miten tietokoneet toimivat: Binääri & Tieto'
+        csd_concept_circuits_logic: 'How Computers Work: Circuits & Logic'
+        csd_concept_memory_cpu_input_output: 'How Computers Work: Memory, CPU, Input,
+          & Output'
+        csd_concept_hardware_software: 'How Computers Work: Hardware & Software'
         csd_concept_search: Miten haku toimii
-        csd_external_amazon_data: How Big Data Is Used In Amazon Recommendation Systems
-          To Change Our Lives
-        csd_external_waze_data: Why Are So Many Users Obsessed With Waze?
+        csd_external_amazon_data: Kuinka Big Datan käyttö Amazonin suositusjärjestelmissä
+          muuttaa elämäämme
+        csd_external_netflix_data: How Does Netflix Make TV Show and Movie Suggestions?
+        csd_external_waze_data: Miksi niin monet käyttäjät ovat kiinnostuneita Wazesta?
         csd_gamelab_animation_tab: Animaatio-välilehti
         csd_gamelab_conditionals_1: Introduction to Conditionals - Part 1
         csd_gamelab_conditionals_2: Introduction to Conditionals - Part 2
@@ -820,9 +715,6 @@
         alg_15_biggame_update_player: CS in Algebra - Big Game Update Player
         alg_16_biggame_collision_detection: CS in Algebra - Big Game Collision Detection
         alg_17_sambat_compound_booleans: CS in Algebra - Compound Booleans
-        hoc2015_preview_blocks: Make your own game blocks
-        hoc2015_preview_typing: Make your own game typing
-        hoc2015_preview_conclusion: Make your own game conclusion
         starwars_intro: 'Tähtien Sota: Kasaa koodista Galaksi - Johdanto'
         starwars_typing: 'Tähtien Sota: Kasaa koodista Galaksi - JavaScript'
         starwars_events: 'Tähtien Sota: Kasaa koodista Galaksi - Tapahtumat'
@@ -846,38 +738,47 @@
         mc_2016_events: Minecraft Koodaustunti - Tapahtumat
         mc_2016_spawn: Minecraft Koodaustunti - Luonti
         mc_2016_congrats: Minecraft Koodaustunti - Onneksi olkoon
-        applab_hoc_welcome: App Lab Hour of Code - Welcome
-        applab_hoc_setproperty: App Lab Hour of Code - setProperty
-        applab_hoc_onevent: App Lab Hour of Code - onEvent
-        applab_hoc_designmode: AppLab Hour of Code - Design Mode
-        applab_hoc_share: AppLab Hour of Code - Share
-        mc_2017_agent_intro: Minecraft Hour of Code - The Agent
-        mc_2017_repeat: Minecraft Hour of Code - Repeat Loops
-        mc_2017_functions: Minecraft Hour of Code - Functions
+        applab_hoc_welcome: Sovelluslabran Koodaustunti - Tervetuloa
+        applab_hoc_setproperty: Sovelluslabran Koodaustunti - aseta ominaisuus
+        applab_hoc_onevent: Sovelluslabran Koodaustunti - tapahtuma
+        applab_hoc_designmode: Sovelluslabran Koodaustunti - Suunnittelu Moodi
+        applab_hoc_share: Sovelluslabran Koodaustunti - Jaa
+        mc_2017_agent_intro: Minecrafti Koodaustunti - Agentti
+        mc_2017_repeat: Minecraft Koodaustunti - Toisto
+        mc_2017_functions: Minecraft Koodaustunti - Funktiot
         mc_2017_congratulations: Minecraft Koodaustunti - Onneksi olkoon
-        mc_2017_puzzle_1: Minecraft Hour of Code - The Agent
-        mc_2017_puzzle_3: Minecraft Hour of Code - Repeat Loops
-        mc_2017_puzzle_8: Minecraft Hour of Code - Functions
-        mc_2017_puzzle_12: Minecraft Hour of Code - Freeplay
-        hint_videos_d_11_3_first: 'Hint Videos: D.11.3 First'
-        hint_videos_d_11_3_last: 'Hint Videos: D.11.3 Last'
-        hint_videos_d_11_4_first: 'Hint Videos: D.11.4 First'
-        hint_videos_d_11_4_last: 'Hint Videos: D.11.4 Last'
-        hint_videos_d_11_5_first: 'Hint Videos: D.11.5 First'
-        hint_videos_d_11_5_last: 'Hint Videos: D.11.5 Last'
-        hint_videos_d_11_6_first: 'Hint Videos: D.11.6 First'
-        hint_videos_d_11_6_last: 'Hint Videos: D.11.6 Last'
-        hint_videos_d_11_7_first: 'Hint Videos: D.11.7 First'
-        hint_videos_d_11_7_last: 'Hint Videos: D.11.7 Last'
-        hint_videos_d_11_9_first: 'Hint Videos: D.11.9 First'
-        hint_videos_d_11_9_last: 'Hint Videos: D.11.9 Last'
-        hint_videos_d_11_11_first: 'Hint Videos: D.11.11 First'
-        hint_videos_d_11_11_last: 'Hint Videos: D.11.11 Last'
-        applab_intro_welcome: App Lab - Getting Started
-        applab_intro_events: App Lab - Make It Interactive
-        applab_intro_sounds: App Lab - Images and Sounds
-        applab_intro_designmode: App Lab - Design Mode
-        applab_intro_share: App Lab - Share Your App
+        mc_2017_puzzle_1: Minecrafti Koodaustunti - Agentti
+        mc_2017_puzzle_3: Minecraft Koodaustunti - Toisto
+        mc_2017_puzzle_8: Minecraft Koodaustunti - Funktiot
+        mc_2017_puzzle_12: Minecraft Koodaustunti - Vapaa Peli
+        hint_videos_d_11_3_first: 'Vihje videot: D.11.3 ensimmäinen'
+        hint_videos_d_11_3_last: 'Vihje videot: D.11.3 viimeinen'
+        hint_videos_d_11_4_first: 'Vihje videot: D.11.4 ensimmäinen'
+        hint_videos_d_11_4_last: 'Vihje videot: D.11.4 viimeinen'
+        hint_videos_d_11_5_first: 'Vihje videot: D.11.5 ensimmäinen'
+        hint_videos_d_11_5_last: 'Vihje videot: D.11.5 viimeinen'
+        hint_videos_d_11_6_first: 'Vihje videot: D.11.6 ensimmäinen'
+        hint_videos_d_11_6_last: 'Vihje videot: D.11.6 viimeinen'
+        hint_videos_d_11_7_first: 'Vihje videot: D.11.7 ensimmäinen'
+        hint_videos_d_11_7_last: 'Vihje videot: D.11.7 viimeinen'
+        hint_videos_d_11_9_first: 'Vihje videot: D.11.9 ensimmäinen'
+        hint_videos_d_11_9_last: 'Vihje videot: D.11.9 viimeinen'
+        hint_videos_d_11_11_first: 'Vihje videot: D.11.11 ensimmäinen'
+        hint_videos_d_11_11_last: 'Vihje videot: D.11.11 viimeinen'
+        applab_intro_welcome: Sovelluslabra - Aloitus
+        applab_intro_events: Sovelluslabra - Tehdään Interaktiivisuutta
+        applab_intro_sounds: Sovelluslabra - Kuvat ja Äänet
+        applab_intro_designmode: Sovelluslabra - Suunnittelumoodi
+        applab_intro_share: Sovelluslabra - Jaa Sovelluksesi
+        csd_applab_arrays: Introduction to Arrays
+        CSF_skinOverview_Harvester: The Harvester
+        CSF_bb8_skinOverview_C-F: BB-8
+        CSF_bb8_skinOverview_K-1: BB-8
+        CSF_bb8_loops_C-F: Loops with BB-8
+        CSF_harvester_skinOverview_K-1: The Harvester
+        CSF_harvester_loops_K1: Loops in Harvester
+        CSF_scrat_loops_K1: Loops in Ice Age
+        CSF_scrat_loops_CF: Loops in Ice Age
     callout:
       text:
         drag_blocks: Vedä "liiku"-lohko ja napsauta se kiinni toisen lohkon alalaitaan
@@ -932,8 +833,8 @@
         length_parameter: Osaatko päivittää tämän funktion niin, että se käyttää "pituus"
           parametria?
         frozen_diamond_repeat: Käytä "toista"-lohkoa luodaksesi tämä muoto.
-        frozen_circle_function_in_circle_turn: "Älä unohda kääntyä luotuasi kunkin
-          ympyrän."
+        frozen_circle_function_in_circle_turn: Älä unohda kääntyä luotuasi kunkin
+          ympyrän.
         frozen_circle_function_with_parameter_circle: Käytä "Luo ympyrä"-lohkoa ja
           muuta kokoa.
         frozen_snowflake_branch: Käytä "luo lumihiutalehaara" -lohkoa
@@ -968,7 +869,7 @@
           kukasta ja tekee hunajaa jos se ei ole kukassa
         repeat_full_circle: Syötä se määrä kertoja, jonka zombin pitää liikkua tehdäkseen
           täysi ympyrä
-        place_length_variable: 'Korvaa kysymysmerkit vetämällä pituusmuuttuja tähän '
+        place_length_variable: Korvaa kysymysmerkit vetämällä pituusmuuttuja tähän
         arrows_move_actor: Käytä nuolia liikuttaaksesi hahmoa
         right_arrow_fireball: Käytä oikeaa nuolta ampuaksesi tulipalloja
         name_function: Kirjoita funktiosi nimi tähän

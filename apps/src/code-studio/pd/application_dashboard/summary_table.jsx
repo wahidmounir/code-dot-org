@@ -16,7 +16,10 @@ const styles = {
     width: '33.3%',
     paddingBottom: '30px'
   },
-  statusCell: StatusColors
+  statusCell: StatusColors,
+  viewApplicationsButton: {
+    marginRight: '10px'
+  }
 };
 
 const ApplicationDataPropType = PropTypes.shape({
@@ -36,12 +39,13 @@ export class SummaryTable extends React.Component {
       unreviewed: ApplicationDataPropType,
       waitlisted: ApplicationDataPropType,
     }),
-    path: PropTypes.string.isRequired
-  }
+    path: PropTypes.string.isRequired,
+    id: PropTypes.string
+  };
 
   static contextTypes = {
     router: PropTypes.object.isRequired
-  }
+  };
 
   tableBody() {
     return Object.keys(StatusColors).map((status, i) => {
@@ -67,10 +71,20 @@ export class SummaryTable extends React.Component {
     this.context.router.push(`/${this.props.path}`);
   };
 
+  handleViewCohortClick = (event) => {
+    event.preventDefault();
+    this.context.router.push(`/${this.props.path}_cohort`);
+  };
+
   render() {
     return (
       <div className="col-xs-4" style={styles.tableWrapper}>
-        <Table striped condensed style={styles.table}>
+        <Table
+          id={this.props.id}
+          striped
+          condensed
+          style={styles.table}
+        >
           <caption>{this.props.caption}</caption>
           <thead>
             <tr>
@@ -87,9 +101,20 @@ export class SummaryTable extends React.Component {
         <Button
           href={this.context.router.createHref(`/${this.props.path}`)}
           onClick={this.handleViewClick}
+          style={styles.viewApplicationsButton}
         >
           View all applications
         </Button>
+        {
+          this.props.data.accepted.locked + this.props.data.accepted.unlocked > 0 && (
+            <Button
+              href={this.context.router.createHref(`/${this.props.path}_cohort`)}
+              onClick={this.handleViewCohortClick}
+            >
+              View accepted cohort
+            </Button>
+          )
+        }
       </div>
     );
   }

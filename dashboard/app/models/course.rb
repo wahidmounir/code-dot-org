@@ -45,6 +45,14 @@ class Course < ApplicationRecord
     I18n.t("data.course.name.#{name}.title", default: name)
   end
 
+  def localized_assignment_family_title
+    I18n.t("data.course.name.#{name}.assignment_family_title", default: localized_title)
+  end
+
+  def localized_version_title
+    I18n.t("data.course.name.#{name}.version_title", default: version_year)
+  end
+
   def self.file_path(name)
     Rails.root.join("config/courses/#{name}.course")
   end
@@ -173,11 +181,28 @@ class Course < ApplicationRecord
     # ScriptConstants gives us untranslated versions of our course name, and the
     # category it's in. Set translated strings here
     info[:name] = localized_title
+    info[:assignment_family_name] = assignment_family_name
+    info[:assignment_family_title] = localized_assignment_family_title
+    info[:version_year] = version_year
+    info[:version_title] = localized_version_title
     info[:category] = I18n.t('courses_category')
     info[:script_ids] = user ?
       scripts_for_user(user).map(&:id) :
       default_course_scripts.map(&:script_id)
     info
+  end
+
+  def self.valid_courses_all_versions
+    Rails.cache.fetch("valid_courses_all_versions/#{I18n.locale}") do
+      ScriptConstants::CATEGORIES[:full_course].map do |assignment_family_name|
+        # Matches any course whose name is the assignment_family_name, with an optional
+        # suffix like '-2018'.
+        Course.
+          where('name regexp ?', "^#{assignment_family_name}(-[0-9]{4})?$").
+          map(&:assignable_info).
+          sort_by {|info| info[:version_year]}
+      end.flatten
+    end
   end
 
   # Get the set of valid courses for the dropdown in our sections table. This
@@ -193,6 +218,18 @@ class Course < ApplicationRecord
         select {|course| ScriptConstants.script_in_category?(:full_course, course[:name])}.
         map(&:assignable_info)
     end
+  end
+
+  def assignment_family_name
+    m = ScriptConstants::VERSIONED_COURSE_NAME_REGEX.match(name)
+    m ? m[1] : name
+  end
+
+  # return the 4-digit year from the suffix of the course name if one exists,
+  # otherwise return the DEFAULT_VERSION_YEAR.
+  def version_year
+    m = ScriptConstants::VERSIONED_COURSE_NAME_REGEX.match(name)
+    m ? m[2] : ScriptConstants::DEFAULT_VERSION_YEAR
   end
 
   # @param user [User]
@@ -222,6 +259,7 @@ class Course < ApplicationRecord
       name: name,
       id: id,
       title: localized_title,
+      assignment_family_title: localized_assignment_family_title,
       description_short: I18n.t("data.course.name.#{name}.description_short", default: ''),
       description_student: I18n.t("data.course.name.#{name}.description_student", default: ''),
       description_teacher: I18n.t("data.course.name.#{name}.description_teacher", default: ''),
@@ -230,8 +268,19 @@ class Course < ApplicationRecord
         script.summarize(include_stages).merge!(script.summarize_i18n(include_stages))
       end,
       teacher_resources: teacher_resources,
-      has_verified_resources: has_verified_resources?
+      has_verified_resources: has_verified_resources?,
+      versions: summarize_versions
     }
+  end
+
+  # Returns an array of objects showing the name and version year for all courses
+  # sharing the assignment_family_name of this course, including this one.
+  def summarize_versions
+    Course.
+      where('name regexp ?', "^#{assignment_family_name}(-[0-9]{4})?$").
+      map {|c| {name: c.name, version_year: c.version_year, version_title: c.localized_version_title}}.
+      sort_by {|info| info[:version_year]}.
+      reverse
   end
 
   # If a user has no experiments enabled, return the default set of scripts.

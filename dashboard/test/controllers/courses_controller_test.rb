@@ -55,7 +55,7 @@ class CoursesControllerTest < ActionController::TestCase
     end
   end
 
-  test_user_gets_response_for :show, response: :success, user: :teacher, params: -> {{course_name: @course_regular.name}}, queries: 8
+  test_user_gets_response_for :show, response: :success, user: :teacher, params: -> {{course_name: @course_regular.name}}, queries: 9
 
   test_user_gets_response_for :show, response: :forbidden, user: :admin, params: -> {{course_name: @course_regular.name}}, queries: 3
 
@@ -156,7 +156,7 @@ class CoursesControllerTest < ActionController::TestCase
     create :course, name: 'csp'
 
     post :update, params: {course_name: 'csp', scripts: [], title: 'Computer Science Principles'}
-    assert_equal 'Computer Science Principles', Course.find_by_name!('csp').summarize[:title]
+    assert_equal "Computer Science Principles ('17-'18)", Course.find_by_name!('csp').summarize[:title]
   end
 
   # tests for edit

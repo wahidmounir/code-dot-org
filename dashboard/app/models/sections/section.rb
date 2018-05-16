@@ -101,6 +101,10 @@ class Section < ActiveRecord::Base
     Pd::Workshop::SECTION_TYPES.include? section_type
   end
 
+  def externally_rostered?
+    [LOGIN_TYPE_EMAIL, LOGIN_TYPE_PICTURE, LOGIN_TYPE_WORD].exclude? login_type
+  end
+
   validates_presence_of :user, unless: -> {deleted?}
   def user_must_be_teacher
     errors.add(:user_id, 'must be a teacher') unless user.try(:teacher?)
@@ -159,7 +163,7 @@ class Section < ActiveRecord::Base
     if follower
       if follower.deleted?
         follower.restore
-        student.update!(sharing_disabled: true) if sharing_disabled?
+        student.update!(sharing_disabled: sharing_disabled) unless student.sharing_disabled
         return ADD_STUDENT_SUCCESS
       end
       return ADD_STUDENT_EXISTS
@@ -188,7 +192,14 @@ class Section < ActiveRecord::Base
   # Optionally email the teacher.
   def remove_student(student, follower, options)
     follower.delete
-    student.update!(sharing_disabled: false) if student.sections_as_student.empty?
+
+    if student.sections_as_student.empty?
+      if student.under_13?
+        student.update!(sharing_disabled: true)
+      else
+        student.update!(sharing_disabled: false)
+      end
+    end
 
     if options[:notify]
       # Though in theory required, we are missing an email address for many teachers.
@@ -211,7 +222,7 @@ class Section < ActiveRecord::Base
     return course.try(:default_course_scripts).try(:first).try(:script)
   end
 
-  # Provides some information about a section. This is consumed by our SectionsTable
+  # Provides some information about a section. This is consumed by our SectionsAsStudentTable
   # React component on the teacher homepage and student homepage
   def summarize
     base_url = CDO.code_org_url('/teacher-dashboard#/sections/')
@@ -313,6 +324,14 @@ class Section < ActiveRecord::Base
       return true if num_students_with_sufficient_progress >= 10
     end
     false
+  end
+
+  # Returns the ids of all scripts which any student in this section has ever
+  # been assigned to or made progress on.
+  def student_script_ids
+    # This performs two queries, but could be optimized to perform only one by
+    # doing additional joins.
+    Script.joins(:user_scripts).where(user_scripts: {user_id: students.pluck(:id)}).distinct.pluck(:id)
   end
 
   private

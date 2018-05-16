@@ -325,139 +325,9 @@
           contro la cassetta di dinamite (TNT)!
         maze_3_4: Argh! Scrivi un programma che mi faccia girare alla larga della
           dinamite (TNT) ed arrivare al maiale.
-        bounce_1_basketball: |-
-          Attacca un blocco al blocco verde `quando si preme sulla freccia verso sinistra` e premi "Esegui". <br>
-          Poi sposta la racchetta usando la freccia verso sinistra per raggiungere la bandierina.
-        bounce_2_basketball: |-
-          Attacca un blocco ad ogni blocco verde `quando si preme sulla freccia verso sinistra` e `quando si preme sulla freccia verso destra` e premi "Esegui".<br>
-          Poi sposta la racchetta usando entrambe le frecce orizzontali per raggiungere le due bandierine.
-        bounce_5_basketball: Stiamo per lanciarti una palla verso la mano. Attacca
-          un blocco al blocco verde `quando la palla colpisce la mano` per permettere
-          alla palla di raggiungere la bandierina.
-        bounce_6_basketball: Ora la bandierina è in alto. Per risolvere questo esercizio
-          devi attaccare dei blocchi ad entrambi i blocchi verdi `quando la palla
-          colpisce il giocatore` e `quando la palla colpisce il muro`.
-        bounce_7_basketball: |-
-          Attacca dei blocchi ad ognuno dei blocchi verdi `quando ...`.<br>
-          Fai rimbalzare la palla fino a quando non colpisce la bandiera.
-        bounce_10_basketball: |-
-          Ora in alto c'è il canestro! Per costruire il gioco, oltre ai blocchi usati negli esercizi precedenti, attacca il blocco `aggiungi un punto` al blocco verde `quando la palla va in rete` e quello `aggiungi un punto all'avversario` al blocco verde `quando la palla manca la mano`.<br>
-          Osserva quanti punti riesci a raggiungere prima che il tuo avversario ne faccia due.
-        bounce_11_basketball: |-
-          Adesso puoi predisporre il gioco come vuoi, attaccando dei blocchi `imposta ...` al blocco iniziale `quando si clicca su "Esegui"`. Devi anche attaccare in diversi punti il blocco `lancia una nuova palla`.<br>
-          Prova anche a cambiare la velocità della palla e della mano e vedi quanti punti riesci a fare prima che il tuo avversario ne faccia due!
-        bounce_12_basketball: Crea il tuo gioco di basket. Puoi modificare tutte le
-          regole. Quando hai finito di giocare, clicca su "Termina" per ottenere un
-          link da condividere con i tuoi amici o per giocare sul tuo telefono con
-          la tua versione del gioco.
-        bounce_1_sports: |-
-          Attacca un blocco al blocco verde `quando si preme sulla freccia verso sinistra` e premi "Esegui". <br>
-          Poi sposta il giocatore usando la freccia verso sinistra per raggiungere la bandierina.
-        bounce_2_sports: |-
-          Ora ci sono due bandiere! Attacca un blocco ad ogni blocco verde `quando si preme sulla freccia verso sinistra` e `quando si preme sulla freccia verso destra` e premi "Esegui".<br>
-          Poi sposta il giocatore usando entrambe le frecce orizzontali per raggiungere le due bandierine.
-        bounce_5_sports: Il disco da hockey sta per arrivare al giocatore! Attacca
-          un blocco al blocco verde `quando la palla colpisce il giocatore` per permettere
-          alla palla di raggiungere la bandierina.
-        bounce_6_sports: Ora la bandierina è in alto. Per risolvere questo esercizio
-          devi attaccare dei blocchi ad entrambi i blocchi verdi `quando la palla
-          colpisce il giocatore` e `quando la palla colpisce il muro`.
-        bounce_7_sports: |-
-          Attacca dei blocchi ad ognuno dei blocchi verdi `quando ...`.<br>
-          Fai rimbalzare la palla fino a quando non colpisce la bandiera.
-        bounce_10_sports: |-
-          Ora in alto c'è la meta! Per costruire il gioco, oltre ai blocchi usati negli esercizi precedenti, attacca il blocco `aggiungi un punto` al blocco verde `quando la palla va in rete` e quello `aggiungi un punto all'avversario` al blocco verde `quando la palla manca il giocatore`.<br>
-          Osserva quanti punti riesci a raggiungere prima che il tuo avversario ne faccia due!
-        bounce_11_sports: |-
-          Adesso puoi predisporre il gioco come vuoi, attaccando dei blocchi `imposta ...` al blocco iniziale `quando si clicca su "Esegui"`. Devi anche attaccare in diversi punti il blocco `lancia una nuova palla`.<br>
-          Prova anche a cambiare la velocità della palla e della mano e vedi quanti punti riesci a fare prima che il tuo avversario ne faccia due!
-        bounce_12_sports: 'Ora comandi tu. Puoi modificare tutte le regole, combinando
-          i diversi sport: sii creativo! Quando hai finito, clicca su `Termina` per
-          consentire agli amici di provare il tuo gioco sui loro telefoni.'
-        bounce_1: Attacca un blocco al blocco verde `quando si preme la freccia verso
-          sinistra` e premi "Esegui". Poi sposta la racchetta usando la freccia verso
-          sinistra per raggiungere la bandierina.
-        bounce_2: Attacca un blocco ai blocchi verdi `quando si preme la freccia verso
-          destra` e `quando si preme la freccia verso sinistra`. Poi sposta la racchetta
-          per raggiungere entrambe le bandierine.
-        bounce_3: Ora fai qualcosa di simile con il blocco `quando si preme la freccia
-          verso l'alto`. Poi sposta la racchetta verso la bandierina in alto.
-        bounce_4: Questa volta devi aggiungere quattro blocchi. Sposta la racchetta
-          verso tutti e quattro le bandierine per completare questo esercizio.
-        bounce_5: Faremo volare una palla verso il basso incontro alla racchetta.
-          Attacca un blocco al blocco verde `quando la palla colpisce la racchetta`
-          per far sì che la palla raggiunga la bandierina.
-        bounce_6: Ora la bandierina è in alto. Per risolvere questo esercizio è necessario
-          attaccare dei blocchi ad entrambi i blocchi verdi `quando la palla colpisce`.
-        bounce_7: Attacca dei blocchi a ciascuno dei blocchi verdi `quando ...`. Poi
-          fai rimbalzare la palla fino a quando colpisce la bandierina.
-        bounce_10: Ora in alto c'è una porta da calcio. Per costruire il gioco attacca
-          il blocco `aggiungi un punto` al blocco verde `quando la palla va in rete`
-          e quello `aggiungi un punto all'avversario` al blocco verde `quando la palla
-          manca la racchetta`. Vedi quanti punti riesci a raggiungere prima che il
-          tuo avversario ne faccia due.
-        bounce_11: Adesso puoi predisporre il gioco come vuoi attaccando dei blocchi
-          `imposta ...` al blocco `quando si clicca su "Esegui" `. Devi poi attaccare
-          a quest'ultimo il blocco `lancia una nuova palla`, che devi attaccare anche
-          ad altri blocchi verdi `quando ...`. Quanti punti riesci a raggiungere prima
-          che il tuo avversario ne faccia due?
-        bounce_12: Crea la tua versione del Ping-Pong. È possibile modificare tutte
-          le immagini e tutte le regole. Quando hai finito, clicca su Condividi per
-          far provare agli amici il gioco sui loro smartphone.
         Custom_builder: Sposta i blocchi dalla cassetta degli attrezzi all'area di
           lavoro per disegnare il livello che vuoi creare. Premi "Esegui" quando hai
           fatto.
-        flappy_1: |-
-          Attacca un blocco al blocco `quando si clicca` e premi "Esegui". Clicca o tocca lo schermo per spostare Flappy verso il bersaglio.<br>
-          <a href="https://www.programmailfuturo.it/come/lezioni-tecnologiche/corso-2/lezione-16#VIDEO" target="_blank">Video doppiato in italiano</a>
-        flappy_2: Ora nello scenario c'è anche il terreno.  Attacca un blocco di azione
-          al blocco di evento `quando precipita a terra`.  Inoltre, il tuo codice
-          ha bisogno del blocco `fine del gioco` quando Flappy precipita a terra.
-        flappy_3: Il blocco `quando si clicca su "Esegui"` permette di eseguire delle
-          specifiche istruzioni all'inizio del gioco.  Prova a cambiare la velocità
-          con cui Flappy vola verso il bersaglio.
-        flappy_4: Scrivi del codice per aiutare Flappy a volare attraverso i tubi
-          che lo ostacolano. Il tuo programma deve eseguire il blocco `fine del gioco`
-          quando Flappy si schianta contro i tubi.
-        flappy_5: Aggiungiamo un segna-punti per contare i punti quando Flappy supera
-          gli ostacoli. Aggiungi al blocco `quando supera un ostacolo` il blocco per
-          segnare un punto. Guadagna un punto facendo volare Flappy attraverso la
-          prima serie di tubi.
-        flappy_6: Vedi se, cambiando di quanto Flappy ogni volta sbatte le ali, riesci
-          ancora a segnare un punto.
-        flappy_7: Adesso, prova a cambiare la scena attaccando un altro blocco al
-          blocco `quando si clicca su "Esegui"`.
-        flappy_8: Puoi impostare le scene in qualsiasi momento, non solo quando il
-          gioco inizia. Prova a impostare una scena scelta a caso quando accadono
-          altri eventi, per esempio quando si supera un ostacolo o si colpisce qualcosa.
-          Puoi anche impostare il tipo di giocatore.
-        flappy_9: Per rendere lo sviluppo più interessante, prova a riportare il punteggio
-          a 0 quando si colpisce un ostacolo invece di finire il gioco.
-        flappy_11: Crea la tua versione del gioco Flappy. È possibile modificare tutte
-          le immagini e tutte le regole, anche la gravità e lo spazio tra gli ostacoli.
-          Quando hai finito, clicca su Condividi per far provare agli amici il gioco
-          sui loro smartphone.
-        flappy_k1_1: Gioca a Flappy
-        flappy_k1_2: Attacca un blocco al blocco "quando si clicca" e premi "Esegui".
-          Clicca o tocca lo schermo per spostare Flappy verso il bersaglio.
-        flappy_k1_3: Ora nello scenario c'è anche il terreno.  Attacca un blocco di
-          quelli a sinistra al blocco "quando precipita a terra".  Il tuo codice ha
-          bisogno del blocco "fine del gioco" quando Flappy precipita a terra.
-        flappy_k1_4: Il blocco `quando si clicca su "Esegui"` permette di eseguire
-          delle specifiche istruzioni all'inizio del gioco.  Prova a cambiare la velocità
-          con cui Flappy vola verso il bersaglio.
-        flappy_k1_5: Scrivi del codice per aiutare Flappy a volare attraverso i tubi
-          che lo ostacolano. Il tuo programma deve eseguire il blocco "fine del gioco"
-          quando Flappy si schianta contro i tubi.
-        flappy_k1_6: Aggiungiamo un segna-punti per contare i punti quando Flappy
-          supera gli ostacoli. Aggiungi al blocco "quando supera un ostacolo" il blocco
-          per segnare un punto. Guadagna un punto facendo volare Flappy attraverso
-          la prima serie di tubi.
-        flappy_k1_7: Vedi se riesci a segnare più punti quando Flappy supera un ostacolo
-        flappy_k1_8: Adesso, prova a cambiare la scena attaccando un altro blocco
-          al blocco `quando si clicca su "Esegui"`.
-        flappy_k1_9: Provare a cambiare il giocatore attaccando un blocco "imposta
-          il giocatore" al blocco "quando inizia il fioco".
         jigsaw_1: Clicca sul blocco
         jigsaw_2: Sposta il blocco verso la destinazione
         jigsaw_3: Sistema i blocchi nell'ordine corretto per formare l'immagine indicata
@@ -485,9 +355,8 @@
           al gatto?
         studio_c2_4: Fai arrivare il cane fino al gatto e fai in modo che il gatto
           dica "Ciao" quando il cane lo raggiunge.
-        studio_c2_5: |-
-          Riesci a scrivere un programma per far dire "Ciao" al polpo quando viene cliccato?<br>
-          <a href="https://www.programmailfuturo.it/come/lezioni-tecnologiche/corso-2/lezione-17#VIDEO" target="_blank">Video doppiato in italiano</a>
+        studio_c2_5: Riesci a scrivere un programma per far dire "Ciao" al polpo quando
+          viene cliccato?
         studio_c2_6: Riesci a scrivere un programma per spostare questo pinguino in
           tutte le direzioni usando i tasti freccia in alto / in basso / a sinistra
           / a destra in modo da fargli raggiungere tutte le bandierine?
@@ -508,7 +377,7 @@
           per far provare la storia ai tuoi amici sui loro smartphone.
         studio_c3_story_1: |-
           Riesci a far dire a questo cane "Ciao a tutti"?<br>
-          <a href="https://www.programmailfuturo.it/come/lezioni-tecnologiche/corso-2/lezione-17#VIDEO" target="_blank">Video doppiato in italiano</a>
+          <a href="https://www.programmailfuturo.it/come/lezioni-tecnologiche/corso-1/lezione-16#VIDEO" target="_blank">Video doppiato in italiano</a>
         studio_c3_story_2: Fai in modo che il cane dica qualcosa e poi il gatto gli
           risponda.
         studio_c3_story_3: Riesci a scrivere un programma che fa arrivare questo cane
@@ -519,8 +388,9 @@
           sia felice?
         studio_c3_story_6: Crea una storia come vuoi tu. Quando hai fatto, clicca
           su "Condividi" per far provare la storia ai tuoi amici sui loro smartphone.
-        studio_c3_game_1: Riesci a scrivere un programma per far dire "ciao" al polpo
-          quando viene cliccato?
+        studio_c3_game_1: |-
+          Riesci a scrivere un programma per far dire "Ciao" al polpo quando viene cliccato?<br>
+          <a href="https://www.programmailfuturo.it/come/lezioni-tecnologiche/corso-3/lezione-17#VIDEO" target="_blank">Video doppiato in italiano</a>
         studio_c3_game_2: Riesci a scrivere un programma per spostare questo pinguino
           in tutte le direzioni usando i tasti freccia in alto / in basso / a sinistra
           / a destra in modo da fargli raggiungere tutte le bandierine?
@@ -652,7 +522,7 @@
           su "Condividi" per far provare il gioco ai tuoi amici sui loro smartphone.
         studio_k1_1: |-
           Riesci a far dire a questo cane "Ciao a tutti"?<br>
-          <a href="https://www.programmailfuturo.it/come/lezioni-tecnologiche/corso-2/lezione-17#VIDEO" target="_blank">Video doppiato in italiano</a>
+          <a href="https://www.programmailfuturo.it/come/lezioni-tecnologiche/corso-1/lezione-16#VIDEO" target="_blank">Video doppiato in italiano</a>
         studio_k1_2: Fai in modo che il cane dica qualcosa e poi il gatto gli risponda.
         studio_k1_3: Riesci a scrivere un programma che fa arrivare questo cane fino
           al gatto?
@@ -690,7 +560,7 @@
     video:
       name:
         maze_intro: Introduzione a "Il Labirinto"
-        artist_intro: Introduzione a "L'Artista"
+        artist_intro: Artista - Introduzione
         farmer_intro: Introduzione a "La Contadina"
         flappy_intro: Introduzione a "Flappy"
         loop_times: Blocco "ripeti ... volte"
@@ -722,7 +592,7 @@
         C1_maze_intro_sequencing: 'Labirinto - Corso 1: Introduzione'
         C1_maze_debugging: 'Labirinto: Correzione di Errori'
         C1_bee_level_intro: 'Ape: Introduzione'
-        C1_artist_intro: 'Artista - Corso 1: Introduzione'
+        C1_artist_intro: Artista - Introduzione
         C1_spelling_bee_intro: 'Ape Sapiente: Introduzione'
         C1_zuck_repeat_loop: 'Labirinto: Cicli'
         C1_bee_loops: 'Ape: Cicli'
@@ -730,9 +600,9 @@
         C1_playlab_storytelling: 'Laboratorio: Crea una Storia'
         C1_planting_seed: Piantare un seme
         C1_building_foundation: Costruire le Fondamenta
-        C1_going_places_safely: Visitare Luoghi in Modo Sicuro
+        C1_going_places_safely: Cittadinanza Digitale - Visitare Luoghi in Modo Sicuro
         C2_maze_intro: 'Labirinto - Corso 2: Introduzione'
-        C2_artist_intro: 'Artista - Corso 2: Introduzione'
+        C2_artist_intro: Artista - Introduzione
         C2_zuck_repeat_loop: 'Labirinto: Cicli'
         C2_artist_loops: 'Artista: Cicli'
         C2_artist_debugging: 'Artista: Correzione di Errori'
@@ -748,7 +618,7 @@
         C2_digital_footprint: La tua Impronta Digitale
         C2_digital_footprint_v2: La tua Impronta Digitale
         C3_maze_level_4: 'Labirinto: Cicli'
-        C3_artist_intro: 'Artista - Corso 3: Introduzione'
+        C3_artist_intro: Artista - Introduzione
         C3_artist_functions: 'Artista: Funzioni'
         C3_bee_functions: 'Ape: Funzioni'
         C3_bee_conditionals: 'Ape: Istruzioni Condizionali'
@@ -784,21 +654,22 @@
         C4_unplugged_forloops: Cicli con Contatore
         C4_unplugged_parameters: Composizione di Canzoni - Parametri
         C4_unplugged_binary: Binario
-        CSF_artist_angles: Angles in Artist
-        CSF_collector_k1_blocks: 'CS Fundamentals: The Collector'
-        CSF_collector_repeat_loops: Collector Repeat Loops
-        CSF_collector_text_blocks: 'CS Fundamentals: The Collector'
-        CSF_create_functions: Create Functions
-        CSF_debugging_k1_blocks: Debugging
-        CSF_debugging_text_blocks: Debugging
+        CSF_a_b_artist_loops: Cicli con l'Artista
+        CSF_artist_angles: Angoli in Artista
+        CSF_collector_k1_blocks: 'Fondamenti di Informatica: Il collezionista'
+        CSF_collector_repeat_loops: 'Collezionista: Cicli di Ripetizione'
+        CSF_collector_text_blocks: 'Fondamenti di Informatica: Il collezionista'
+        CSF_create_functions: Creazione di funzioni
+        CSF_debugging_k1_blocks: Correzione Errori (Debugging)
+        CSF_debugging_text_blocks: Correzione Errori (Debugging)
         CSF_EF_cs_matters: L'informatica conta
         CSF_maze_intro_k1_blocks: Introduzione a Code Studio
         CSF_maze_intro_text_blocks: Introduzione a Code Studio
         CSF_my_robotic_friends: I miei amici robotici
-        CSF_Power_of_Words: Potere delle Parole
-        CSF_Super_Digital_Citizen: Cittadino Super Digitale
-        CSF_stevie_big_project: Stevie e il grande progetto
-        CSF_unspotted_bugs: Bug Non Individuati
+        CSF_Power_of_Words: Cittadinanza Digitale - Il Potere delle Parole
+        CSF_Super_Digital_Citizen: Cittadinanza Digitale - Super Cittadino Digitale
+        CSF_stevie_big_project: Stevie e il Grande Progetto
+        CSF_unspotted_bugs: Errori Non Riconosciuti
         CSF_zuck_loops_short: I cicli Repeat
         frozen_intro: Introduzione all'Ora del Codice
         frozen_loops: Introduzione ai Cicli
@@ -810,11 +681,18 @@
         infinity_playlab_intro: Laboratorio - Introduzione
         infinity_playlab_events: Laboratorio - Eventi
         infinity_playlab_repeat_forever: Laboratorio - Ripeti per sempre
-        csd_concept_computer: Cosa rende un Computer, un Computer?
-        csd_concept_binary_data: 'How Computers Work: Binary & Data'
+        csd_concept_how_computers_work: Come Funzionano i Computer - Introduzione
+        csd_concept_computer: 'Come Funzionano i Computer: Cosa rende un Computer,
+          un Computer?'
+        csd_concept_binary_data: 'Come Funzionano i Computer: Dati e Sistema Binari'
+        csd_concept_circuits_logic: 'Come Funzionano i Computer: Circuiti e Logica'
+        csd_concept_memory_cpu_input_output: 'Come Funzionano i Computer: Memoria,
+          CPU, Ingressi e Uscite'
+        csd_concept_hardware_software: 'Come Funzionano i Computer: Hardware e Software'
         csd_concept_search: Come Funziona la Ricerca
         csd_external_amazon_data: How Big Data Is Used In Amazon Recommendation Systems
           To Change Our Lives
+        csd_external_netflix_data: How Does Netflix Make TV Show and Movie Suggestions?
         csd_external_waze_data: Why Are So Many Users Obsessed With Waze?
         csd_gamelab_animation_tab: La scheda dell'animazione
         csd_gamelab_conditionals_1: Introduction to Conditionals - Part 1
@@ -892,9 +770,6 @@
         alg_16_biggame_collision_detection: CS in Algebra - Big Game Rilevamento delle
           collisioni
         alg_17_sambat_compound_booleans: CS in Algebra - Booleani composti
-        hoc2015_preview_blocks: Make your own game blocks
-        hoc2015_preview_typing: Make your own game typing
-        hoc2015_preview_conclusion: Make your own game conclusion
         starwars_intro: 'Guerre Stellari: Costruisci una galassia con il codice -
           Introduzione'
         starwars_typing: 'Guerre Stellari: Costruisci una galassia con il codice -
@@ -928,7 +803,7 @@
         applab_hoc_welcome: L'ora del codice in Sviluppo App - Benvenuto
         applab_hoc_setproperty: L'ora del codice in Sviluppo App - setProperty
         applab_hoc_onevent: L'ora del codice in Sviluppo App - onEvent
-        applab_hoc_designmode: L'ora del codice in Sviluppo App - modalità di progetto
+        applab_hoc_designmode: L'Ora del Codice Sviluppo App - Modalità Interfaccia
         applab_hoc_share: L'ora del codice in Sviluppo App - condivisione
         mc_2017_agent_intro: L'Ora del Codice con Minecraft - L'Agente
         mc_2017_repeat: L'Ora del Codice con Minecraft - Cicli
@@ -952,11 +827,20 @@
         hint_videos_d_11_9_last: 'Hint Videos: D.11.9 Last'
         hint_videos_d_11_11_first: 'Hint Videos: D.11.11 First'
         hint_videos_d_11_11_last: 'Hint Videos: D.11.11 Last'
-        applab_intro_welcome: App Lab - Getting Started
-        applab_intro_events: App Lab - Make It Interactive
-        applab_intro_sounds: App Lab - Images and Sounds
-        applab_intro_designmode: App Lab - Design Mode
-        applab_intro_share: App Lab - Share Your App
+        applab_intro_welcome: Sviluppo App - Per cominciare
+        applab_intro_events: Sviluppo App - Rendila interattiva
+        applab_intro_sounds: Sviluppo App - Immagini e suoni
+        applab_intro_designmode: Sviluppo App - Modalità Interfaccia
+        applab_intro_share: Sviluppo App - Condividi la tua app
+        csd_applab_arrays: Introduzione agli array
+        CSF_skinOverview_Harvester: The Harvester
+        CSF_bb8_skinOverview_C-F: BB-8
+        CSF_bb8_skinOverview_K-1: BB-8
+        CSF_bb8_loops_C-F: Loops with BB-8
+        CSF_harvester_skinOverview_K-1: The Harvester
+        CSF_harvester_loops_K1: Loops in Harvester
+        CSF_scrat_loops_K1: Loops in Ice Age
+        CSF_scrat_loops_CF: Loops in Ice Age
     callout:
       text:
         drag_blocks: Prendi qui a sinistra il blocco "vai avanti" ed attaccalo sotto

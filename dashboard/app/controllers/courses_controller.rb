@@ -14,7 +14,10 @@ class CoursesController < ApplicationController
         @header_banner_image_filename = !@is_teacher ? "courses-hero-student" : "courses-hero-teacher"
       end
       format.json do
-        render json: Course.valid_courses(current_user)
+        courses = params['allVersions'] ?
+          Course.valid_courses_all_versions :
+          Course.valid_courses(current_user)
+        render json: courses
       end
     end
   end
@@ -25,7 +28,7 @@ class CoursesController < ApplicationController
       # PLC courses have different ways of getting to name. ideally this goes
       # away eventually
       course_name = params[:course_name].tr('-', '_').titleize
-      course = Course.find_by_name(course_name)
+      course = Course.get_from_cache(course_name)
       # only support this alternative course name for plc courses
       raise ActiveRecord::RecordNotFound unless course.try(:plc_course)
     end

@@ -29,6 +29,22 @@ class DummyFormWithOptions < DummyForm
   end
 end
 
+class DummyFormWithRequiredOptions < DummyForm
+  def self.options
+    {
+      first_option: ["Yes", "No"],
+      second_option: ["I don't know", "Maybe so"]
+    }.freeze
+  end
+
+  def self.required_fields
+    [
+      :first_option,
+      :second_option
+    ].freeze
+  end
+end
+
 class DummyFormWithDynamicOptions < DummyForm
   def self.options
     {
@@ -135,16 +151,19 @@ class Pd::FormTest < ActiveSupport::TestCase
     assert form.valid?
   end
 
-  test 'pd form always fails validation for nil options' do
-    form = DummyFormWithDynamicOptions.new
+  test 'pd form always fails validation for nil required options' do
+    form = DummyFormWithRequiredOptions.new
 
-    form.form_data = {optionSet: '3', option: 'some value'}.to_json
+    form.form_data = {firstOption: 'Yes', secondOption: nil}.to_json
     refute form.valid?
-    assert_equal ['option'], form.errors.messages[:form_data]
+    assert_equal ['secondOption'], form.errors.messages[:form_data]
+  end
 
-    form.form_data = {optionSet: '3', option: nil}.to_json
-    refute form.valid?
-    assert_equal ['option'], form.errors.messages[:form_data]
+  test 'pd form passes validation with nil nonrequired options' do
+    form = DummyFormWithOptions.new
+
+    form.form_data = {firstOption: 'Yes', secondOption: nil}.to_json
+    assert form.valid?
   end
 
   test 'pd form enforces dynamic options' do
@@ -169,5 +188,87 @@ class Pd::FormTest < ActiveSupport::TestCase
 
     assert form.valid?
     assert_equal({}, form.form_data_hash)
+  end
+
+  test 'memoized form_data_hash' do
+    form = DummyForm.new(
+      form_data_hash: {
+        firstField: 'value1',
+        secondField: 'value2'
+      }
+    )
+    form_data_hash = {
+      'firstField' => 'value1',
+      'secondField' => 'value2'
+    }
+
+    assert_nil form.instance_variable_get(:@form_data_hash)
+    assert_equal form_data_hash, form.form_data_hash
+    assert_equal form_data_hash, form.instance_variable_get(:@form_data_hash)
+
+    form.form_data = nil
+    assert_nil form.instance_variable_get(:@form_data_hash)
+  end
+
+  test 'memoized sanitize_form_data_hash' do
+    form = DummyForm.new(
+      form_data_hash: {
+        firstField: 'value1',
+        secondField: 'value2'
+      }
+    )
+
+    sanitized_form_data_hash = {
+      first_field: 'value1',
+      second_field: 'value2'
+    }
+
+    assert_nil form.instance_variable_get(:@sanitized_form_data_hash)
+    assert_equal sanitized_form_data_hash, form.sanitize_form_data_hash
+    assert_equal sanitized_form_data_hash, form.instance_variable_get(:@sanitized_form_data_hash)
+
+    form.form_data = nil
+    assert_nil form.instance_variable_get(:@sanitized_form_data_hash)
+  end
+
+  test 'memoized sanitize_and_trim_form_data_hash' do
+    form = DummyForm.new(
+      form_data_hash: {
+        firstField: 'value1',
+        secondField: ''
+      }
+    )
+
+    sanitized_and_trimmed_form_data_hash = {
+      first_field: 'value1'
+    }
+
+    assert_nil form.instance_variable_get(:@sanitized_and_trimmed_form_data_hash)
+    assert_equal sanitized_and_trimmed_form_data_hash, form.sanitize_and_trim_form_data_hash
+    assert_equal sanitized_and_trimmed_form_data_hash, form.instance_variable_get(:@sanitized_and_trimmed_form_data_hash)
+
+    form.form_data = nil
+    assert_nil form.instance_variable_get(:@sanitized_and_trimmed_form_data_hash)
+  end
+
+  test 'memoized public_sanitized_form_data_hash' do
+    form = DummyForm.new(
+      form_data_hash: {
+        firstField: 'value1',
+        publicField1: 'public value 1'
+      }
+    )
+    DummyForm.stubs(:public_fields).returns([:public_field1])
+
+    public_sanitized_form_data_hash = {
+      public_field1: 'public value 1'
+    }
+
+    assert_nil form.instance_variable_get(:@public_sanitized_form_data_hash)
+    assert_equal public_sanitized_form_data_hash, form.public_sanitized_form_data_hash
+    assert_equal public_sanitized_form_data_hash, form.instance_variable_get(:@public_sanitized_form_data_hash)
+
+    form.form_data = nil
+    assert_nil form.instance_variable_get(:@public_sanitized_form_data_hash)
   end
 end

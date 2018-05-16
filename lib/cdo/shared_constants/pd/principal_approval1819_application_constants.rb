@@ -21,7 +21,7 @@ module PrincipalApproval1819ApplicationConstants
     american_indian: 'American Indian or Native Alaskan',
     other: 'Other',
     do_you_approve: "Do you approve of this teacher's application to participate in Code.org’s 2018 - 19 Professional Learning Program?",
-    committed_to_master_schedule: 'Are you committed to including this program on the master schedule in 2018-19 if accepted into the program. Note: the program may be listed under a different course name as determined by your district.',
+    committed_to_master_schedule: 'Are you committed to including this program on the master schedule in 2018-19 if this teacher is accepted into the program. Note: the program may be listed under a different course name as determined by your district.',
     hours_per_year: 'Approximately how many course hours per school year will your school offer this course?',
     terms_per_year: 'How many terms will this course span in one school year?',
     replace_course: 'Will this course replace an existing computer science course in the master schedule? If yes, please list the course(s) that will be replaced.',
@@ -30,7 +30,7 @@ module PrincipalApproval1819ApplicationConstants
     committed_to_diversity: 'Do you commit to recruiting and enrolling a diverse group of students in this course, representative of  the overall demographics of your school?',
     understand_fee: 'By checking this box, you indicate that you understand there may be a program fee for the summer workshop your teacher attends.',
     pay_fee: 'If there is a fee for the summer workshop, will your teacher or your school be able to pay for the fee?',
-    want_funding: 'Would you like to be considered for funding support? Note that funding support is not guaranteed.',
+    want_funding: 'Yes, I would like to be considered for funding support.',
     confirm_principal: 'By submitting this application, I confirm I am the principal of this school.',
 
     school: 'School',
@@ -40,5 +40,11 @@ module PrincipalApproval1819ApplicationConstants
     school_state: 'State',
     school_zip_code: 'Zip Code',
     school_type: 'My school is a',
+  }.freeze
+
+  TEXT_FIELDS = {
+    other_with_text: 'Other:'.freeze,
+    other_please_explain: 'Other (Please Explain):'.freeze,
+    dont_know_explain: "I don't know (Please Explain):".freeze
   }.freeze
 end

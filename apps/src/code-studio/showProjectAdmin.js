@@ -11,7 +11,12 @@ export default () => {
       if (dashboard.project.isFrozen()) {
         $('.project_admin').html($('<span>&#x2744; Frozen! To use as an example, copy this id: <input type="text" disabled value="' +
           dashboard.project.getCurrentId() +
-          '"/></span>'));
+          '"/><div><button id="unfreeze" class="btn btn-default btn-sm">Unfreeze</button><div></span>'));
+          $('#unfreeze').click(function () {
+            dashboard.project.unfreeze(function () {
+              window.location.reload();
+            });
+          });
       } else {
         $('.project_admin').html($('<button id="freeze" class="btn btn-default btn-sm">Freeze for use as an exemplar &#x2744;</button>'));
         $('#freeze').click(function () {
@@ -21,6 +26,44 @@ export default () => {
         });
       }
     }
+  }
+
+  if (!dashboard.project.isPublished()) {
+    $('#unpublished_warning').show();
+  }
+
+  if ($('#feature_project').length && dashboard.project.isProjectLevel()) {
+    $('#feature_project').click(function () {
+      var url = `/featured_projects/${dashboard.project.getCurrentId()}/feature`;
+      $.ajax({
+        url: url,
+        type:'PUT',
+        dataType:'json',
+        success:function (data) {
+          $('#unfeature_project').show();
+          $('#feature_project').hide();
+        },
+        error:function (data) {
+          alert("Shucks. Something went wrong - this project wasn't featured.");
+        }
+      });
+    });
+
+    $('#unfeature_project').click(function () {
+      var url = `/featured_projects/${dashboard.project.getCurrentId()}/unfeature`;
+      $.ajax({
+        url: url,
+        type:'PUT',
+        dataType:'json',
+        success:function (data) {
+          $('#unfeature_project').hide();
+          $('#feature_project').show();
+        },
+        error:function (data) {
+          alert("Shucks. Something went wrong - this project is still featured.");
+        }
+      });
+    });
   }
 
   if ($('.admin-abuse').length && dashboard.project.isProjectLevel()) {

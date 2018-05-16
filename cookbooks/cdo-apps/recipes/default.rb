@@ -92,7 +92,7 @@ include_recipe 'cdo-apps::build'
 if node['cdo-secrets']["build_apps"] ||
   # Or install nodejs if the daemon builds apps packages in this environment.
   # TODO keep this logic in sync with `BUILD_PACKAGE` in `package.rake`.
-  (node['cdo-apps']['daemon'] && %w[staging test].include?(node.chef_environment))
+  (node['cdo-apps']['daemon'] && %w[staging test adhoc].include?(node.chef_environment))
   include_recipe 'cdo-nodejs'
 end
 
@@ -111,3 +111,9 @@ include_recipe 'cdo-redis' if node['cdo-apps']['local_redis']
 # non-production daemons run self-hosted solr.
 node.default['cdo-apps']['solr'] = node['cdo-apps']['daemon'] && node.chef_environment != 'production'
 include_recipe 'cdo-solr' if node['cdo-apps']['solr']
+
+# only the i18n server needs the i18n recipe
+include_recipe 'cdo-i18n' if node.name == 'i18n'
+
+# Production analytics utilities.
+include_recipe 'cdo-analytics' if %w[production-daemon production-console].include?(node.name)

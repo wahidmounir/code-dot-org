@@ -1,9 +1,8 @@
-/* globals google */
-
 import React, { Component, PropTypes } from 'react';
 import i18n from "@cdo/locale";
 import { STATES } from '../geographyConstants';
 import { styles } from './census2017/censusFormStyles';
+import GoogleSchoolLocationSearchField from './GoogleSchoolLocationSearchField';
 
 const schoolTypes = [
   '',
@@ -59,6 +58,8 @@ export default class SchoolNotFound extends Component {
     schoolState: PropTypes.string,
     schoolZip: PropTypes.string,
     schoolType: PropTypes.string,
+    schoolLocation: PropTypes.string,
+    controlSchoolLocation: PropTypes.bool,
     fieldNames: PropTypes.object,
     showErrorMsg: PropTypes.bool,
     singleLineLayout: PropTypes.bool,
@@ -71,6 +72,7 @@ export default class SchoolNotFound extends Component {
 
   static defaultProps = {
     showRequiredIndicators: true,
+    controlSchoolLocation: false,
     schoolNameLabel: i18n.schoolName(),
     fieldNames: {
       schoolName: "school_name_s",
@@ -86,7 +88,7 @@ export default class SchoolNotFound extends Component {
 
   handleChange = (field, event) => {
     this.props.onChange(field, event);
-  }
+  };
 
   isNotBlank(value) {
     return value && (value !== '');
@@ -106,7 +108,7 @@ export default class SchoolNotFound extends Component {
     }
 
     if (this.props.useGoogleLocationSearch) {
-      return this.isFieldValid($("#registration-school-location").val());
+      return this.isFieldValid(this.locationSearchRef.value());
     } else {
       return (
         this.isFieldValid(this.props.schoolCity) &&
@@ -174,6 +176,7 @@ export default class SchoolNotFound extends Component {
               <label style={labelStyle}>
                 {this.renderLabel(i18n.schoolType())}
                 <select
+                  id="school_type"
                   name={this.props.fieldNames.schoolType}
                   value={this.props.schoolType}
                   onChange={this.handleChange.bind(this, "schoolType")}
@@ -198,6 +201,7 @@ export default class SchoolNotFound extends Component {
               <label style={labelStyle}>
                 {this.renderLabel(i18n.schoolCity())}
                 <input
+                  id="school_city"
                   type="text"
                   name={this.props.fieldNames.schoolCity}
                   value={this.props.schoolCity}
@@ -212,6 +216,7 @@ export default class SchoolNotFound extends Component {
               <label style={labelStyle}>
                 {this.renderLabel(i18n.schoolState())}
                 <select
+                  id="school_state"
                   name={this.props.fieldNames.schoolState}
                   value={this.props.schoolState}
                   onChange={this.handleChange.bind(this, "schoolState")}
@@ -249,11 +254,12 @@ export default class SchoolNotFound extends Component {
           <div style={fieldStyle}>
             <label style={labelStyle}>
               {this.renderLabel(i18n.schoolCityTown())}
-              <input
-                id="registration-school-location"
-                type="text"
+              <GoogleSchoolLocationSearchField
+                ref={el => this.locationSearchRef = el}
                 name={this.props.fieldNames.googleLocation}
-                placeholder={i18n.schoolLocationSearchPlaceholder()}
+                isControlledInput={this.props.controlSchoolLocation}
+                value={this.props.schoolLocation}
+                onChange={this.handleChange.bind(this, 'schoolLocation')}
                 style={inputStyle}
               />
             </label>
@@ -263,11 +269,5 @@ export default class SchoolNotFound extends Component {
         {singleLineLayout && showError && errorDiv}
       </div>
     );
-  }
-
-  componentDidMount() {
-    if (this.props.useGoogleLocationSearch) {
-      new google.maps.places.SearchBox(document.getElementById('registration-school-location'));
-    }
   }
 }

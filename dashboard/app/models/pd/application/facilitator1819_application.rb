@@ -19,6 +19,8 @@
 #  application_guid                    :string(255)
 #  decision_notification_email_sent_at :datetime
 #  accepted_at                         :datetime
+#  properties                          :text(65535)
+#  deleted_at                          :datetime
 #
 # Indexes
 #
@@ -36,8 +38,17 @@ require 'state_abbr'
 require 'cdo/shared_constants/pd/facilitator1819_application_constants'
 
 module Pd::Application
-  class Facilitator1819Application < ApplicationBase
+  class Facilitator1819Application < WorkshopAutoenrolledApplication
     include Facilitator1819ApplicationConstants
+
+    serialized_attrs %w(
+      fit_workshop_id
+      auto_assigned_fit_enrollment_id
+    )
+
+    has_one :pd_fit_weekend1819_registration,
+      class_name: 'Pd::FitWeekend1819Registration',
+      foreign_key: 'pd_application_id'
 
     def send_decision_notification_email
       # Accepted, declined, and waitlisted are the only valid "final" states;
@@ -54,9 +65,17 @@ module Pd::Application
       self.application_type = FACILITATOR_APPLICATION
     end
 
+    PROGRAMS = {
+      csf: 'CS Fundamentals (Pre-K - 5th grade)',
+      csd: 'CS Discoveries (6 - 10th grade)',
+      csp: 'CS Principles (9 - 12th grade)'
+    }.freeze
+    PROGRAM_OPTIONS = PROGRAMS.values
+    VALID_COURSES = PROGRAMS.keys.map(&:to_s)
+
     validates_uniqueness_of :user_id
 
-    validates_presence_of :course
+    validates :course, presence: true, inclusion: {in: VALID_COURSES}
     before_validation :set_course_from_program
     def set_course_from_program
       self.course = PROGRAMS.key(program)
@@ -73,6 +92,39 @@ module Pd::Application
       Time.zone.now < APPLICATION_CLOSE_DATE
     end
 
+    # Queries for locked and (accepted or withdrawn) and assigned to a fit workshop
+    # @param [ActiveRecord::Relation<Pd::Application::Facilitator1819Application>] applications_query
+    #   (optional) defaults to all
+    # @note this is not chainable since it inspects fit_workshop_id from serialized attributes,
+    #   which must be done in the model.
+    # @return [array]
+    def self.fit_cohort(applications_query = all)
+      applications_query.
+        where(type: name).
+        where(status: [:accepted, :withdrawn]).
+        where.not(locked_at: nil).
+        includes(:pd_fit_weekend1819_registration).
+        select(&:fit_workshop_id?)
+    end
+
+    def fit_workshop
+      return nil unless fit_workshop_id
+
+      # attempt to retrieve from cache
+      cache_fetch self.class.get_workshop_cache_key(fit_workshop_id) do
+        Pd::Workshop.includes(:sessions, :enrollments).find_by(id: fit_workshop_id)
+      end
+    end
+
+    def fit_workshop_date_and_location
+      fit_workshop.try(&:date_and_location_name)
+    end
+
+    def registered_fit_workshop?
+      # inspect the cached fit_workshop.enrollments rather than querying the DB
+      fit_workshop.enrollments.any? {|e| e.user_id == user.id} if fit_workshop_id
+    end
+
     GRADES = [
       'Pre-K'.freeze,
       'Kindergarten'.freeze,
@@ -80,17 +132,6 @@ module Pd::Application
       'Community college, college, or university',
       'Participants in a tech bootcamp or professional development program'
     ].freeze
-
-    HOW_HEARD_FACILITATOR = 'A Code.org facilitator (please share name):'
-    HOW_HEARD_CODE_ORG_STAFF = 'A Code.org staff member (please share name):'
-    HOW_HEARD_REGIONAL_PARTNER = 'A Code.org Regional Partner (please share name):'
-
-    PROGRAMS = {
-      csf: 'CS Fundamentals (Pre-K - 5th grade)',
-      csd: 'CS Discoveries (6 - 10th grade)',
-      csp: 'CS Principles (9 - 12th grade)'
-    }.freeze
-    PROGRAM_OPTIONS = PROGRAMS.values
 
     ONLY_WEEKEND = 'I will only be able to attend Saturday and Sunday of the training'.freeze
 
@@ -106,7 +147,7 @@ module Pd::Application
           'Non-profit',
           'Institute of higher education',
           'Tech company',
-          OTHER_WITH_TEXT
+          TEXT_FIELDS[:other_with_text]
         ],
 
         worked_in_cs_job: [YES, NO],
@@ -120,7 +161,7 @@ module Pd::Application
           'Attended a CS professional development workshop',
           'I have a minor, major, certificate',
           NONE,
-          OTHER_WITH_TEXT
+          TEXT_FIELDS[:other_with_text]
         ],
 
         diversity_training: [YES, NO],
@@ -128,11 +169,11 @@ module Pd::Application
         how_heard: [
           'Code.org email',
           'Code.org social media post',
-          HOW_HEARD_FACILITATOR,
-          HOW_HEARD_CODE_ORG_STAFF,
-          HOW_HEARD_REGIONAL_PARTNER,
+          TEXT_FIELDS[:how_heard_facilitator],
+          TEXT_FIELDS[:how_heard_code_org_staff],
+          TEXT_FIELDS[:how_heard_regional_partner],
           'My employer',
-          OTHER_WITH_TEXT
+          TEXT_FIELDS[:other_with_text]
         ],
 
         program: PROGRAM_OPTIONS,
@@ -141,7 +182,7 @@ module Pd::Application
           YES,
           NO,
           "I don’t know yet",
-          OTHER_WITH_TEXT
+          TEXT_FIELDS[:other_with_text]
         ],
 
         ability_to_meet_requirements: [
@@ -159,32 +200,32 @@ module Pd::Application
         csd_csp_teachercon_availability: [
           'TeacherCon 1: June 17 - 22, 2018',
           'TeacherCon 2: July 22 - 27, 2018',
-          "I'm not available for either TeacherCon. (Please Explain):"
+          TEXT_FIELDS[:not_available_for_teachercon]
         ],
 
         csd_csp_fit_availability: [
           'June 23 - 24, 2018 (immediately following TeacherCon 1)',
           'July 28 - 29, 2018 (immediately following TeacherCon 2)',
-          "I'm not available for either Facilitator-in-Training workshop. (Please Explain):"
+          TEXT_FIELDS[:not_available_for_fit_weekend]
         ],
 
         led_cs_extracurriculars: [
           'Hour of Code',
           'After-school or lunchtime computer science clubs',
           'Computer science-focused summer camps',
-          OTHER_PLEASE_LIST
+          TEXT_FIELDS[:other_please_list]
         ],
 
         teaching_experience: [YES, NO],
 
         grades_taught: [
           *GRADES,
-          OTHER_WITH_TEXT
+          TEXT_FIELDS[:other_with_text]
         ],
 
         grades_currently_teaching: [
           *GRADES,
-          OTHER_WITH_TEXT,
+          TEXT_FIELDS[:other_with_text],
           'None - I don’t currently teach'
         ],
 
@@ -197,7 +238,7 @@ module Pd::Application
           'History',
           'Art',
           'Foreign Language',
-          OTHER_WITH_TEXT
+          TEXT_FIELDS[:other_with_text]
         ],
 
         years_experience: [
@@ -223,7 +264,7 @@ module Pd::Application
           'NMSI',
           'Project Lead the Way',
           'ScratchEd',
-          OTHER_WITH_TEXT,
+          TEXT_FIELDS[:other_with_text],
           "I don't have experience teaching any of these courses",
         ],
 
@@ -382,6 +423,10 @@ module Pd::Application
       sanitize_form_data_hash[:first_name]
     end
 
+    def last_name
+      sanitize_form_data_hash[:last_name]
+    end
+
     def program
       sanitize_form_data_hash[:program]
     end
@@ -403,12 +448,12 @@ module Pd::Application
       [
         [:institution_type],
         [:completed_cs_courses_and_activities],
-        [:how_heard, HOW_HEARD_FACILITATOR, :how_heard_facilitator],
-        [:how_heard, HOW_HEARD_CODE_ORG_STAFF, :how_heard_code_org_staff],
-        [:how_heard, HOW_HEARD_REGIONAL_PARTNER, :how_heard_regional_partner],
+        [:how_heard, TEXT_FIELDS[:how_heard_facilitator], :how_heard_facilitator],
+        [:how_heard, TEXT_FIELDS[:how_heard_code_org_staff], :how_heard_code_org_staff],
+        [:how_heard, TEXT_FIELDS[:how_heard_regional_partner], :how_heard_regional_partner],
         [:how_heard],
         [:plan_on_teaching],
-        [:led_cs_extracurriculars, OTHER_PLEASE_LIST],
+        [:led_cs_extracurriculars, TEXT_FIELDS[:other_please_list]],
         [:grades_taught],
         [:grades_currently_teaching],
         [:subjects_taught],
@@ -416,31 +461,44 @@ module Pd::Application
       ]
     end
 
-    # @override
-    # Filter out extraneous answers, based on selected program (course)
-    def self.filtered_labels(course)
-      labels_to_remove = (course == 'csf' ?
+    # memoize in a hash, per course
+    FILTERED_LABELS ||= Hash.new do |h, key|
+      labels_to_remove = (key == 'csf' ?
         [:csd_csp_fit_availability, :csd_csp_teachercon_availability]
         : # csd / csp
         [:csf_availability, :csf_partial_attendance_reason]
       )
 
-      ALL_LABELS_WITH_OVERRIDES.except(*labels_to_remove)
+      h[key] = ALL_LABELS_WITH_OVERRIDES.except(*labels_to_remove)
     end
 
     # @override
-    def self.csv_header(course)
+    # Filter out extraneous answers, based on selected program (course)
+    def self.filtered_labels(course)
+      raise "Invalid course #{course}" unless VALID_COURSES.include?(course)
+      FILTERED_LABELS[course]
+    end
+
+    # @override
+    def self.csv_header(course, user)
       # strip all markdown formatting out of the labels
       markdown = Redcarpet::Markdown.new(Redcarpet::Render::StripDown)
       CSV.generate do |csv|
-        columns = filtered_labels(course).values.map {|l| markdown.render(l)}
+        columns = filtered_labels(course).values.map {|l| markdown.render(l)}.map(&:strip)
         columns.push 'Status', 'Locked', 'Notes', 'Regional Partner'
         csv << columns
       end
     end
 
     # @override
-    def to_csv_row
+    def self.cohort_csv_header
+      CSV.generate do |csv|
+        csv << ['Date Accepted', 'Name', 'School District', 'School Name', 'Email', 'Status']
+      end
+    end
+
+    # @override
+    def to_csv_row(user)
       answers = full_answers
       CSV.generate do |csv|
         row = self.class.filtered_labels(course).keys.map {|k| answers[k]}
@@ -449,6 +507,21 @@ module Pd::Application
       end
     end
 
+    # @override
+    def to_cohort_csv_row
+      CSV.generate do |csv|
+        csv << [
+          date_accepted,
+          applicant_name,
+          district_name,
+          school_name,
+          user.email,
+          status
+        ]
+      end
+    end
+
+    # @override
     # Add account_email (based on the associated user's email) to the sanitized form data hash
     def sanitize_form_data_hash
       super.merge(account_email: user.email)
@@ -463,6 +536,79 @@ module Pd::Application
     # @override
     def check_idempotency
       Pd::Application::Facilitator1819Application.find_by(user: user)
+    end
+
+    before_save :destroy_fit_autoenrollment, if: -> {status_changed? && status != "accepted"}
+    def destroy_fit_autoenrollment
+      return unless auto_assigned_fit_enrollment_id
+
+      Pd::Enrollment.find_by(id: auto_assigned_fit_enrollment_id).try(:destroy)
+      self.auto_assigned_fit_enrollment_id = nil
+    end
+
+    # override
+    def enroll_user
+      super
+      return unless fit_workshop_id
+
+      enrollment = Pd::Enrollment.where(
+        pd_workshop_id: fit_workshop_id,
+        email: user.email
+      ).first_or_initialize
+
+      # If this is a new enrollment, we want to:
+      #   - save it with all required data
+      #   - save a reference to it in properties
+      #   - delete the previous auto-created enrollment if it exists
+      if enrollment.new_record?
+        enrollment.update(
+          user: user,
+          school_info: user.school_info,
+          full_name: user.name
+        )
+        enrollment.save!
+
+        destroy_fit_autoenrollment
+        self.auto_assigned_fit_enrollment_id = enrollment.id
+      end
+    end
+
+    # G1 facilitators are always associated with Phoenix
+    # G2 facilitators are always associated with Atlanta
+    # G3 facilitators are assigned based on their partner mapping, arbitrarily
+    #   defaulting to Phoenix
+    def find_default_fit_teachercon
+      return unless regional_partner
+
+      return TC_PHOENIX if regional_partner.group == 1
+      return TC_ATLANTA if regional_partner.group == 2
+
+      return get_matching_teachercon(regional_partner) || TC_PHOENIX
+    end
+
+    # Assigns the default FiT workshop, if one is not yet assigned
+    def assign_default_fit_workshop!
+      return if fit_workshop_id
+      update! fit_workshop_id: find_default_fit_workshop.try(:id)
+    end
+
+    def find_default_fit_workshop
+      return unless regional_partner
+
+      find_fit_workshop(
+        course: workshop_course,
+        city: find_default_fit_teachercon[:city]
+      )
+    end
+
+    def fit_weekend_registration
+      Pd::FitWeekend1819Registration.find_by_pd_application_id(id)
+    end
+
+    # override
+    def self.prefetch_associated_models(applications)
+      # also prefetch fit workshops
+      prefetch_workshops applications.flat_map {|a| [a.pd_workshop_id, a.fit_workshop_id]}.uniq.compact
     end
   end
 end

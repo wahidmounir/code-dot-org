@@ -8,14 +8,17 @@ describe('feedback redux module', () => {
       displayingCode: false,
       displayingShareControls: false,
 
-
+      isChallenge: false,
       isPerfect: true,
       blocksUsed: 0,
       blockLimit: undefined,
       achievements: [],
       displayFunometer: true,
-      studentCode: '',
-      canShare: false,
+      studentCode: {
+        message: '',
+        code: '',
+      },
+      feedbackImage: null,
     });
   });
 
@@ -74,19 +77,20 @@ describe('feedback redux module', () => {
     it('sets all the properties', () => {
       const state = {};
       const newState = reducer(state, feedback.setFeedbackData({
+        isChallenge: true,
         isPerfect: true,
         blocksUsed: 19,
         displayFunometer: false,
         studentCode: 'console.log("hello world!");',
-        canShare: true,
+        feedbackImage: 'fake_image.png',
       }));
       expect(newState).to.deep.equal({
+        isChallenge: true,
         isPerfect: true,
         blocksUsed: 19,
-        achievements: undefined,
         displayFunometer: false,
         studentCode: 'console.log("hello world!");',
-        canShare: true,
+        feedbackImage: 'fake_image.png',
       });
     });
   });

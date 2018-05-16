@@ -65,7 +65,6 @@ class Blockly < Level
     project_template_level_name
     hide_share_and_remix
     is_project_level
-    edit_code
     code_functions
     palette_category_at_start
     failure_message_override
@@ -74,6 +73,7 @@ class Blockly < Level
     contained_level_names
     encrypted_examples
     disable_if_else_editing
+    show_type_hints
   )
 
   before_save :update_ideal_level_source
@@ -130,7 +130,8 @@ class Blockly < Level
   def normalize_xml(attr)
     attr_val = send(attr)
     if attr_val.present?
-      normalized_attr = Nokogiri::XML(attr_val, &:noblanks).serialize(save_with: XML_OPTIONS).strip
+      attr_doc = Nokogiri::XML(attr_val) {|config| config.strict.noblanks}
+      normalized_attr = attr_doc.serialize(save_with: XML_OPTIONS).strip
       send("#{attr}=", normalized_attr)
     end
   end
@@ -221,7 +222,7 @@ class Blockly < Level
         {
           baseUrl: Blockly.base_url,
           app: game.try(:app),
-          droplet: game.try(:uses_droplet?),
+          droplet: uses_droplet?,
           pretty: Rails.configuration.pretty_apps ? '' : '.min',
         }
       )
@@ -260,7 +261,10 @@ class Blockly < Level
 
       if is_a? Blockly
         level_prop['startBlocks'] = try(:project_template_level).try(:start_blocks) || start_blocks
-        level_prop['toolbox'] = try(:project_template_level).try(:toolbox_blocks) || toolbox_blocks
+        level_prop['toolbox'] =
+          try(:project_template_level).try(:toolbox_blocks) ||
+          toolbox_blocks ||
+          default_toolbox_blocks
         level_prop['codeFunctions'] = try(:project_template_level).try(:code_functions) || code_functions
       end
 
@@ -285,6 +289,7 @@ class Blockly < Level
       level_prop['startDirection'] = level_prop['startDirection'].to_i if level_prop['startDirection'].present?
       level_prop['sliderSpeed'] = level_prop['sliderSpeed'].to_f if level_prop['sliderSpeed']
       level_prop['scale'] = {'stepSpeed' => level_prop['stepSpeed']} if level_prop['stepSpeed'].present?
+      level_prop['editCode'] = uses_droplet?
 
       # Blockly requires these fields to be objects not strings
       %w(map initialDirt serializedMaze goal softButtons inputOutputTable).
@@ -312,19 +317,25 @@ class Blockly < Level
     options.freeze
   end
 
-  def localized_failure_message_override
-    if should_localize? && failure_message_override
-      I18n.t("data.failure_message_overrides").
-        try(:[], "#{name}_failure_message_override".to_sym)
+  def get_localized_property(property_name)
+    if should_localize? && try(property_name)
+      I18n.t("data.#{property_name.pluralize}.#{name}_#{property_name.singularize}", default: nil)
     end
+  end
+
+  def localized_failure_message_override
+    get_localized_property("failure_message_overrides")
+  end
+
+  def localized_markdown_instructions
+    get_localized_property("markdown_instructions")
   end
 
   def localized_authored_hints
     return unless authored_hints
 
     if should_localize?
-      translations = I18n.t("data.authored_hints").
-        try(:[], "#{name}_authored_hint".to_sym)
+      translations = get_localized_property("authored_hints")
 
       return unless translations.instance_of? Hash
 
@@ -355,7 +366,7 @@ class Blockly < Level
 
   def localized_instructions
     if custom?
-      loc_val = I18n.t("data.instructions").try(:[], "#{name}_instruction".to_sym)
+      loc_val = get_localized_property("instructions")
       unless I18n.en? || loc_val.nil?
         return loc_val
       end
@@ -387,5 +398,23 @@ class Blockly < Level
     # remove nil and empty strings from examples
     return if examples.nil?
     self.examples = examples.select(&:present?)
+  end
+
+  # This should just return false, but we have a few levels.js levels that use
+  # droplet (starwars, and a few test levels). They all have level records of
+  # type 'Blockly', so they can't override this as needed
+  def uses_droplet?
+    %w(MazeEC ArtistEC Applab StudioEC Gamelab).include? game.name
+  end
+
+  def default_toolbox_blocks
+    nil
+  end
+
+  # Clear 'is_project_level' from cloned levels
+  def clone_with_name(name)
+    level = super(name)
+    level.update!(is_project_level: false)
+    level
   end
 end

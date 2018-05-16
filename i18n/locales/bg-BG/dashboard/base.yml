@@ -69,7 +69,7 @@ bg:
   try_k8intro: "Или опитайте нашите начални встъпителни курсове по компютърни науки (15-25 часа)"
   k8intro: "K-8 представяне на курс по компютърни науки (15-25 часа)"
   already_started: "Вече сте започнали? Продължете оттук >> "
-  demos: 'Администратор: Всички демо версии'
+  demos: "Администратор: Всички демо версии"
   continue: 'Продължи'
   prize: 'награда'
   more_info: 'Повече информация'
@@ -123,6 +123,9 @@ bg:
     field_is_required: "е задължително"
     accept_terms: "Вие трябва да потвърдите, за да си създадете профил"
     error: "Възникна грешка."
+    email_preference_question: "Can we email you about updates to our courses, local learning opportunities, or other computer science news?"
+    email_preference_yes: "Да"
+    email_preference_no: "Не"
   school_info:
     title: 'Информацшя за училището (по избор)'
     school_country: 'Училищен район'
@@ -171,6 +174,7 @@ bg:
       email: 'Имейл адрес'
       submit: 'Изпрати'
     reset_errors:
+      captcha_required: 'Please fill out the CAPTCHA to reset your password.'
       invalid_email: 'Като че ли сте се регистрирали с невалиден имейл адрес. Моля пишете на support@code.org, за да получите парола за възстановяване на връзката.'
     change_form:
       title: 'Смяна на паролата'
@@ -218,7 +222,7 @@ bg:
       provider_managed_section: "Този раздел се управлява от друг доставчик и не може да се присъединете. Помолете учителите си да ви добавят чрез %{provider} и повторно синхронизирайте раздела."
     mail:
       student_disassociated:
-        subject: 'Code.org уведомление: %{student_name} вече не свързан като ваш ученик.'
+        subject: "Code.org уведомление: %{student_name} вече не свързан като ваш ученик."
   reports:
     error:
       access_denied: "Нямате достъп до статистиката на този човек"
@@ -350,7 +354,7 @@ bg:
     current_password_hint: '(нуждаем се от вашата текуща парола, за да потвърдим вашите промени)'
     delete: 'Изтриване на вашия акаунт'
     delete_text: "Щракнете върху бутона по-долу, за да изтриете вашия акаунт."
-    delete_text_teacher_note: 'Моля, обърнете внимание: изтриването на вашия акаунт няма да изтрие акаунтите на вашите ученици.'
+    delete_text_teacher_note: "Моля, обърнете внимание: изтриването на вашия акаунт няма да изтрие акаунтите на вашите ученици."
     delete_confirm: 'Наистина ли искате да изтриете профила си?'
     deleted_user: 'изтрит потребител'
     no_password_because_oauth: 'Без парола, защото можете да влезете от трета страна доставчик.'
@@ -361,10 +365,11 @@ bg:
     create_personal_login_under_13_parent_email: 'Имейл на родителя/настойника (за да възстановите паролата си)'
     create_personal_login_info: 'Ако искате да продължите да използвате профила си Code.org дори и след края на учебната година, можете да се регистрирате самостоятелно.'
     create_personal_login_terms: "Чрез създаване на лична регистрация, съм съгласен да се обвържа с Code.org <a href='%{terms_of_service_url}', target='_blank'> условията за ползване</a>. Ако съм на възраст под 13 години, аз потвърждавам, че имам разрашение от моя родител или законен настойник за използване на услугите на Code.org дори и без учител."
-    create_personal_login_email_note: 'Забележка: Имейл адресите не се съхраняват във форма, която да позволява да се свържете с ученици. Курсистите не получават имейли от Code.org освен за възстановяване на парола. Вижте нашата <a href=''%{privacy_policy_url}'', target=''_blank''> декларация за поверителност</a> за повече информация.'
+    create_personal_login_email_note: "Забележка: Имейл адресите не се съхраняват във форма, която да позволява да се свържете с ученици. Курсистите не получават имейли от Code.org освен за възстановяване на парола. Вижте нашата <a href='%{privacy_policy_url}', target='_blank'> декларация за поверителност</a> за повече информация."
     enter_new_login_info: 'Enter your new login information'
     confirm_secret_words: 'Confirm that it is you by entering your current secret words'
     enter_parent_email: "Enter your parent or guardian's email address (for password recovery)"
+    update: "Update Account"
   user_level:
     completed: 'Завършено'
     tried: 'Опитах'
@@ -652,6 +657,7 @@ bg:
     correct_title: "Благодаря"
     correct_body: "Благодаря Ви, че подадохте отговор"
     hide_survey_last_answer: "Това анкета е анонимна.  Моля, посетете учителското таблото за обобщени резултати.  Имайте предвид, че резултатите ще се виждат само ако най-малко пет ученици са направили анкетата."
+    survey_submission_thankyou: "Thank you for submitting this survey! The survey has been cleared so that your responses stay anonymous. Note that your teacher will still be able to see responses for the whole class, but without names attached."
   level_group-submittable:
     wrong_title: "Благодаря"
     wrong_body: "Благодаря Ви, че подадохте отговор"
@@ -699,7 +705,7 @@ bg:
     sign_out: 'Ако не искате да предоставите информация за вашата възраст, може да <a href="%{url}"> излезете</a>.'
   terms_interstitial:
     title: "Актуализираните условия за ползване и поверителност"
-    intro_desc: 'Обновихме нашите условия за ползване и поверителност, както е показано по-долу. Промените са в действие от 24 август 2016 г.  Най-голямата промяна: ние  <i>вече не съхраняваме имейл адреси на ученическите акаунти в Студиото по кодиране.</i> Това е от значение за нас, и ние се надяваме това да подпомогне сигурността на учениците в образованието по Cs. Ние ще изпратим Резюме на другите промени по електронна поща.'
+    intro_desc: "Обновихме нашите условия за ползване и поверителност, както е показано по-долу. Промените са в действие от 24 август 2016 г.  Най-голямата промяна: ние  <i>вече не съхраняваме имейл адреси на ученическите акаунти в Студиото по кодиране.</i> Това е от значение за нас, и ние се надяваме това да подпомогне сигурността на учениците в образованието по Cs. Ние ще изпратим Резюме на другите промени по електронна поща."
     intro_instructions: "Трябва да приемете тези условия за ученици на възраст под 13 във вашия клас, за да имат пълен достъп до всички най-нови функции в Студиото по кодиране.  Когато се регистрира акаунт за ученик под 13, вие ще бъдете помолени да потвърдите, че вашето училище има родителско съгласие за събиране на лична информация на учениците за използването от училището на образователните програми в Студиото по кодиране."
     tos: "Термини"
     privacy: "Защита на личните данни"
@@ -715,25 +721,25 @@ bg:
     message_with_suggestion: "Please verify that the following information is correct, or update as necessary."
     save: "Запазване"
   race_interstitial:
-    title: 'По желание: Помогнете ни подобрим многообразието от уроци по компютърни науки'
+    title: "По желание: Помогнете ни подобрим многообразието от уроци по компютърни науки"
     message: "Моля да ни кажете вашата раса (проверка на всички, които се прилагат)"
     races:
       - 
-        white: Бял
+        white: "Бял"
       - 
-        black: Черен или афро-американец
+        black: "Черен или афро-американец"
       - 
-        hispanic: Испанец или латино
+        hispanic: "Испанец или латино"
       - 
-        asian: Азиатец
+        asian: "Азиатец"
       - 
-        hawaiian: Хавайец или друг тихоокеански островитянин
+        hawaiian: "Хавайец или друг тихоокеански островитянин"
       - 
-        american_indian: Индианец/от Аляска
+        american_indian: "Индианец/от Аляска"
       - 
-        other: Друго
+        other: "Друго"
       - 
-        opt_out: Предпочитам да не отговоря
+        opt_out: "Предпочитам да не отговоря"
     submit: "Изпрати"
     decline: "Затваряне"
   zendesk_too_young_message: 'Съжаляваме, но малки потребители не може да влизат в нашия сайт за поддръжка. Може да разглеждате <a href="http://support.code.org"> support.code.org</a> без регистрация или попитайте вашия родител или учител да се свърже с нас за вас.'
@@ -759,7 +765,7 @@ bg:
     delete: "Изтриване"
     import: "Импортиране"
     share_link_import_bad_link_header: "Връзката за споделяне не е разпозната"
-    share_link_import_bad_link_body: 'Не успяхме да импортираме тази връзка за споделяне. Уверете се, че използвате връзка от Minecraft: Agent puzzle и сте копирали пълната връзка.'
+    share_link_import_bad_link_body: "Не успяхме да импортираме тази връзка за споделяне. Уверете се, че използвате връзка от Minecraft: Agent puzzle и сте копирали пълната връзка."
     share_link_import_error_header: "Възникна грешка."
     share_link_import_error_body: "Възникна проблем при импортирането на връзката за споделяне. Опитайте отново."
     exit: "Връщане към курса"
@@ -862,8 +868,8 @@ bg:
     csd4_2: 'Chapter 2: App Prototyping'
     csd5_1: 'Chapter 1: Representing Information'
     csd5_2: 'Chapter 2: Solving Data Problems'
-    csd6_1: 'Chapter 1: Hardware Output'
-    csd6_2: 'Chapter 2: Hardware Input'
+    csd6_1: 'Chapter 1: Programming with Hardware'
+    csd6_2: 'Chapter 2: Building Physical Prototypes'
     csp1_1: 'Chapter 1: Representing and Transmitting Information'
     csp1_2: 'Chapter 2: Inventing the Internet'
     csp2_1: 'Chapter 1: Encoding and Compressing Complex Information'
@@ -877,6 +883,11 @@ bg:
     csp_ap_1: 'Глава 1: AP техническа настройка'
     csp_ap_2: 'Chapter 2: AP Explore Performance Task'
     csp_ap_3: 'Chapter 3: AP Create Performance Task'
+    csp_postap_1: 'Chapter 1: Manipulating and Visualizing Data'
+    csp_postap_2: 'Chapter 2: Apps and Databases'
+    csp2_1_2018: 'Част 1 - Дигитална информация'
+    csp3_1_2018: 'Unit 3: Intro to Programming'
+    csp4_1_2018: 'Unit 4: Big Data and Privacy'
     dlp: 'Reflection Prompts'
   external_links:
     disclaimer: Отказ от отговорност
@@ -981,3 +992,7 @@ bg:
       things_you_would_change_s: 'What are the two things you would change about the activities you did in this workshop?'
       anything_else_s: 'Is there anything else you’d like to tell us about your experience at this workshop?'
   courses_category: 'Full Courses'
+  cookie_banner:
+    message: 'By continuing to browse our site or clicking "I agree," you agree to the storing of cookies on your computer or device.'
+    more_information: "See Code.org's Privacy Policy."
+    accept: 'Приемам'

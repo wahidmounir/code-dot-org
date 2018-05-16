@@ -15,6 +15,13 @@ And(/^the Droplet ACE text is "([^"]*)"$/) do |expected_text|
   expect(actual_text).to eq(expected_text)
 end
 
+And(/^the Droplet ACE text is '([^']*)'$/) do |expected_text|
+  # Let us expect newlines in the editor
+  expected_text.gsub! '\n', "\n"
+  actual_text = @browser.execute_script("return __TestInterface.getDropletContents();")
+  expect(actual_text).to eq(expected_text)
+end
+
 And(/^no Tooltipster tooltip is visible$/) do
   wait = Selenium::WebDriver::Wait.new(timeout: 10)
   wait.until {!@browser.execute_script("return $('.tooltipster-base').is(':visible');")}
@@ -79,4 +86,28 @@ When /^I ensure droplet is in block mode$/ do
       And I wait to see Droplet block mode
     STEPS
   end
+end
+
+When /^I add code "([^"]+)" to ace editor$/ do |code|
+  steps 'I ensure droplet is in text mode'
+  add_code_to_editor(code)
+end
+
+def add_code_to_editor(code)
+  script =
+    "var aceEditor = __TestInterface.getDroplet().aceEditor;\n" \
+    "aceEditor.textInput.focus();\n" \
+    "aceEditor.onTextInput(\"#{code}\");\n"
+
+  @browser.execute_script(script)
+end
+
+When /^ace editor code is equal to "([^"]+)"$/ do |expected_code|
+  actual_code = get_ace_editor_code
+  expect(actual_code).to eq(expected_code)
+end
+
+def get_ace_editor_code
+  script = 'return __TestInterface.getDroplet().aceEditor.getValue().trim();'
+  @browser.execute_script(script)
 end

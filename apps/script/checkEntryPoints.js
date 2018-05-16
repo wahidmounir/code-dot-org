@@ -71,7 +71,6 @@ const SILENCED = [
   'levels/widget',
   'maze',
   'netsim',
-  'pd',
   'plc',
   'publicKeyCryptography',
   'raceInterstitial',
@@ -85,6 +84,7 @@ const SILENCED = [
   'tutorialExplorer',
   'weblab',
   'learn/index',
+  'cookieBanner',
 ];
 const SITES_CONFIG = {
   'studio': {

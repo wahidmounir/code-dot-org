@@ -4,6 +4,7 @@ import {Galleries} from './projectConstants';
 import projects, {selectGallery} from './projectsRedux';
 import {createStore, combineReducers} from 'redux';
 import {Provider} from 'react-redux';
+import {action} from '@storybook/addon-actions';
 
 const createProjectsStore = function () {
   return createStore(combineReducers({projects}));
@@ -11,7 +12,7 @@ const createProjectsStore = function () {
 
 export default storybook => {
   return storybook
-    .storiesOf('GallerySwitcher', module)
+    .storiesOf('Projects/GallerySwitcher', module)
     .addStoryTable([
       {
         name: 'Gallery Switcher with My Projects selected initially',
@@ -22,7 +23,7 @@ export default storybook => {
           return (
             <Provider store={store}>
               <GallerySwitcher
-                showGallery={storybook.action('showGallery')}
+                showGallery={action('showGallery')}
               />
             </Provider>
           );
@@ -37,7 +38,7 @@ export default storybook => {
           return (
             <Provider store={store}>
               <GallerySwitcher
-                showGallery={storybook.action('showGallery')}
+                showGallery={action('showGallery')}
               />
             </Provider>
           );

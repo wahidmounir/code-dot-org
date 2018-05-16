@@ -20,7 +20,7 @@ import * as dom from './dom';
 import * as dropletUtils from './dropletUtils';
 import * as shareWarnings from './shareWarnings';
 import * as utils from './utils';
-import AbuseError from './code-studio/components/abuse_error';
+import AbuseError from './code-studio/components/AbuseError';
 import Alert from './templates/alert';
 import AuthoredHints from './authoredHints';
 import ChallengeDialog from './templates/ChallengeDialog';
@@ -36,6 +36,7 @@ import VersionHistory from './templates/VersionHistory';
 import WireframeButtons from './templates/WireframeButtons';
 import annotationList from './acemode/annotationList';
 import color from "./util/color";
+import getAchievements from './achievements';
 import i18n from './code-studio/i18n';
 import logToCloud from './logToCloud';
 import msg from '@cdo/locale';
@@ -54,7 +55,9 @@ import {resetAniGif} from '@cdo/apps/utils';
 import {setIsRunning} from './redux/runState';
 import {setPageConstants} from './redux/pageConstants';
 import {setVisualizationScale} from './redux/layout';
+import {mergeProgress} from './code-studio/progressRedux';
 import {
+  setAchievements,
   setBlockLimit,
   setFeedbackData,
   showFeedback,
@@ -200,8 +203,6 @@ StudioApp.prototype.configure = function (options) {
   this.scratch = options.level && options.level.scratch;
   this.usingBlockly_ = !this.editCode && !this.scratch;
 
-  // TODO (bbuchanan) : Replace this editorless-hack with setting an editor enum
-  // or (even better) inject an appropriate editor-adaptor.
   if (options.isEditorless) {
     this.editCode = false;
     this.usingBlockly_ = false;
@@ -257,6 +258,7 @@ StudioApp.prototype.init = function (config) {
   if (config.isLegacyShare && config.hideSource) {
     $("body").addClass("legacy-share-view");
     if (dom.isMobile()) {
+      $("body").addClass("legacy-share-view-mobile");
       $('#main-logo').hide();
     }
     if (dom.isIOS() && !window.navigator.standalone) {
@@ -277,7 +279,8 @@ StudioApp.prototype.init = function (config) {
             }}
         />
         <FinishDialog
-          handleClose={() => this.onContinue()}
+          onContinue={() => this.onContinue()}
+          getShareUrl={() => this.lastShareUrl}
         />
       </div>
     </Provider>,
@@ -621,7 +624,7 @@ StudioApp.prototype.scaleLegacyShare = function () {
 
 StudioApp.prototype.getCode = function () {
   if (!this.editCode) {
-    throw "getCode() requires editCode";
+    return codegen.workspaceCode(Blockly);
   }
   if (this.hideSource) {
     return this.startBlocks_;
@@ -659,11 +662,11 @@ StudioApp.prototype.handleClearPuzzle = function (config) {
       // Don't pass CRLF pairs to droplet until they fix CR handling:
       resetValue = config.level.startBlocks.replace(/\r\n/g, '\n');
     }
-    // TODO (bbuchanan): This getValue() call is a workaround for a Droplet bug,
+    // This getValue() call is a workaround for a Droplet bug,
     // See https://github.com/droplet-editor/droplet/issues/137
     // Calling getValue() updates the cached ace editor value, which can be
     // out-of-date in droplet and cause an incorrect early-out.
-    // Remove this line once that bug is fixed and our Droplet lib is updated.
+    // Could remove this line once that bug is fixed and Droplet is updated.
     this.editor.getValue();
     this.editor.setValue(resetValue);
 
@@ -819,7 +822,6 @@ StudioApp.prototype.assetUrl_ = function (path) {
  *   to be played.
  */
 StudioApp.prototype.reset = function (shouldPlayOpeningAnimation) {
-  // TODO (bbuchanan): Look for comon reset logic we can pull here
   // Override in app subclass
 };
 
@@ -1047,6 +1049,7 @@ StudioApp.prototype.onReportComplete = function (response) {
   if (!response) {
     return;
   }
+  this.lastShareUrl = response.level_source;
 
   // Track GA events
   if (response.new_level_completed) {
@@ -1168,7 +1171,7 @@ StudioApp.prototype.showInstructionsDialog_ = function (level, autoClose) {
 */
 StudioApp.prototype.onResize = function () {
   const codeWorkspace = document.getElementById('codeWorkspace');
-  if (codeWorkspace) {
+  if (codeWorkspace && $(codeWorkspace).is(':visible')) {
     var workspaceWidth = codeWorkspace.clientWidth;
 
     // Keep blocks static relative to the right edge in RTL mode
@@ -1318,12 +1321,6 @@ StudioApp.prototype.resizeVisualization = function (width) {
   visualization.style.maxWidth = newVizWidthString;
   visualization.style.maxHeight = newVizHeightString;
 
-  // We don't get the benefits of our responsive styling, so set height
-  // explicitly
-  if (!utils.browserSupportsCssMedia()) {
-    visualization.style.height = newVizHeightString;
-    visualization.style.width = newVizWidthString;
-  }
   var scale = (newVizWidth / this.nativeVizWidth);
   getStore().dispatch(setVisualizationScale(scale));
 
@@ -1408,38 +1405,50 @@ StudioApp.prototype.clearHighlighting = function () {
 * @param {FeedbackOptions} options
 */
 StudioApp.prototype.displayFeedback = function (options) {
-  if (experiments.isEnabled('bubbleDialog')) {
-    // eslint-disable-next-line no-unused-vars
-    const { level, response, preventDialog, feedbackType, ...otherOptions } = options;
-    if (Object.keys(otherOptions).length === 0) {
-      const store = getStore();
-      store.dispatch(setFeedbackData({
-        isPerfect: feedbackType >= TestResults.MINIMUM_OPTIMAL_RESULT,
-        blocksUsed: this.feedback_.getNumBlocksUsed(),
-        achievements: [
-          {
-            isAchieved: true,
-            message: 'Placeholder achievement!',
-          },
-          {
-            isAchieved: true,
-            message: 'Another achievement!',
-          },
-          {
-            isAchieved: false,
-            message: 'Some lame achievement :(',
-          },
-        ],
-        displayFunometer: response && response.puzzle_ratings_enabled,
-        studentCode: this.feedback_.getGeneratedCodeProperties(this.config.appStrings),
-        canShare: !this.disableSocialShare && !options.disableSocialShare,
-      }));
-      if (!preventDialog) {
-        store.dispatch(showFeedback());
-      }
+  // Special test code for edit blocks.
+  if (options.level.edit_blocks) {
+    options.feedbackType = TestResults.EDIT_BLOCKS;
+  }
 
-      this.onFeedback(options);
-      return;
+  // Write updated progress to Redux.
+  const store = getStore();
+  store.dispatch(mergeProgress({[this.config.serverLevelId]: options.feedbackType}));
+
+  if (experiments.isEnabled('bubbleDialog')) {
+    const {response, preventDialog, feedbackType, feedbackImage} = options;
+
+    const newFinishDialogApps = {
+      turtle: true,
+      karel: true,
+      maze: true,
+      studio: true,
+      flappy: true,
+      bounce: true,
+    };
+    const hasNewFinishDialog = newFinishDialogApps[this.config.app];
+
+    if (hasNewFinishDialog && !this.hasContainedLevels) {
+      const generatedCodeProperties =
+        this.feedback_.getGeneratedCodeProperties(this.config.appStrings);
+      const studentCode = {
+        message: generatedCodeProperties.shortMessage,
+        code: generatedCodeProperties.code,
+      };
+      const canShare = !this.disableSocialShare && !options.disableSocialShare;
+      store.dispatch(setFeedbackData({
+        isChallenge: this.config.isChallengeLevel,
+        isPerfect: feedbackType >= TestResults.MINIMUM_OPTIMAL_RESULT,
+        blocksUsed: this.feedback_.getNumCountableBlocks(),
+        displayFunometer: response && response.puzzle_ratings_enabled,
+        studentCode,
+        feedbackImage: canShare && feedbackImage,
+      }));
+      store.dispatch(setAchievements(getAchievements(store.getState())));
+      if (this.shouldDisplayFeedbackDialog_(preventDialog, feedbackType)) {
+        store.dispatch(showFeedback());
+        this.onFeedback(options);
+        return;
+      }
     }
   }
   options.onContinue = this.onContinue;
@@ -1452,12 +1461,9 @@ StudioApp.prototype.displayFeedback = function (options) {
       project.getShareUrl();
   } catch (e) {}
 
-  // Special test code for edit blocks.
-  if (options.level.edit_blocks) {
-    options.feedbackType = TestResults.EDIT_BLOCKS;
-  }
-
-  if (this.shouldDisplayFeedbackDialog(options)) {
+  if (this.shouldDisplayFeedbackDialog_(
+      options.preventDialog,
+      options.feedbackType)) {
     // let feedback handle creating the dialog
     this.feedback_.displayFeedback(options, this.requiredBlocks_,
       this.maxRequiredBlocksToFlag_, this.recommendedBlocks_,
@@ -1479,7 +1485,7 @@ StudioApp.prototype.displayFeedback = function (options) {
 
   // If this level is enabled with a hint prompt threshold, check it and some
   // other state values to see if we should show the hint prompt
-  if (this.config.level.hintPromptAttemptsThreshold !== undefined) {
+  if (this.config.level.hintPromptAttemptsThreshold) {
     this.authoredHintsController_.considerShowingOnetimeHintPrompt();
   }
 
@@ -1489,10 +1495,11 @@ StudioApp.prototype.displayFeedback = function (options) {
 /**
  * Whether feedback should be displayed as a modal dialog or integrated
  * into the top instructions
- * @param {FeedbackOptions} options
+ * @param {boolean} preventDialog
+ * @param {TestResult} feedbackType
  */
-StudioApp.prototype.shouldDisplayFeedbackDialog = function (options) {
-  if (options.preventDialog) {
+StudioApp.prototype.shouldDisplayFeedbackDialog_ = function (preventDialog, feedbackType) {
+  if (preventDialog) {
     return false;
   }
 
@@ -1500,7 +1507,7 @@ StudioApp.prototype.shouldDisplayFeedbackDialog = function (options) {
   // success feedback.
   const constants = getStore().getState().pageConstants;
   if (!constants.noInstructionsWhenCollapsed) {
-    return this.feedback_.canContinueToNextLevel(options.feedbackType);
+    return this.feedback_.canContinueToNextLevel(feedbackType);
   }
   return true;
 };
@@ -1561,12 +1568,14 @@ StudioApp.prototype.report = function (options) {
 
   this.lastTestResult = options.testResult;
 
+  const readOnly = getStore().getState().pageConstants.isReadOnlyWorkspace;
+
   // If hideSource is enabled, the user is looking at a shared level that
   // they cannot have modified. In that case, don't report it to the service
   // or call the onComplete() callback expected. The app will just sit
   // there with the Reset button as the only option.
   var self = this;
-  if (!(this.hideSource && this.share)) {
+  if (!(this.hideSource && this.share) && !readOnly) {
     var onAttemptCallback = (function () {
       return function (builderDetails) {
         for (var option in builderDetails) {
@@ -1722,7 +1731,10 @@ StudioApp.prototype.setConfigValues_ = function (config) {
   this.requiredBlocks_ = config.level.requiredBlocks || [];
   this.recommendedBlocks_ = config.level.recommendedBlocks || [];
 
-  if (config.ignoreLastAttempt) {
+  // Always use the source code from the level definition for contained levels,
+  // so that changes made in levelbuilder will show up for users who have
+  // already run the level.
+  if (config.ignoreLastAttempt || config.hasContainedLevels) {
     config.level.lastAttempt = '';
   }
 
@@ -1821,7 +1833,8 @@ StudioApp.prototype.configureDom = function (config) {
   var referenceArea = document.getElementById('reference_area');
   // noInstructionsWhenCollapsed is used in TopInstructions to determine when to use CSPTopInstructions (in which case
   // display videos in the top instructions) or CSFTopInstructions (in which case the videos are appended here).
-  const referenceAreaInTopInstructions = config.noInstructionsWhenCollapsed && experiments.isEnabled('resourcesTab');
+
+  const referenceAreaInTopInstructions = config.noInstructionsWhenCollapsed;
   if (!referenceAreaInTopInstructions && referenceArea) {
     belowViz.appendChild(referenceArea);
   }
@@ -2320,9 +2333,14 @@ StudioApp.prototype.setStartBlocks_ = function (config, loadLastAttempt) {
     this.loadBlocks(startBlocks);
   } catch (e) {
     if (loadLastAttempt) {
-      Blockly.mainBlockSpace.clear();
-      // Try loading the default start blocks instead.
-      this.setStartBlocks_(config, false);
+      try {
+        Blockly.mainBlockSpace.clear();
+        // Try loading the default start blocks instead.
+        this.setStartBlocks_(config, false);
+      } catch (otherException) {
+        // re-throw the original exception
+        throw e;
+      }
     } else {
       throw e;
     }
@@ -2393,7 +2411,9 @@ StudioApp.prototype.handleUsingBlockly_ = function (config) {
     editBlocks: utils.valueOr(config.level.edit_blocks, false),
     showUnusedBlocks: utils.valueOr(config.showUnusedBlocks, true),
     readOnly: utils.valueOr(config.readonlyWorkspace, false),
-    showExampleTestButtons: utils.valueOr(config.showExampleTestButtons, false)
+    showExampleTestButtons: utils.valueOr(config.showExampleTestButtons, false),
+    valueTypeTabShapeMap: utils.valueOr(config.valueTypeTabShapeMap, {}),
+    typeHints: utils.valueOr(config.level.showTypeHints, false),
   };
 
   // Never show unused blocks or disable autopopulate in edit mode
@@ -2714,13 +2734,14 @@ StudioApp.prototype.displayPlayspaceAlert = function (type, alertContents) {
  * @param {number} [object.sideMaring] - Optional param specifying margin on
  *   either side of element
  * @param {React.Component} alertContents
+ * @param {?string} position
  */
-StudioApp.prototype.displayAlert = function (selector, props, alertContents) {
+StudioApp.prototype.displayAlert = function (selector, props, alertContents, position = 'absolute') {
   var parent = $(selector);
   var container = parent.children('.react-alert');
   if (container.length === 0) {
     container = $("<div class='react-alert'/>").css({
-      position: 'absolute',
+      position: position,
       left: 0,
       right: 0,
       top: 0,
@@ -2803,13 +2824,13 @@ StudioApp.prototype.forLoopHasDuplicatedNestedVariables_ = function (block) {
 
   // Not the most efficient of algo's, but we shouldn't have enough blocks for
   // it to matter.
-  return innerBlock && block.getVars().some(function (varName) {
+  return innerBlock && Blockly.Variables.allVariablesFromBlock(block).some(function (varName) {
     return innerBlock.getDescendants().some(function (descendant) {
       if (descendant.type !== 'controls_for' &&
           descendant.type !== 'controls_for_counter') {
         return false;
       }
-      return descendant.getVars().indexOf(varName) !== -1;
+      return Blockly.Variables.allVariablesFromBlock(descendant).indexOf(varName) !== -1;
     });
   });
 };
@@ -2876,6 +2897,7 @@ StudioApp.prototype.setPageConstants = function (config, appSpecificConstants) {
     inputOutputTable: config.level.inputOutputTable,
     is13Plus: config.is13Plus,
     isSignedIn: config.isSignedIn,
+    userId: config.userId,
     textToSpeechEnabled: config.textToSpeechEnabled,
     isK1: config.level.isK1,
     appType: config.app,
@@ -2883,6 +2905,7 @@ StudioApp.prototype.setPageConstants = function (config, appSpecificConstants) {
     showProjectTemplateWorkspaceIcon: !!config.level.projectTemplateLevelName &&
       !config.level.isK1 &&
       !config.readonlyWorkspace,
+    serverLevelId: config.serverLevelId,
   }, appSpecificConstants);
 
   getStore().dispatch(setPageConstants(combined));

@@ -6,51 +6,60 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import SummaryTable from './summary_table';
 import RegionalPartnerDropdown from './regional_partner_dropdown';
+import ApplicantSearch from './applicant_search';
+import AdminNavigationButtons from './admin_navigation_buttons';
 import Spinner from '../components/spinner';
-import {
-  UnmatchedFilter,
-  RegionalPartnerDropdownOptions as dropdownOptions
-} from './constants';
+import {RegionalPartnerPropType} from './constants';
 import $ from 'jquery';
 
 export class Summary extends React.Component {
   static propTypes = {
-    regionalPartnerName: PropTypes.string.isRequired,
+    regionalPartnerFilter: RegionalPartnerPropType.isRequired,
+    showRegionalPartnerDropdown: PropTypes.bool,
     isWorkshopAdmin: PropTypes.bool
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: true,
+      applications: null,
+    };
   }
 
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  };
-
-  state = {
-    loading: true,
-    applications: null,
-    regionalPartnerName: this.props.regionalPartnerName,
-    regionalPartnerFilter: null
-  };
+  componentWillReceiveProps(nextProps) {
+    if (this.props.regionalPartnerFilter !== nextProps.regionalPartnerFilter) {
+      this.load(nextProps.regionalPartnerFilter);
+    }
+  }
 
   componentWillMount() {
-    $.ajax({
-      method: 'GET',
-      url: `/api/v1/pd/applications?regional_partner_filter=${UnmatchedFilter}`,
-      dataType: 'json'
-    })
-    .done(data => {
-      this.setState({
-        loading: false,
-        applications: data
-      });
-    });
+    this.load(this.props.regionalPartnerFilter);
   }
 
-  handleRegionalPartnerChange = (selected) => {
-    const regionalPartnerFilter = selected ? selected.value : null;
-    const regionalPartnerName = selected ? selected.label : this.props.regionalPartnerName;
-    this.setState({ regionalPartnerName, regionalPartnerFilter });
-    $.ajax({
+  componentWillUnmount() {
+    this.abortLoad();
+  }
+
+  abortLoad() {
+    if (this.loadRequest) {
+      this.loadRequest.abort();
+    }
+  }
+
+  load(regionalPartnerFilter) {
+    this.abortLoad();
+    this.setState({loading: true});
+
+    let url = '/api/v1/pd/applications';
+    if (this.props.isWorkshopAdmin) {
+      url += `?${$.param({regional_partner_value: regionalPartnerFilter.value})}`;
+    }
+
+    this.loadRequest = $.ajax({
       method: 'GET',
-      url: `/api/v1/pd/applications?regional_partner_filter=${regionalPartnerFilter ? regionalPartnerFilter : UnmatchedFilter}`,
+      url,
       dataType: 'json'
     }).done((data) => {
       this.setState({
@@ -58,7 +67,7 @@ export class Summary extends React.Component {
         applications: data
       });
     });
-  };
+  }
 
   render() {
     if (this.state.loading) {
@@ -66,36 +75,41 @@ export class Summary extends React.Component {
     }
     return (
       <div>
+        <ApplicantSearch/>
         {this.props.isWorkshopAdmin &&
-          <RegionalPartnerDropdown
-            onChange={this.handleRegionalPartnerChange}
-            regionalPartnerFilter={this.state.regionalPartnerFilter}
-            additionalOptions={dropdownOptions}
-          />
+          <AdminNavigationButtons/>
         }
-        <h1>{this.state.regionalPartnerName}</h1>
+        {this.props.showRegionalPartnerDropdown &&
+          <RegionalPartnerDropdown/>
+        }
+        <h1>{this.props.regionalPartnerFilter.label}</h1>
         <div className="row">
           <SummaryTable
+            id="summary-csf-facilitators"
             caption="CS Fundamentals Facilitators"
             data={this.state.applications["csf_facilitators"]}
             path="csf_facilitators"
           />
           <SummaryTable
+            id="summary-csd-facilitators"
             caption="CS Discoveries Facilitators"
             data={this.state.applications["csd_facilitators"]}
             path="csd_facilitators"
           />
           <SummaryTable
+            id="summary-csp-facilitators"
             caption="CS Principles Facilitators"
             data={this.state.applications["csp_facilitators"]}
             path="csp_facilitators"
           />
           <SummaryTable
+            id="summary-csd-teachers"
             caption="CS Discoveries Teachers"
             data={this.state.applications["csd_teachers"]}
             path="csd_teachers"
           />
           <SummaryTable
+            id="summary-csp-teachers"
             caption="CS Principles Teachers"
             data={this.state.applications["csp_teachers"]}
             path="csp_teachers"
@@ -107,7 +121,7 @@ export class Summary extends React.Component {
 }
 
 export default connect(state => ({
-  regionalPartnerName: state.regionalPartnerName,
-  regionalPartners: state.regionalPartners,
+  regionalPartnerFilter: state.regionalPartnerFilter,
   isWorkshopAdmin: state.permissions.workshopAdmin,
+  showRegionalPartnerDropdown: state.regionalPartners.length > 1
 }))(Summary);

@@ -451,13 +451,15 @@ describe('entry tests', () => {
     'levels/editors/_all':          './src/sites/studio/pages/levels/editors/_all.js',
     'levels/editors/_dsl':          './src/sites/studio/pages/levels/editors/_dsl.js',
     'projects/index':               './src/sites/studio/pages/projects/index.js',
-    'projects/public':               './src/sites/studio/pages/projects/public.js',
+    'projects/public':            './src/sites/studio/pages/projects/public.js',
+    'projects/featured':          './src/sites/studio/pages/projects/featured.js',
     'schoolInfo':                   './src/sites/studio/pages/schoolInfo.js',
     'schoolInfoInterstitial':       './src/sites/studio/pages/schoolInfoInterstitial.js',
     'scripts/stage_extras':         './src/sites/studio/pages/scripts/stage_extras.js',
     'signup':                       './src/sites/studio/pages/signup.js',
     'raceInterstitial':             './src/sites/studio/pages/raceInterstitial.js',
     'layouts/_terms_interstitial':  './src/sites/studio/pages/layouts/_terms_interstitial.js',
+    'maker/home':                   './src/sites/studio/pages/maker/home.js',
     'maker/setup':                  './src/sites/studio/pages/maker/setup.js',
     'maker/discountcode':           './src/sites/studio/pages/maker/discountcode.js',
     'scriptOverview':               './src/sites/studio/pages/scriptOverview.js',
@@ -492,8 +494,7 @@ describe('entry tests', () => {
     'code.org/views/theme_common_head_after': './src/sites/code.org/pages/views/theme_common_head_after.js',
     'hourofcode.com/views/theme_common_head_after': './src/sites/hourofcode.com/pages/views/theme_common_head_after.js',
 
-    pd: './src/code-studio/pd/workshop_dashboard/workshop_dashboard.jsx',
-
+    'pd/workshop_dashboard/index': './src/sites/studio/pages/pd/workshop_dashboard/index.js',
     'pd/teacher_application/new': './src/sites/studio/pages/pd/teacher_application/new.js',
     'pd/facilitator_program_registration/new': './src/sites/studio/pages/pd/facilitator_program_registration/new.js',
     'pd/regional_partner_program_registration/new': './src/sites/studio/pages/pd/regional_partner_program_registration/new.js',
@@ -504,6 +505,8 @@ describe('entry tests', () => {
     'pd/application/facilitator_application/new': './src/sites/studio/pages/pd/application/facilitator_application/new.js',
     'pd/application/teacher_application/new': './src/sites/studio/pages/pd/application/teacher_application/new.js',
     'pd/application/principal_approval_application/new': './src/sites/studio/pages/pd/application/principal_approval_application/new.js',
+    'pd/teachercon1819_registration/new': './src/sites/studio/pages/pd/teachercon1819_registration/new.js',
+    'pd/fit_weekend1819_registration/new': './src/sites/studio/pages/pd/fit_weekend1819_registration/new.js',
 
     'pd/professional_learning_landing/index': './src/sites/studio/pages/pd/professional_learning_landing/index.js',
     'pd/regional_partner_contact/new': './src/sites/studio/pages/pd/regional_partner_contact/new.js',
@@ -524,8 +527,12 @@ describe('entry tests', () => {
     'code.org/public/educate/curriculum/courses': './src/sites/code.org/pages/public/educate/curriculum/courses.js',
     'code.org/views/workshop_search' : './src/sites/code.org/pages/views/workshop_search.js',
 
+    'census_reviewers/review_reported_inaccuracies': './src/sites/studio/pages/census_reviewers/review_reported_inaccuracies.js',
+
     'code.org/public/yourschool': './src/sites/code.org/pages/public/yourschool.js',
-    'hourofcode.com/public/index': './src/sites/hourofcode.com/pages/public/index.js'
+    'hourofcode.com/public/index': './src/sites/hourofcode.com/pages/public/index.js',
+
+    cookieBanner: './src/cookieBanner/cookieBanner.js',
   };
 
   // Create a config for each of our bundles
@@ -633,7 +640,6 @@ describe('entry tests', () => {
   var ext = envConstants.DEV ? 'uncompressed' : 'compressed';
   config.concat = {
     vendor: {
-      nonull: true,
       src: [
         'lib/blockly/preamble_' + ext + '.js',
         'lib/blockly/blockly_' + ext + '.js',
@@ -643,7 +649,6 @@ describe('entry tests', () => {
       dest: 'build/package/js/blockly.js'
     }
   };
-
 
   config.uglify = {
     lib: {

@@ -65,6 +65,7 @@ import * as thumbnailUtils from '../util/thumbnail';
 import Sounds from '../Sounds';
 import {makeDisabledConfig} from '../dropletUtils';
 import {getRandomDonorTwitter} from '../util/twitterHelper';
+import {showHideWorkspaceCallouts} from '../code-studio/callouts';
 
 import {TestResults, ResultType} from '../constants';
 import i18n from '../code-studio/i18n';
@@ -463,21 +464,17 @@ Applab.init = function (config) {
     // should never be present on such levels, however some levels do
     // have levelHtml stored due to a previous bug. HTML set by levelbuilder
     // is stored in startHtml, not levelHtml. Also ignore levelHtml for embedded
-    // levels so that updates made to startHtml by levelbuilders are shown.
+    // or contained levels so that updates made to startHtml by levelbuilders
+    // are shown.
     if (!getStore().getState().pageConstants.hasDesignMode ||
-        getStore().getState().pageConstants.isEmbedView) {
+        getStore().getState().pageConstants.isEmbedView ||
+        getStore().getState().pageConstants.hasContainedLevels) {
       config.level.levelHtml = '';
     }
 
     // Set designModeViz contents after it is created in configureDom()
     // and sized in drawDiv().
     Applab.setLevelHtml(level.levelHtml || level.startHtml || "");
-
-    // IE9 doesnt support the way we handle responsiveness. Instead, explicitly
-    // resize our visualization (user can still resize with grippy)
-    if (!utils.browserSupportsCssMedia()) {
-      studioApp().resizeVisualization(300);
-    }
   };
 
   config.afterEditorReady = function () {
@@ -736,7 +733,7 @@ Applab.render = function () {
     Applab.reactMountPoint_);
 };
 
-Applab.exportApp = function () {
+Applab.exportApp = function (expoOpts) {
   Applab.runButtonClick();
   var html = document.getElementById('divApplab').outerHTML;
   studioApp().resetButtonClick();
@@ -744,7 +741,8 @@ Applab.exportApp = function () {
     // TODO: find another way to get this info that doesn't rely on globals.
     window.dashboard && window.dashboard.project.getCurrentName() || 'my-app',
     studioApp().editor.getValue(),
-    html
+    html,
+    expoOpts
   );
 };
 
@@ -937,7 +935,7 @@ var displayFeedback = function () {
       executionError: Applab.executionError,
       response: Applab.response,
       level: level,
-      showingSharing: level.freePlay,
+      showingSharing: false,
       tryAgainText: applabMsg.tryAgainText(),
       feedbackImage: Applab.feedbackImage,
       twitter: twitterOptions,
@@ -1070,6 +1068,7 @@ function onInterfaceModeChange(mode) {
       Applab.activeScreen().focus();
     }
   }
+  requestAnimationFrame(() => showHideWorkspaceCallouts());
 }
 
 /**

@@ -6,7 +6,7 @@
 import $ from 'jquery';
 var netsimMsg = require('@cdo/netsim/locale');
 var markup = require('./NetSimPacketEditor.html.ejs');
-var KeyCodes = require('../constants').KeyCodes;
+import {KeyCodes} from '../constants';
 var NetSimEncodingControl = require('./NetSimEncodingControl');
 var NetSimLogPanel = require('./NetSimLogPanel');
 var Packet = require('./Packet');
@@ -707,7 +707,7 @@ NetSimPacketEditor.prototype.bindElements_ = function () {
     rowFields.message.focus(removeWatermark);
     rowFields.message.keypress(
         makeKeypressHandlerWithWhitelist(rowType.messageAllowedCharacters));
-    rowFields.message.keydown(function (jqueryEvent){
+    rowFields.message.keydown(function (jqueryEvent) {
       if (isUnmodifiedEnterPress(jqueryEvent)) {
         this.enterKeyPressedCallback_(jqueryEvent);
         // We don't want to insert a newline or anything, since we have special

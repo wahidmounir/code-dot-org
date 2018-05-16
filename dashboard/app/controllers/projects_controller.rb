@@ -83,6 +83,13 @@ class ProjectsController < ApplicationController
       name: 'New Game Lab Project',
       login_required: true,
     },
+    gamelab_jr: {
+      name: 'New Game Lab Jr Project',
+      levelbuilder_required: true,
+    },
+    spritelab: {
+      name: 'New Sprite Lab Project',
+    },
     makerlab: {
       name: 'New Maker Lab Project',
       login_required: true
@@ -133,6 +140,68 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def project_and_featured_project_fields
+    [
+      :storage_apps__id___id,
+      :storage_apps__storage_id___storage_id,
+      :storage_apps__value___value,
+      :storage_apps__project_type___project_type,
+      :storage_apps__published_at___published_at,
+      :featured_projects__featured_at___featured_at,
+      :featured_projects__unfeatured_at___unfeatured_at
+    ]
+  end
+
+  def combine_projects_and_featured_projects_data
+    storage_apps = "#{CDO.pegasus_db_name}__storage_apps".to_sym
+    project_featured_project_combo_data = DASHBOARD_DB[:featured_projects].
+      select(*project_and_featured_project_fields).
+      join(storage_apps, id: :storage_app_id).all
+    extract_data_for_tables(project_featured_project_combo_data)
+  end
+
+  def extract_data_for_tables(project_featured_project_combo_data)
+    @featured_project_table_rows = []
+    project_featured_project_combo_data.each do |project_details|
+      project_details_value = JSON.parse(project_details[:value])
+      channel = storage_encrypt_channel_id(project_details[:storage_id], project_details[:id])
+      featured_project_row = {
+        projectName: project_details_value['name'],
+        channel: channel,
+        type: project_details[:project_type],
+        publishedAt: project_details[:published_at],
+        thumbnailUrl: project_details_value['thumbnailUrl'],
+        featuredAt: project_details[:featured_at],
+        unfeaturedAt: project_details[:unfeatured_at],
+      }
+      @featured_project_table_rows << featured_project_row
+    end
+    sort_projects(@featured_project_table_rows)
+  end
+
+  # @param [Array {Hash}] Each hash is data for a row in the featured projects tables.
+  # The rows are sorted into two arrays: featured or unfeatured, based on
+  # on whether the project is currently featured or not.
+  def sort_projects(featured_project_table_rows)
+    @featured = []
+    @unfeatured = []
+    featured_project_table_rows.each do |row|
+      featured = row[:unfeaturedAt].nil? && !row[:featuredAt].nil?
+      featured ? @featured << row : @unfeatured << row
+    end
+  end
+
+  # GET /projects/featured
+  # Access is restricted to those with project_validator permission
+  def featured
+    if current_user && current_user.project_validator?
+      combine_projects_and_featured_projects_data
+      render template: 'projects/featured'
+    else
+      redirect_to '/projects/public', flash: {alert: 'Only project validators can feature projects.'}
+    end
+  end
+
   # Renders a <script> tag with JS to redirect /p/:key#:channel_id/:action to /projects/:key/:channel_id/:action.
   def redirect_legacy
     render layout: nil
@@ -171,11 +240,16 @@ class ProjectsController < ApplicationController
       return
     end
     return if redirect_under_13_without_tos_teacher(@level)
-    redirect_to action: 'edit', channel_id: ChannelToken.create_channel(
+    channel = ChannelToken.create_channel(
       request.ip,
       StorageApps.new(storage_id('user')),
       data: initial_data,
       type: params[:key]
+    )
+    redirect_to(
+      action: 'edit',
+      channel_id: channel,
+      enableMaker: params['enableMaker'] ? true : nil
     )
   end
 
@@ -251,7 +325,6 @@ class ProjectsController < ApplicationController
     end
 
     FirehoseClient.instance.put_record(
-      'analysis-events',
       study: 'project-views',
       event: project_view_event_type(iframe_embed, sharing),
       # allow cross-referencing with the storage_apps table.
@@ -297,8 +370,8 @@ class ProjectsController < ApplicationController
       remix_parent_id: remix_parent_id,
     )
     AssetBucket.new.copy_files src_channel_id, new_channel_id
-    AnimationBucket.new.copy_files src_channel_id, new_channel_id
-    SourceBucket.new.copy_files src_channel_id, new_channel_id
+    animation_list = AnimationBucket.new.copy_files src_channel_id, new_channel_id
+    SourceBucket.new.remix_source src_channel_id, new_channel_id, animation_list
     FileBucket.new.copy_files src_channel_id, new_channel_id
     redirect_to action: 'edit', channel_id: new_channel_id
   end
@@ -324,7 +397,11 @@ class ProjectsController < ApplicationController
   end
 
   def get_from_cache(key)
-    @@project_level_cache[key] ||= Level.find_by_key(key)
+    if Script.should_cache?
+      @@project_level_cache[key] ||= Level.find_by_key(key)
+    else
+      Level.find_by_key(key)
+    end
   end
 
   # For certain actions, check a special permission before proceeding.

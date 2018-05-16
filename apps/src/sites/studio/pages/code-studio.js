@@ -12,6 +12,7 @@ import { getStore } from '@cdo/apps/code-studio/redux';
 import { setRtlFromDOM } from '@cdo/apps/code-studio/isRtlRedux';
 import initSigninState from '@cdo/apps/code-studio/initSigninState';
 import initResponsive from '@cdo/apps/code-studio/responsive';
+import hashEmail from '@cdo/apps/code-studio/hashEmail';
 
 const store = getStore();
 store.dispatch(setRtlFromDOM());
@@ -30,8 +31,8 @@ window.Radium = require('radium');
 
 // TODO (bbuchanan): Stop including these components in a global way, just
 //                   require them specifically where needed.
-require('@cdo/apps/code-studio/components/abuse_error');
-require('@cdo/apps/code-studio/components/report_abuse_form');
+require('@cdo/apps/code-studio/components/AbuseError');
+require('@cdo/apps/code-studio/components/ReportAbuseForm');
 require('@cdo/apps/code-studio/components/SendToPhone');
 require('@cdo/apps/code-studio/components/SmallFooter');
 require('@cdo/apps/code-studio/components/GridEditor');
@@ -47,7 +48,7 @@ if ($.fn.modal) {
 window.dashboard = window.dashboard || {};
 window.dashboard.clientState = require('@cdo/apps/code-studio/clientState');
 window.dashboard.createCallouts = require('@cdo/apps/code-studio/callouts').default;
-window.dashboard.hashEmail = require('@cdo/apps/code-studio/hashEmail');
+window.dashboard.hashEmail = hashEmail;
 window.dashboard.levelCompletions = require('@cdo/apps/code-studio/levelCompletions');
 window.dashboard.popupWindow = require('@cdo/apps/code-studio/popup-window');
 window.dashboard.reporting = require('@cdo/apps/code-studio/reporting');

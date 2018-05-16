@@ -10,7 +10,6 @@ export const projectDataPropType = PropTypes.shape({
   type: PropTypes.string.isRequired,
   publishedAt: PropTypes.string.isRequired,
   publishedToPublic: PropTypes.bool.isRequired,
-  publishedToClass: PropTypes.bool.isRequired,
 });
 
 
@@ -23,6 +22,16 @@ export const personalProjectDataPropType = PropTypes.shape({
   isPublished: PropTypes.bool
 });
 
+export const featuredProjectDataPropType = PropTypes.shape({
+  projectName: PropTypes.string.isRequired,
+  channel: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  publishedAt: PropTypes.string,
+  thumbnailUrl: PropTypes.string,
+  featuredAt: PropTypes.string.isRequired,
+  unfeaturedAt: PropTypes.string,
+});
+
 export const projectPropType = PropTypes.shape({
   projectData: projectDataPropType.isRequired,
   currentGallery: PropTypes.string.isRequired,
@@ -31,6 +40,11 @@ export const projectPropType = PropTypes.shape({
 export const Galleries = {
   PUBLIC: 'PUBLIC',
   PRIVATE: 'PRIVATE',
+};
+
+export const featuredProjectTableTypes = {
+  current: 'currentFeatured',
+  archived: 'archivedUnfeatured'
 };
 
 export const MAX_PROJECTS_PER_CATEGORY = 100;
@@ -46,6 +60,28 @@ export const PROJECT_TYPE_MAP = {
   gamelab: i18n.projectTypeGamelab(),
   playlab: i18n.projectTypePlaylab(),
   weblab: i18n.projectTypeWeblab(),
+};
+
+export const FEATURED_PROJECT_TYPE_MAP = {
+  applab: i18n.projectTypeApplab(),
+  artist: i18n.projectTypeDrawing(),
+  frozen: i18n.projectTypeDrawing(),
+  gamelab: i18n.projectTypeGamelab(),
+  playlab: i18n.projectTypePlaylab(),
+  gumball: i18n.projectTypePlaylab(),
+  infinity: i18n.projectTypePlaylab(),
+  iceage: i18n.projectTypePlaylab(),
+  minecraft_adventurer: i18n.projectTypeMinecraft(),
+  minecraft_designer: i18n.projectTypeMinecraft(),
+  minecraft_hero: i18n.projectTypeMinecraft(),
+  bounce: i18n.projectTypeEvents(),
+  flappy: i18n.projectTypeEvents(),
+  starwars: i18n.projectTypeEvents(),
+  starwarsblocks_hour: i18n.projectTypeEvents(),
+  sports: i18n.projectTypeEvents(),
+  basketball: i18n.projectTypeEvents(),
+  artist_k1: i18n.projectTypeK1(),
+  playlab_k1: i18n.projectTypeK1(),
 };
 
 // The project table uses the channels API to populate the personal projects

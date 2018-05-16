@@ -78,5 +78,167 @@ module Pd::Application
       Pd::Application::ApplicationBase.send_all_decision_notification_emails
       Pd::Application::ApplicationBase.send_all_decision_notification_emails
     end
+
+    test 'total score' do
+      application = ApplicationBase.new
+
+      # initially nil
+      assert_nil application.total_score
+
+      # non-numeric only, still nil
+      # Also handles nil values
+      application.response_scores = {
+        q1: 'Yes',
+        q2: nil,
+      }.to_json
+      assert_nil application.total_score
+
+      # Numeric with 0
+      application.response_scores = {
+        q1: 'Yes',
+        q2: nil,
+        q3: '0',
+        q4: 0
+      }.to_json
+      assert_equal 0, application.total_score
+
+      # Numeric non-zero
+      application.response_scores = {
+        q1: 'Yes',
+        q2: nil,
+        q3: '1',
+        q4: 2,
+        q5: '0',
+      }.to_json
+      assert_equal 3, application.total_score
+    end
+
+    test 'answer_with_additional_text for a string answer' do
+      answer_hash = {
+        string_question: 'Other:',
+        string_question_other: 'my explanation'
+      }
+
+      full_answer = ApplicationBase.answer_with_additional_text answer_hash, :string_question
+      assert_equal 'Other: my explanation', full_answer
+    end
+
+    test 'answer_with_additional_text for a string answer and custom other text' do
+      answer_hash = {
+        string_question: 'A custom answer:',
+        string_question_explanation: 'my custom explanation'
+      }
+
+      full_answer = ApplicationBase.answer_with_additional_text answer_hash,
+        :string_question, 'A custom answer:', :string_question_explanation
+      assert_equal 'A custom answer: my custom explanation', full_answer
+    end
+
+    test 'answer_with_additional_text for an array answer' do
+      answer_hash = {
+        array_question: [
+          'An answer',
+          'Other:'
+        ],
+        array_question_other: 'my explanation'
+      }
+
+      full_answer = ApplicationBase.answer_with_additional_text answer_hash, :array_question
+      assert_equal(
+        [
+          'An answer',
+          'Other: my explanation',
+        ],
+        full_answer
+      )
+    end
+
+    test 'answer_with_additional_text for an array answer and custom other text' do
+      answer_hash = {
+        array_question: [
+          'A supplied answer',
+          'A custom answer:'
+        ],
+        array_question_other: 'my custom explanation'
+      }
+
+      full_answer = ApplicationBase.answer_with_additional_text answer_hash,
+        :array_question, 'A custom answer:', :array_question_other
+      assert_equal(
+        [
+          'A supplied answer',
+          'A custom answer: my custom explanation',
+        ],
+        full_answer
+      )
+    end
+
+    test 'full answers' do
+      application = ApplicationBase.new
+      application.stubs(additional_text_fields:
+        [
+          [:string_question_with_extra],
+          [:array_question_with_extra]
+        ]
+      )
+      form_data = {
+        regular_string_question: 'regular string answer',
+        regular_array_question: ['regular array answer'],
+        string_question_with_extra: 'Other:',
+        string_question_with_extra_other: 'my other string answer',
+        array_question_with_extra: ['Other:'],
+        array_question_with_extra_other: 'my other array answer',
+        filtered_question: 'to be removed'
+      }
+
+      application.stubs(sanitize_form_data_hash: form_data)
+      ApplicationBase.stubs(filtered_labels: form_data.except(:filtered_question))
+
+      expected_full_answers = {
+        regular_string_question: 'regular string answer',
+        regular_array_question: ['regular array answer'],
+        string_question_with_extra: 'Other: my other string answer',
+        array_question_with_extra: ['Other: my other array answer'],
+      }
+
+      assert_equal expected_full_answers, application.full_answers
+    end
+
+    test 'date_accepted formats the accepted date as iso8601' do
+      application = ApplicationBase.new
+      assert_nil application.date_accepted
+
+      # March 9, 2018 10:15am
+      application.accepted_at = DateTime.new(2018, 3, 9, 10, 15)
+      assert_equal '2018-03-09', application.date_accepted
+    end
+
+    test 'memoized full_answers' do
+      application = ApplicationBase.new
+      application.stubs(additional_text_fields:
+        [
+          [:string_question_with_extra]
+        ]
+      )
+      form_data = {
+        regular_string_question: 'regular string answer',
+        string_question_with_extra: 'Other:',
+        string_question_with_extra_other: 'my other string answer',
+      }
+      application.stubs(sanitize_form_data_hash: form_data)
+      ApplicationBase.stubs(filtered_labels: form_data)
+
+      expected_full_answers = {
+        regular_string_question: 'regular string answer',
+        string_question_with_extra: 'Other: my other string answer',
+      }
+
+      assert_nil application.instance_variable_get(:@full_answers)
+      assert_equal expected_full_answers, application.full_answers
+      assert_equal expected_full_answers, application.instance_variable_get(:@full_answers)
+
+      application.form_data = nil
+      assert_nil application.instance_variable_get(:@full_answers)
+    end
   end
 end

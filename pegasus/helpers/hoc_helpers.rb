@@ -2,7 +2,7 @@ require 'rmagick'
 require 'cdo/graphics/certificate_image'
 require 'dynamic_config/gatekeeper'
 
-UNSAMPLED_SESSION_ID = 'HOC_UNSAMPLED'
+UNSAMPLED_SESSION_ID = 'HOC_UNSAMPLED'.freeze
 
 # Creates a session row and sets the hour of code cookie to the session_id,
 # if the user is assigned to the sample set (as decided by a random choice
@@ -122,10 +122,8 @@ def complete_tutorial(tutorial={})
       )
     end
 
-    site = "http://#{row[:referer]}"
-    if DCDO.get('new_congrats', false) && tutorial[:orgname].try(:include?, 'Code.org')
-      site = CDO.studio_url('', CDO.default_scheme)
-    end
+    site = tutorial[:orgname].try(:include?, 'Code.org') ?
+      CDO.studio_url('', CDO.default_scheme) : "http://#{row[:referer]}"
 
     destination = "#{site}/congrats?i=#{row[:session]}"
     destination += "&co=#{row[:company]}" unless row[:company].blank?

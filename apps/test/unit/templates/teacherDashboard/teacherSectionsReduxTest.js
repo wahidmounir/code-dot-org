@@ -103,23 +103,29 @@ const sections = [
 const validCourses = [
   {
     id: 29,
-    name: "CS Discoveries",
+    name: "CS Discoveries 2017",
     script_name: "csd",
     category: "Full Courses",
     position: 1,
     category_priority: 0,
+    assignment_family_title: 'CS Discoveries',
+    assignment_family_name: 'csd',
+    version_year: '2017',
   },
   {
     id: 30,
-    name: "CS Principles",
+    name: "CS Principles 2017",
     script_name: "csp",
     category: "Full Courses",
     position: 0,
     category_priority: 0,
     script_ids: [112, 113],
+    assignment_family_title: 'CS Principles',
+    assignment_family_name: 'csp',
+    version_year: '2017',
   }];
 
-  const validScripts = [
+const validScripts = [
   {
     id: 1,
     name: "Accelerated Course",
@@ -268,23 +274,23 @@ describe('teacherSectionsRedux', () => {
         [assignmentId(null, 112), assignmentId(null, 113)]);
     });
 
-    it('adds primaryAssignmentId for a course', () => {
-      const primaryIds = nextState.primaryAssignmentIds;
-      validCourses.forEach(course => {
-        assert(primaryIds.includes(assignmentId(course.id, null)));
+    it('adds assignmentFamily for a course', () => {
+      const assignmentFamilies = nextState.assignmentFamilies;
+      ['csd', 'csp'].forEach(courseName => {
+        assert(assignmentFamilies.find(af => af.assignment_family_name === courseName));
       });
     });
 
-    it('adds primaryAssignmentId for a script that is not in a course', () => {
-      const primaryIds = nextState.primaryAssignmentIds;
+    it('adds assignmentFamily for a script that is not in a course', () => {
+      const assignmentFamilies = nextState.assignmentFamilies;
       const courselessScript = validScripts[0];
-      assert(!primaryIds.includes(courselessScript.id));
+      assert(assignmentFamilies.find(af => af.assignment_family_name === courselessScript.script_name));
     });
 
-    it('does not add primaryAssignmentId for a script that is in a course', () => {
-      const primaryIds = nextState.primaryAssignmentIds;
+    it('does not add assignmentFamily for a script that is in a course', () => {
+      const assignmentFamilies = nextState.assignmentFamilies;
       const scriptInCourse = validScripts[4];
-      assert(!primaryIds.includes(scriptInCourse.id));
+      assert(assignmentFamilies.find(af => af.assignment_family_name === scriptInCourse.script_name));
     });
   });
 
@@ -414,7 +420,7 @@ describe('teacherSectionsRedux', () => {
         loginType: undefined,
         grade: '',
         providerManaged: false,
-        stageExtras: false,
+        stageExtras: true,
         pairingAllowed: true,
         sharingDisabled: false,
         studentCount: 0,
@@ -509,6 +515,15 @@ describe('teacherSectionsRedux', () => {
           providerManaged: false, // Uneditable!
         })
       )).to.throw();
+    });
+
+    it('switching to non-CSF course assignment turns off stage extras', () => {
+      let state = reducer(editingNewSectionState, setValidAssignments(validCourses, validScripts));
+      state = reducer(state, editSectionProperties({scriptId: 1}));
+      expect(state.sectionBeingEdited.stageExtras).to.equal(false);
+
+      state = reducer(state, editSectionProperties({scriptId: 36}));
+      expect(state.sectionBeingEdited.stageExtras).to.equal(true);
     });
   });
 
@@ -969,23 +984,53 @@ describe('teacherSectionsRedux', () => {
         script: null,
       }
     });
+    const stateWithInvalidScriptAssignment = reducer(stateWithSections, {
+      type: EDIT_SECTION_SUCCESS,
+      sectionId: '12',
+      serverSection: {
+        ...sections[1],
+        course_id: null,
+        script: {id: 35, name: "netsim"},
+      }
+    });
+    const stateWithInvalidCourseAssignment = reducer(stateWithSections, {
+      type: EDIT_SECTION_SUCCESS,
+      sectionId: '12',
+      serverSection: {
+        ...sections[1],
+        course_id: 9999,
+        script: null,
+      }
+    });
 
     const assignedSection = stateWithUnassignedSection.sections["11"];
     const unassignedSection = stateWithUnassignedSection.sections["12"];
     const assignedSectionWithUnit = stateWithUnassignedSection.sections["307"];
+    const invalidScriptSection = stateWithInvalidScriptAssignment.sections['12'];
+    const invalidCourseSection = stateWithInvalidCourseAssignment.sections['12'];
 
     it('assignmentNames returns the name if the section is assigned a course/script', () => {
       const names = assignmentNames(stateWithUnassignedSection.validAssignments, assignedSection);
-      assert.deepEqual(names, ['CS Discoveries']);
+      assert.deepEqual(names, ['CS Discoveries 2017']);
     });
 
     it('assignmentNames returns the names of course and script if assigned both', () => {
       const names = assignmentNames(stateWithUnassignedSection.validAssignments, assignedSectionWithUnit);
-      assert.deepEqual(names, ['CS Discoveries', 'Unit 1: The Internet']);
+      assert.deepEqual(names, ['CS Discoveries 2017', 'Unit 1: The Internet']);
     });
 
     it('assignmentName returns empty array if unassigned', () => {
       const names = assignmentNames(stateWithUnassignedSection.validAssignments, unassignedSection);
+      assert.deepEqual(names, []);
+    });
+
+    it('assignmentName returns empty array if assigned script is not a valid assignment', () => {
+      const names = assignmentNames(stateWithInvalidScriptAssignment.validAssignments, invalidScriptSection);
+      assert.deepEqual(names, []);
+    });
+
+    it('assignmentName returns empty array if assigned course is not a valid assignment', () => {
+      const names = assignmentNames(stateWithInvalidCourseAssignment.validAssignments, invalidCourseSection);
       assert.deepEqual(names, []);
     });
 
@@ -1001,6 +1046,16 @@ describe('teacherSectionsRedux', () => {
 
     it('assignmentPaths returns empty array if unassigned', () => {
       const paths = assignmentPaths(stateWithUnassignedSection, unassignedSection);
+      assert.deepEqual(paths, []);
+    });
+
+    it('assignmentPaths returns empty array if assigned script is not a valid assignment', () => {
+      const paths = assignmentPaths(stateWithInvalidScriptAssignment, invalidScriptSection);
+      assert.deepEqual(paths, []);
+    });
+
+    it('assignmentPaths returns empty array if assigned course is not a valid assignment', () => {
+      const paths = assignmentPaths(stateWithInvalidCourseAssignment, invalidCourseSection);
       assert.deepEqual(paths, []);
     });
   });
@@ -1410,7 +1465,7 @@ describe('teacherSectionsRedux', () => {
         grade: '2',
         providerManaged: false,
         hidden: false,
-        assignmentNames: ['CS Discoveries'],
+        assignmentNames: ['CS Discoveries 2017'],
         assignmentPaths: ['/courses/csd']
       }, {
         id: 12,

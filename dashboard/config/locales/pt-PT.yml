@@ -16,7 +16,7 @@
   activerecord:
     errors:
       messages:
-        blank: "é obrigatório"
+        blank: é obrigatório
         blank_plural: are required
         invalid_plural: are invalid
     attributes:
@@ -135,7 +135,7 @@
     age: Idade
     user_type: Aluno ou professor?
     submit: Criar conta
-    teacher: "É um professor?"
+    teacher: É um professor?
     valid_username: Disponível!
     invalid_username: O nome de utilizador tem de ter, pelo menos, 5 caracteres
     taken_username: O nome de utilizador já existe
@@ -157,7 +157,7 @@
     user_type_label: Tipo de conta
     user_type_teacher: Professor
     user_type_student: Aluno
-    field_is_required: "é obrigatório"
+    field_is_required: é obrigatório
     accept_terms: Você deve concordar em criar uma conta
     error: An error occurred.
   school_info:
@@ -211,6 +211,7 @@
       email: Endereço de e-mail
       submit: OK
     reset_errors:
+      captcha_required: Please fill out the CAPTCHA to reset your password.
       invalid_email: It looks like you may have signed up with an invalid email address.
         Please email support@code.org to receive a password recovery link.
     change_form:
@@ -242,7 +243,7 @@
     remove: "(remove section)"
     type:
       picture: Picture Password
-      word: Secret Words
+      word: Palavra secreta
       email: E-mail
       google_classroom: Google Classroom
       clever: Clever
@@ -428,6 +429,7 @@
     confirm_secret_words: Confirm that it is you by entering your current secret words
     enter_parent_email: Enter your parent or guardian's email address (for password
       recovery)
+    update: Update Account
   user_level:
     completed: Concluído
     tried: Tentado
@@ -775,6 +777,9 @@
         and games with objects and characters that interact with each other.
       audience: Maiores de 13 anos
       cta: Saber mais
+    hoc-encryption:
+      title: Simple Encryption
+      body: Students will learn techniques to create and crack encrypted messages.
     weblab:
       title: Web Lab (beta)
       body: Web Lab is a programming environment where you can make simple web pages
@@ -796,6 +801,10 @@
       title: Minecraft
       body: Programe animais e outras criaturas Minecraft na sua própria versão do
         Minecraft.
+    hero:
+      title: Minecraft
+      body: Minecraft is back for the Hour of Code with a brand new activity! Journey
+        through Minecraft with code.
     sports:
       title: Sports
       body: Make a basketball game or mix and match across sports.
@@ -879,6 +888,9 @@
     hide_survey_last_answer: This survey is anonymous.  Please visit the teacher dashboard
       for aggregate results.  Note that results are only visible if at least five
       students submitted the survey.
+    survey_submission_thankyou: Thank you for submitting this survey! The survey has
+      been cleared so that your responses stay anonymous. Note that your teacher will
+      still be able to see responses for the whole class, but without names attached.
   level_group-submittable:
     wrong_title: Obrigado
     wrong_body: Thank you for submitting answers.
@@ -1033,7 +1045,7 @@
     close: Fechar
     more: Mais
     name: Nome
-    updated: "Última atualização"
+    updated: Última atualização
     project_type: Tipo de projeto
     help_text: Clica em <strong>Desenvolver uma aplicação</strong> ou <strong>Desenhar
       alguma coisa</strong> para entrares num novo Laboratório de jogos ou fazeres

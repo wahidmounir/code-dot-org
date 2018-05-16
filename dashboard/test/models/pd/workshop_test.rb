@@ -5,11 +5,26 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
 
   self.use_transactional_test_case = true
   setup_all do
-    @organizer = create(:workshop_organizer)
+    @organizer = create(:program_manager)
     @workshop = create(:pd_workshop, organizer: @organizer)
+
+    @workshop_organizer = create(:workshop_organizer)
+    @organizer_workshop = create(:pd_workshop, organizer: @workshop_organizer)
   end
   setup do
     @workshop.reload
+
+    @organizer_workshop.reload
+  end
+
+  # TODO: remove this test when workshop_organizer is deprecated
+  test 'query by workshop organizer' do
+    # create a workshop with a different organizer, which should not be returned below
+    create(:pd_workshop)
+
+    workshops = Pd::Workshop.organized_by @workshop_organizer
+    assert_equal 1, workshops.length
+    assert_equal workshops.first, @organizer_workshop
   end
 
   test 'query by organizer' do
@@ -48,26 +63,40 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
     assert_equal workshops.first, @workshop
   end
 
-  test 'facilitated_or_organized_by' do
+  test 'exclude_summer scope' do
+    summer_workshop = create :pd_workshop, :local_summer_workshop
+    teachercon = create :pd_workshop, :teachercon
+
+    assert Pd::Workshop.exclude_summer.exclude? summer_workshop
+    assert Pd::Workshop.exclude_summer.exclude? teachercon
+    assert Pd::Workshop.exclude_summer.include? @workshop
+  end
+
+  test 'managed_by' do
     user = create :workshop_organizer
     user.permission = UserPermission::FACILITATOR
+    regional_partner = create(:regional_partner_program_manager, program_manager: user).regional_partner
 
     expected_workshops = [
       create(:pd_workshop, facilitators: [user]),
+      create(:pd_workshop, organizer: user),
+      create(:pd_workshop, regional_partner: regional_partner),
+
+      # combos
       create(:pd_workshop, num_facilitators: 1, organizer: user),
       create(:pd_workshop, facilitators: [user], organizer: user),
-      create(:pd_workshop, organizer: user)
+      create(:pd_workshop, regional_partner: regional_partner, facilitators: [user], organizer: user)
     ]
 
     # extra (not included)
-    create :pd_workshop, num_facilitators: 1
+    create :pd_workshop, num_facilitators: 1, regional_partner: create(:regional_partner)
 
-    filtered = Pd::Workshop.facilitated_or_organized_by(user)
-    assert_equal 4, filtered.count
+    filtered = Pd::Workshop.managed_by(user)
+    assert_equal 6, filtered.count
     assert_equal expected_workshops.map(&:id).sort, filtered.pluck(:id).sort
 
-    assert_equal 3, filtered.organized_by(user).count
-    assert_equal 2, filtered.facilitated_by(user).count
+    assert_equal 4, filtered.organized_by(user).count
+    assert_equal 3, filtered.facilitated_by(user).count
   end
 
   test 'query by attended teacher' do
@@ -89,13 +118,13 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
   end
 
   test 'query by state' do
-    workshop_not_started = @workshop
+    workshops_not_started = [@workshop, @organizer_workshop]
     workshop_in_progress = create :pd_workshop, started_at: Time.now
     workshop_ended = create :pd_ended_workshop
 
     not_started = Pd::Workshop.in_state(Pd::Workshop::STATE_NOT_STARTED)
-    assert_equal 1, not_started.count
-    assert_equal workshop_not_started.id, not_started[0][:id]
+    assert_equal workshops_not_started.length, not_started.count
+    assert_equal workshops_not_started, not_started
 
     in_progress = Pd::Workshop.in_state(Pd::Workshop::STATE_IN_PROGRESS)
     assert_equal 1, in_progress.count
@@ -134,7 +163,7 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
     @workshop.end!
     assert_equal 'Ended', @workshop.state
     assert_equal 'Ended', @workshop.state
-    assert @workshop.sessions.first.code.nil?
+    assert_not_nil @workshop.sessions.first.code
   end
 
   test 'start is idempotent' do
@@ -317,11 +346,11 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
   end
 
   test 'friendly name' do
-    workshop = create :pd_workshop, course: Pd::Workshop::COURSE_CSF, location_name: 'Code.org',
+    workshop = create :pd_workshop, course: Pd::Workshop::COURSE_ADMIN, location_name: 'Code.org',
       sessions: [create(:pd_session, start: Date.new(2016, 9, 1))]
 
     # no subject
-    assert_equal 'CS Fundamentals workshop on 09/01/16 at Code.org', workshop.friendly_name
+    assert_equal 'Admin workshop on 09/01/16 at Code.org', workshop.friendly_name
 
     # with subject
     workshop.update!(course: Pd::Workshop::COURSE_ECS, subject: Pd::Workshop::SUBJECT_ECS_UNIT_5)
@@ -351,6 +380,41 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
     # combined
     assert_equal [workshop_pivot.id],
       Pd::Workshop.scheduled_start_on_or_after(pivot_date).scheduled_start_on_or_before(pivot_date).pluck(:id)
+  end
+
+  test 'in_year' do
+    # before
+    create :pd_workshop, num_sessions: 1, sessions_from: Date.new(2016, 12, 31)
+
+    workshops_this_year = [
+      create(:pd_workshop, num_sessions: 1, sessions_from: Date.new(2017, 1, 1)),
+      create(:pd_workshop, num_sessions: 1, sessions_from: Date.new(2017, 12, 31))
+    ]
+
+    # after
+    create :pd_workshop, num_sessions: 1, sessions_from: Date.new(2018, 12, 31)
+
+    assert_equal workshops_this_year.map(&:id), Pd::Workshop.in_year(2017).pluck(:id)
+  end
+
+  test 'future scope' do
+    future_workshops = [
+      # Today
+      create(:pd_workshop, num_sessions: 1, sessions_from: Date.today),
+
+      # Next week
+      create(:pd_workshop, num_sessions: 1, sessions_from: Date.today + 1.week)
+    ]
+
+    # Excluded (not future) workshops:
+    # Last week
+    create :pd_workshop, num_sessions: 1, sessions_from: Date.today - 1.week
+    # Today, but ended
+    create :pd_ended_workshop, num_sessions: 1, sessions_from: Date.today
+    # Next week, but ended
+    create :pd_ended_workshop, num_sessions: 1, sessions_from: Date.today + 1.week
+
+    assert_equal future_workshops, Pd::Workshop.future
   end
 
   test 'end date filters' do
@@ -394,35 +458,39 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
     # Workshops with 0 (not counting deleted), 1 and 2 enrollments
     workshops = [
       @workshop,
+      @organizer_workshop,
       build(:pd_workshop, num_enrollments: 1),
       build(:pd_workshop, num_enrollments: 2)
     ]
     # save out of order
     workshops.shuffle.each(&:save!)
 
-    assert_equal workshops.pluck(:id), Pd::Workshop.order_by_enrollment_count.pluck(:id)
-    assert_equal workshops.pluck(:id), Pd::Workshop.order_by_enrollment_count(desc: false).pluck(:id)
-    assert_equal workshops.reverse.pluck(:id), Pd::Workshop.order_by_enrollment_count(desc: true).pluck(:id)
+    assert_equal [0, 0, 1, 2], Pd::Workshop.order_by_enrollment_count.map {|w| w.enrollments.count}
+    assert_equal [0, 0, 1, 2], Pd::Workshop.order_by_enrollment_count(desc: false).map {|w| w.enrollments.count}
+    assert_equal [2, 1, 0, 0], Pd::Workshop.order_by_enrollment_count(desc: true).map {|w| w.enrollments.count}
   end
 
   test 'order_by_enrollment_count with duplicates' do
     workshops = [
       @workshop,
+      @organizer_workshop,
       build(:pd_workshop),
       build(:pd_workshop, num_enrollments: 1),
     ]
     # save out of order
     workshops.shuffle.each(&:save!)
 
-    assert_equal [0, 0, 1], Pd::Workshop.order_by_enrollment_count(desc: false).map {|w| w.enrollments.count}
-    assert_equal [1, 0, 0], Pd::Workshop.order_by_enrollment_count(desc: true).map {|w| w.enrollments.count}
+    assert_equal [0, 0, 0, 1], Pd::Workshop.order_by_enrollment_count(desc: false).map {|w| w.enrollments.count}
+    assert_equal [1, 0, 0, 0], Pd::Workshop.order_by_enrollment_count(desc: true).map {|w| w.enrollments.count}
   end
 
   test 'order_by_state' do
+    @workshop.started_at = Time.now
     workshops = [
       build(:pd_ended_workshop), # Ended
-      build(:pd_workshop, started_at: Time.now), # In Progress
+      # build(:pd_workshop, started_at: Time.now), # In Progress
       @workshop, # Not Started
+      @organizer_workshop # Not Started
     ]
     # save out of order
     workshops.shuffle.each(&:save!)
@@ -636,7 +704,20 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
     assert_equal enrollments.pluck(:id).sort, @workshop.unattended_enrollments.pluck(:id).sort
   end
 
+  # TODO: remove this test when workshop_organizer is deprecated
   test 'organizer_or_facilitator?' do
+    facilitator = create :facilitator
+    @organizer_workshop.facilitators << facilitator
+    another_organizer = create :workshop_organizer
+    another_facilitator = create :facilitator
+
+    assert @organizer_workshop.organizer_or_facilitator?(@workshop_organizer)
+    assert @organizer_workshop.organizer_or_facilitator?(facilitator)
+    refute @organizer_workshop.organizer_or_facilitator?(another_organizer)
+    refute @organizer_workshop.organizer_or_facilitator?(another_facilitator)
+  end
+
+  test 'organizer_or_facilitator? with program manager organizer' do
     facilitator = create :facilitator
     @workshop.facilitators << facilitator
     another_organizer = create :workshop_organizer
@@ -666,10 +747,12 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
       OpenStruct.new(
         latitude: 47.6101003,
         longitude: -122.33746,
+        city: 'Seattle',
+        state: 'WA',
         formatted_address: '1501 4th Ave, Seattle, WA 98101, USA'
       )
     ]
-    expected_processed_location = '{"latitude":47.6101003,"longitude":-122.33746,"formatted_address":"1501 4th Ave, Seattle, WA 98101, USA"}'
+    expected_processed_location = '{"latitude":47.6101003,"longitude":-122.33746,"city":"Seattle","state":"WA","formatted_address":"1501 4th Ave, Seattle, WA 98101, USA"}'
     Honeybadger.expects(:notify).never
 
     # Normal lookup
@@ -684,11 +767,13 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
     @workshop.process_location
     assert_nil @workshop.processed_location
 
-    # Don't bother looking up blank addresses
-    Geocoder.expects(:search).never
-    @workshop.location_address = ''
-    @workshop.process_location
-    assert_nil @workshop.processed_location
+    # Don't bother looking up blank addresses or TBA/TBDs
+    ['', 'tba', 'TBA', 'tbd', 'N/A'].each do |address|
+      Geocoder.expects(:search).never
+      @workshop.location_address = address
+      @workshop.process_location
+      assert_nil @workshop.processed_location
+    end
 
     # Retry on errors
     Geocoder.expects(:search).with('1501 4th Ave, Seattle WA').raises(SocketError).then.returns(mock_geocoder_result).twice
@@ -706,10 +791,11 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
 
   test 'suppress_reminders?' do
     suppressed = [
+      create(:pd_workshop, course: Pd::Workshop::COURSE_CSF, subject: Pd::Workshop::SUBJECT_CSF_FIT),
       create(:pd_workshop, course: Pd::Workshop::COURSE_CSD, subject: Pd::Workshop::SUBJECT_CSD_TEACHER_CON),
       create(:pd_workshop, course: Pd::Workshop::COURSE_CSD, subject: Pd::Workshop::SUBJECT_CSD_FIT),
       create(:pd_workshop, course: Pd::Workshop::COURSE_CSP, subject: Pd::Workshop::SUBJECT_CSP_TEACHER_CON),
-      create(:pd_workshop, course: Pd::Workshop::COURSE_CSP, subject: Pd::Workshop::SUBJECT_CSP_FIT),
+      create(:pd_workshop, course: Pd::Workshop::COURSE_CSP, subject: Pd::Workshop::SUBJECT_CSP_FIT)
     ]
 
     refute @workshop.suppress_reminders?
@@ -773,13 +859,142 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
   end
 
   test 'friendly date range same month' do
-    workshop = create :pd_workshop, num_sessions: 5, sessions_from: Date.new(2017, 3, 10)
+    workshop = build :pd_workshop, num_sessions: 5, sessions_from: Date.new(2017, 3, 10)
     assert_equal 'March 10-14, 2017', workshop.friendly_date_range
   end
 
   test 'friendly date range different months' do
-    workshop = create :pd_workshop, num_sessions: 5, sessions_from: Date.new(2017, 3, 30)
+    workshop = build :pd_workshop, num_sessions: 5, sessions_from: Date.new(2017, 3, 30)
     assert_equal 'March 30 - April 3, 2017', workshop.friendly_date_range
+  end
+
+  test 'date_and_location_name with processed location and sessions' do
+    workshop = build :pd_workshop, num_sessions: 5, sessions_from: Date.new(2017, 3, 30),
+      processed_location: {city: 'Seattle', state: 'WA'}.to_json
+
+    assert_equal 'March 30 - April 3, 2017, Seattle WA', workshop.date_and_location_name
+  end
+
+  test 'date_and_location_name with processed location but no sessions' do
+    workshop = build :pd_workshop, processed_location: {city: 'Seattle', state: 'WA'}.to_json
+
+    assert_equal 'Dates TBA, Seattle WA', workshop.date_and_location_name
+  end
+
+  test 'date_and_location_name with no location but with sessions' do
+    workshop = build :pd_workshop, num_sessions: 5, sessions_from: Date.new(2017, 3, 30),
+      processed_location: nil
+
+    assert_equal 'March 30 - April 3, 2017, Location TBA', workshop.date_and_location_name
+  end
+
+  test 'date_and_location_name with no location nor sessions' do
+    workshop = create :pd_workshop, processed_location: nil
+
+    assert_equal 'Dates TBA, Location TBA', workshop.date_and_location_name
+  end
+
+  test 'date_and_location_name for teachercon' do
+    workshop = build :pd_workshop, :teachercon, num_sessions: 5, sessions_from: Date.new(2017, 3, 30),
+      processed_location: {city: 'Seattle', state: 'WA'}.to_json
+
+    assert_equal 'March 30 - April 3, 2017, Seattle WA TeacherCon', workshop.date_and_location_name
+  end
+
+  test 'friendly_location TBA' do
+    workshop = build :pd_workshop, location_address: 'tba'
+    assert_equal 'Location TBA', workshop.friendly_location
+  end
+
+  test 'friendly_location with a city and state' do
+    workshop = build :pd_workshop, location_address: 'Seattle, WA',
+      processed_location: {city: 'Seattle', state: 'WA'}.to_json
+    assert_equal 'Seattle WA', workshop.friendly_location
+  end
+
+  test 'friendly_location with an unprocessable location address returns the address as entered' do
+    workshop = build :pd_workshop, location_address: 'my custom unprocessable location', processed_location: nil
+    assert_equal 'my custom unprocessable location', workshop.friendly_location
+  end
+
+  test 'friendly_location with no location returns tba' do
+    workshop = build :pd_workshop, location_address: '', processed_location: nil
+    assert_equal 'Location TBA', workshop.friendly_location
+  end
+
+  test 'workshops organized by a non program manager are not assigned regional partner' do
+    workshop = create :pd_workshop
+    assert_nil workshop.regional_partner
+  end
+
+  test 'workshops organized by a program manager are assigned the regional partner' do
+    regional_partner = create :regional_partner
+    program_manager = create :program_manager, regional_partner: regional_partner
+    workshop = create :pd_workshop, organizer: program_manager
+
+    assert_equal regional_partner, workshop.regional_partner
+  end
+
+  test 'csf funded workshops require a funding type' do
+    workshop = build :pd_workshop, course: Pd::Workshop::COURSE_CSF,
+      funded: true, funding_type: nil
+    refute workshop.valid?
+
+    workshop.funding_type = Pd::Workshop::FUNDING_TYPE_FACILITATOR
+    assert workshop.valid?
+  end
+
+  test 'csf unfunded workshops do not accept a funding type' do
+    workshop = build :pd_workshop, course: Pd::Workshop::COURSE_CSF,
+      funded: false, funding_type: Pd::Workshop::FUNDING_TYPE_FACILITATOR
+    refute workshop.valid?
+
+    workshop.funding_type = nil
+    assert workshop.valid?
+  end
+
+  test 'non-csf workshops do not accept a funding type' do
+    [
+      [{funded: true, funding_type: Pd::Workshop::FUNDING_TYPE_FACILITATOR}, false],
+      [{funded: false, funding_type: Pd::Workshop::FUNDING_TYPE_FACILITATOR}, false],
+      [{funded: true, funding_type: nil}, true],
+      [{funded: false, funding_type: nil}, true]
+    ].each do |params, expected_validity|
+      workshop = build :pd_workshop, course: Pd::Workshop::COURSE_CSP, **params
+      assert_equal(
+        expected_validity,
+        workshop.valid?,
+        "Expected #{params} to be #{expected_validity ? 'valid' : 'invalid'}"
+      )
+    end
+  end
+
+  test 'funded_friendly_name' do
+    [
+      [
+        {funded: false},
+        'No'
+      ],
+      [
+        {course: Pd::Workshop::COURSE_CSP, funded: true},
+        'Yes'
+      ],
+      [
+        {course: Pd::Workshop::COURSE_CSF, funded: true, funding_type: Pd::Workshop::FUNDING_TYPE_PARTNER},
+        'Yes: partner'
+      ],
+      [
+        {course: Pd::Workshop::COURSE_CSF, funded: true, funding_type: Pd::Workshop::FUNDING_TYPE_FACILITATOR},
+        'Yes: facilitator'
+      ]
+    ].each do |params, expected|
+      workshop = build :pd_workshop, **params
+      assert_equal(
+        expected,
+        workshop.funding_summary,
+        "Expected #{params} funded_friendly_name to be #{expected}"
+      )
+    end
   end
 
   private

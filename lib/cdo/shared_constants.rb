@@ -48,6 +48,15 @@ module SharedConstants
     }
   )
 
+  # The set of gamelab autorun options
+  GAMELAB_AUTORUN_OPTIONS = OpenStruct.new(
+    {
+      draw_loop: 'DRAW_LOOP',
+      draw_sprites: 'DRAW_SPRITES',
+      custom: 'CUSTOM',
+    }
+  ).freeze
+
   # Valid milestone post modes
   POST_MILESTONE_MODE = OpenStruct.new(
     {
@@ -57,7 +66,8 @@ module SharedConstants
     }
   )
 
-  PUBLISHABLE_PROJECT_TYPES_UNDER_13 = %w(
+  # This list of project types can be shared by anyone regardless of their age or sharing setting.
+  ALWAYS_PUBLISHABLE_PROJECT_TYPES = %w(
     artist
     frozen
     playlab
@@ -78,11 +88,14 @@ module SharedConstants
     playlab_k1
   ).freeze
 
-  PUBLISHABLE_PROJECT_TYPES_OVER_13 = PUBLISHABLE_PROJECT_TYPES_UNDER_13 + %w(
+  # For privacy reasons, App Lab and Game Lab can only be shared if certain conditions are met. These project types can be shared if: the user is >= 13 years old and their teacher has NOT disabled sharing OR the user is < 13 and their teacher has enabled sharing.
+  CONDITIONALLY_PUBLISHABLE_PROJECT_TYPES = %w(
     applab
     gamelab
   ).freeze
 
+  ALL_PUBLISHABLE_PROJECT_TYPES =
+    ALWAYS_PUBLISHABLE_PROJECT_TYPES + CONDITIONALLY_PUBLISHABLE_PROJECT_TYPES
   # This is a set of Applab blocks. It is used by dashboard to initialize the
   # default palette when creating a level. It is used by apps to determine
   # what the full set of blocks available is.
@@ -248,12 +261,14 @@ module SharedConstants
       "analogRead": null,
       "boardConnected": null,
       "var myLed = createLed": null,
+      "var myButton = createButton": null,
 
       // Circuit Playground
       "on": null,
       "off": null,
       "toggle": null,
       "blink": null,
+      "pulse": null,
       "stop": null,
       "color": null,
       "intensity": null,
@@ -268,16 +283,17 @@ module SharedConstants
       "buzzer.playNotes": null,
       "buzzer.playSong": null,
       "accelerometer.getOrientation": null,
-      "accelerometer.start": null,
       "accelerometer.getAcceleration": null,
       "isPressed": null,
       "holdtime": null,
       "soundSensor.value": null,
       "soundSensor.getAveragedValue": null,
       "soundSensor.setScale": null,
+      "soundSensor.threshold": null,
       "lightSensor.value": null,
       "lightSensor.getAveragedValue": null,
       "lightSensor.setScale": null,
+      "lightSensor.threshold": null,
       "tempSensor.F": null,
       "tempSensor.C": null,
       "toggleSwitch.isOpen": null,
@@ -375,6 +391,7 @@ module SharedConstants
       "setCollider": null,
       "createEdgeSprites": null,
       "shapeColor": null,
+      "tint": null,
       "setVelocity": null,
       "getDirection": null,
       "getSpeed": null,
@@ -423,6 +440,7 @@ module SharedConstants
       "setRotationSpeedEach": null,
       "setScaleEach": null,
       "setSpeedAndDirectionEach": null,
+      "setTintEach": null,
       "setVelocityEach": null,
       "setVelocityXEach": null,
       "setVelocityYEach": null,

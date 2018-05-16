@@ -5,8 +5,10 @@ exclude_csf_column_in_legend true
 student_detail_progress_view true
 teacher_resources [["lessonPlans", "https://curriculum.code.org/csp/unit1/"], ["teacherForum", "https://forum.code.org/c/csp1"], ["vocabulary", "https://curriculum.code.org/csp/unit1/vocab/"], ["standardMappings", "https://curriculum.code.org/csp/unit1/standards/"], ["professionalLearning", "https://studio.code.org/s/csp1-support"]]
 has_verified_resources true
+has_lesson_plan true
+script_announcements [{"notice"=>"Have your students take the Post-Course Survey!", "details"=>"We want to make CSP even better! Please have your students complete the Post-Course survey now at the bottom of this unit. You'll be able to see anonymized results as well.", "link"=>"", "type"=>"bullhorn"}]
 
-stage 'CS Principles Pre-survey', lockable: true
+stage 'CS Principles Pre-survey', lockable: true, flex_category: 'cspSurvey'
 assessment 'csp-pre-survey-2017-levelgroup'
 
 stage 'Personal Innovations', flex_category: 'csp1_1'
@@ -67,7 +69,6 @@ assessment 'CSP Unit 1 Ch1 Cumulative Assessment MC Group v2'
 stage 'The Internet', flex_category: 'csp1_2'
 level 'v2 U1 Internet is for Everyone Student Lesson Introduction', progression: 'Lesson Vocabulary & Resources'
 named_level 'What is the Internet?', progression: 'What is the Internet?'
-
 assessment 'U2L01 Assessment 1', progression: 'Check Your Understanding'
 assessment 'U2L01 Assessment 2', progression: 'Check Your Understanding'
 assessment 'U2L01 Assessment 3', progression: 'Check Your Understanding'
@@ -127,3 +128,7 @@ variants
   level 'csp_affirmation_intervention', experiments: ["rene-control-affirmation","rene-belonging-affirmation"], progression: 'Pre-test reflection'
 endvariants
 assessment 'CSP Unit 1 Ch2 Cumulative Assessment MC Group'
+
+stage 'Post-Course Survey', flex_category: 'cspSurvey'
+level 'csp-post-survey-2018-markdown-with-link-to-survey', progression: 'Click here! Complete the CS Principles post-course survey'
+level 'Click Here!', progression: 'Participate in a longitudinal study!'

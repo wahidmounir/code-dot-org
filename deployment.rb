@@ -46,6 +46,7 @@ def load_configuration
     'build_apps'                  => false,
     'build_dashboard'             => true,
     'build_pegasus'               => true,
+    'census_map_table_id'         => rack_env == :development ? nil : '1AUZYRjLMI5NiQsDeDBGFsOIFpL_rLGsnxNpSyR13',
     'chef_local_mode'             => rack_env == :adhoc,
     'dcdo_table_name'             => "dcdo_#{rack_env}",
     'dashboard_assets_dir'        => "#{root_dir}/dashboard/public/assets",
@@ -59,6 +60,7 @@ def load_configuration
     'dashboard_enable_pegasus'    => rack_env == :development,
     'dashboard_workers'           => 8,
     'db_writer'                   => 'mysql://root@localhost/',
+    'default_hoc_mode'            => false, # overridden by 'hoc_mode' DCDO param, except in :test
     'reporting_db_writer'         => 'mysql://root@localhost/',
     'gatekeeper_table_name'       => "gatekeeper_#{rack_env}",
     'slack_log_room'              => rack_env.to_s,
@@ -69,8 +71,6 @@ def load_configuration
     'newrelic_logging'            => rack_env == :production,
     'netsim_max_routers'          => 20,
     'netsim_shard_expiry_seconds' => 7200,
-    # npm_use_sudo now controls whether to run yarn under sudo, which should be never. Remove this variable in the future.
-    'npm_use_sudo'                => false,
     'partners'                    => %w(ar br italia ro sg tr uk za),
     'pdf_port_collate'            => 8081,
     'pdf_port_markdown'           => 8081,
@@ -200,6 +200,10 @@ class CDOImpl < OpenStruct
     canonical_hostname('hourofcode.com')
   end
 
+  def advocacy_hostname
+    canonical_hostname('advocacy.code.org')
+  end
+
   def circle_run_identifier
     ENV['CIRCLE_BUILD_NUM'] ? "CIRCLE-BUILD-#{ENV['CIRCLE_BUILD_NUM']}-#{ENV['CIRCLE_NODE_INDEX']}" : nil
   end
@@ -235,8 +239,12 @@ class CDOImpl < OpenStruct
     site_url('code.org', path, scheme)
   end
 
+  def advocacy_url(path = '', scheme = '')
+    site_url('advocacy.code.org', path, scheme)
+  end
+
   def default_scheme
-    rack_env?(:development) ? 'http:' : 'https:'
+    rack_env?(:development) || ENV['CI'] ? 'http:' : 'https:'
   end
 
   def dir(*dirs)
@@ -256,7 +264,7 @@ class CDOImpl < OpenStruct
   end
 
   def rack_env?(env)
-    rack_env == env
+    rack_env.to_sym == env.to_sym
   end
 
   # Sets the slogger to use in a test.
@@ -353,12 +361,19 @@ CDO ||= CDOImpl.new
 ##########
 
 def rack_env
-  CDO.rack_env
+  CDO.rack_env.to_sym
 end
 
 def rack_env?(*env)
   e = *env
-  e.include? rack_env
+  e.include? rack_env.to_sym
+end
+
+def with_rack_env(temporary_env)
+  previous_env = CDO.rack_env
+  CDO.rack_env = temporary_env
+  yield
+  CDO.rack_env = previous_env
 end
 
 def deploy_dir(*dirs)

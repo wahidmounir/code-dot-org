@@ -5,7 +5,7 @@ import SchoolAutocompleteDropdownWithLabel from '@cdo/apps/templates/census2017/
 import SchoolNotFound from '@cdo/apps/templates/SchoolNotFound';
 import i18n from "@cdo/locale";
 
-const SCHOOL_TYPES_HAVING_NCES_SEARCH = ['charter', 'private', 'public'];
+export const SCHOOL_TYPES_HAVING_NCES_SEARCH = ['charter', 'private', 'public'];
 
 const SCHOOL_TYPES_HAVING_NAMES = [
   'charter',
@@ -28,6 +28,7 @@ export default class SchoolInfoInputs extends Component {
     schoolCity: PropTypes.string,
     schoolState: PropTypes.string,
     schoolZip: PropTypes.string,
+    schoolLocation: PropTypes.string,
     useGoogleLocationSearch: PropTypes.bool,
     fieldNames: PropTypes.object,
     showErrors: PropTypes.bool,
@@ -42,6 +43,7 @@ export default class SchoolInfoInputs extends Component {
     schoolCity: "",
     schoolState: "",
     schoolZip: "",
+    schoolLocation: "",
     useGoogleLocationSearch: false,
     fieldNames: {
       schoolType: "user[school_info_attributes][school_type]",
@@ -132,7 +134,6 @@ export default class SchoolInfoInputs extends Component {
          />
         }
         {(outsideUS || ncesInfoNotFound || noDropdownForSchoolType) &&
-         !(outsideUS && !askForName) &&
          <SchoolNotFound
            ref={this.bindSchoolNotFound}
            onChange={this.props.onSchoolNotFoundChange}
@@ -141,6 +142,8 @@ export default class SchoolInfoInputs extends Component {
            schoolCity={SchoolNotFound.OMIT_FIELD}
            schoolState={isUS ? this.props.schoolState : SchoolNotFound.OMIT_FIELD}
            schoolZip={isUS ? this.props.schoolZip : SchoolNotFound.OMIT_FIELD}
+           schoolLocation={this.props.schoolLocation}
+           controlSchoolLocation={true}
            fieldNames={this.props.fieldNames}
            showErrorMsg={this.props.showErrors}
            singleLineLayout

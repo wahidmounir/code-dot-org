@@ -6,6 +6,7 @@ import 'jquery-ui/ui/widgets/droppable';
 import 'jquery-ui/ui/widgets/resizable';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Provider} from 'react-redux';
 import DesignWorkspace from './DesignWorkspace';
 import * as assetPrefix from '../assetManagement/assetPrefix';
 import elementLibrary from './designElements/library';
@@ -234,7 +235,10 @@ designMode.updateProperty = function (element, name, value) {
       }
       break;
     case 'text':
-      element.innerHTML = utils.escapeText(value);
+      // If element is a dropdown, do nothing here and use the type-specific setter
+      if (element.nodeName !== 'SELECT') {
+        element.innerHTML = utils.escapeText(value);
+      }
       break;
     case 'textColor':
       element.style.color = value;
@@ -263,6 +267,7 @@ designMode.updateProperty = function (element, name, value) {
       }
       break;
     }
+    // Set an image on a button.
     case 'image':
       var originalValue = element.getAttribute('data-canonical-image-url');
       element.setAttribute('data-canonical-image-url', value);
@@ -287,13 +292,14 @@ designMode.updateProperty = function (element, name, value) {
 
       var backgroundImage = new Image();
       backgroundImage.src = assetPrefix.fixPath(value);
-      element.style.backgroundImage = 'url(' + backgroundImage.src + ')';
+      element.style.backgroundImage = 'url("' + backgroundImage.src + '")';
 
       // do not resize if only the asset path has changed (e.g. on remix).
       if (value !== originalValue) {
         backgroundImage.onload = fitImage;
       }
       break;
+    // Set an image on a screen.
     case 'screen-image': {
       element.setAttribute('data-canonical-image-url', value);
 
@@ -310,10 +316,11 @@ designMode.updateProperty = function (element, name, value) {
         screenImage.src = assetPrefix.fixPath(value);
         url = screenImage.src;
       }
-      element.style.backgroundImage = 'url(' + url + ')';
+      element.style.backgroundImage = 'url("' + url + '")';
 
       break;
     }
+    // Set an image on an image element.
     case 'picture':
       originalValue = element.getAttribute('data-canonical-image-url');
       element.setAttribute('data-canonical-image-url', value);
@@ -451,7 +458,12 @@ designMode.readProperty = function (element, name) {
     case 'style-height':
       return parseFloat(element.style.height);
     case 'text':
-      return utils.escapeText(element.innerHTML);
+      // If the element is a dropdown, read the selected value
+      if (element.innerHTML && element.nodeName !== 'SELECT') {
+        return utils.escapeText(element.innerHTML);
+      } else {
+        return utils.escapeText(element.value);
+      }
     case 'textColor':
       return element.style.color;
     case 'backgroundColor':
@@ -544,6 +556,24 @@ function duplicateScreen(element) {
   return newScreen;
 }
 
+designMode.onCopyElementToScreen = function (element, destScreen) {
+  const sourceElement = $(element);
+  designMode.changeScreen(destScreen);
+
+  // Unwrap the draggable wrappers around the elements in the source screen:
+  const madeUndraggable = makeUndraggable(sourceElement.children());
+
+  let duplicateElement = sourceElement.clone(true)[0];
+  const elementType = elementLibrary.getElementType(duplicateElement);
+  elementUtils.setId(duplicateElement, elementLibrary.getUnusedElementId(elementType.toLowerCase()));
+  designMode.attachElement(duplicateElement);
+
+  // Restore the draggable wrappers on the elements in the source screen:
+  if (madeUndraggable) {
+    makeDraggable(sourceElement.children());
+  }
+};
+
 designMode.onDeletePropertiesButton = function (element, event) {
   deleteElement(element);
 };
@@ -577,7 +607,6 @@ designMode.onDepthChange = function (element, depthDirection) {
 
   var removed;
 
-  // TODO (brent) - use an enum?
   switch (depthDirection) {
     case 'forward':
       var twoAhead = outerElement.nextSibling.nextSibling;
@@ -1213,6 +1242,7 @@ designMode.renderDesignWorkspace = function (element) {
     element: element || null,
     elementIdList: Applab.getIdDropdownForCurrentScreen(),
     handleChange: designMode.onPropertyChange.bind(this, element),
+    onCopyElementToScreen: designMode.onCopyElementToScreen.bind(this, element),
     onChangeElement: designMode.editElementProperties.bind(this),
     onDepthChange: designMode.onDepthChange,
     onDuplicate: designMode.onDuplicate.bind(this, element),
@@ -1220,9 +1250,14 @@ designMode.renderDesignWorkspace = function (element) {
     onInsertEvent: designMode.onInsertEvent.bind(this),
     handleVersionHistory: Applab.handleVersionHistory,
     isDimmed: Applab.running,
-    store: getStore(),
+    screenIds: designMode.getAllScreenIds(),
   };
-  ReactDOM.render(React.createElement(DesignWorkspace, props), designWorkspace);
+  ReactDOM.render(
+      <Provider store={getStore()}>
+        <DesignWorkspace {...props}/>
+      </Provider>,
+      designWorkspace
+  );
 };
 
 /**

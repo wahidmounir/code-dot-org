@@ -58,6 +58,10 @@ class Level < ActiveRecord::Base
     authored_hints
     instructions_important
     display_name
+    map_reference
+    reference_links
+    name_suffix
+    parent_level_id
   )
 
   # Fix STI routing http://stackoverflow.com/a/9463495
@@ -311,6 +315,7 @@ class Level < ActiveRecord::Base
     Craft
     Eval
     Grid
+    GamelabJr
     Karel
     Maze
     Studio
@@ -443,9 +448,9 @@ class Level < ActiveRecord::Base
   # Returns an array of all the contained levels
   # (based on the contained_level_names property)
   def contained_levels
-    names = properties["contained_level_names"]
+    names = try('contained_level_names')
     return [] unless names.present?
-    properties["contained_level_names"].map do |contained_level_name|
+    names.map do |contained_level_name|
       Script.cache_find_level(contained_level_name)
     end
   end
@@ -474,7 +479,69 @@ class Level < ActiveRecord::Base
     summary
   end
 
+  def uses_droplet?
+    false
+  end
+
+  # Create a copy of this level named new_name, and store the id of the original
+  # level in parent_level_id.
+  # @param [String] new_name
+  # @raise [ActiveRecord::RecordInvalid] if the new name already is taken.
+  def clone_with_name(new_name)
+    level = dup
+    level.update!(name: new_name, parent_level_id: id)
+    level
+  end
+
+  # Create a copy of this level by appending new_suffix to the name, removing
+  # any previous suffix from the name first. Store the id of the original
+  # level in parent_level_id, and store the suffix in name_suffix. If a level
+  # with the same name already exists, us that instead of creating a new one.
+  #
+  # Also, copy over any project template level. If two levels with the same
+  # project template level are copied using the same new_suffix, then the new
+  # levels should both point to the same new project template level.
+  #
+  # @param [String] new_suffix The suffix to append to the name of the original
+  #   level when choosing a name for the new level, replacing any existing
+  #   name_suffix if one exists.
+  def clone_with_suffix(new_suffix)
+    # Make sure we don't go over the 70 character limit.
+    new_name = "#{base_name[0..64]}#{new_suffix}"
+
+    return Level.find_by_name(new_name) if Level.find_by_name(new_name)
+
+    level = clone_with_name(new_name)
+
+    update_params = {name_suffix: new_suffix}
+
+    if project_template_level
+      new_template_level = project_template_level.clone_with_suffix(new_suffix)
+      update_params[:project_template_level_name] = new_template_level.name
+    end
+
+    unless contained_levels.empty?
+      update_params[:contained_level_names] = contained_levels.map do |contained_level|
+        contained_level.clone_with_suffix(new_suffix).name
+      end
+    end
+
+    level.update!(update_params)
+    level
+  end
+
+  def age_13_required?
+    false
+  end
+
   private
+
+  # Returns the level name, removing the name_suffix first (if present).
+  def base_name
+    return name unless name_suffix
+    strip_suffix_regex = /^(.*)#{Regexp.escape(name_suffix)}$/
+    name[strip_suffix_regex, 1] || name
+  end
 
   def write_to_file?
     custom? && !is_a?(DSLDefined) && Rails.application.config.levelbuilder_mode

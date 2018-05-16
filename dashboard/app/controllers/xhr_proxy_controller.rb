@@ -27,7 +27,10 @@ class XhrProxyController < ApplicationController
   ALLOWED_HOSTNAME_SUFFIXES = %w(
     accuweather.com
     apex.oracle.com
+    api.coinmarketcap.com
     api.data.gov
+    api.football-data.org
+    api.foursquare.com
     api.nasa.gov
     api.open-notify.org
     api.openweathermap.org
@@ -37,6 +40,7 @@ class XhrProxyController < ApplicationController
     api.themoviedb.org
     api.zippopotam.us
     atlas.media.mit.edu
+    bible-api.com
     code.org
     data.cityofchicago.org
     data.gv.at
@@ -57,6 +61,8 @@ class XhrProxyController < ApplicationController
     nuevaschool2.ngrok.io
     nuevaschool3.ngrok.io
     rhcloud.com
+    sheets.googleapis.com
+    spreadsheets.google.com
     swapi.co
     transitchicago.com
     translate.yandex.net

@@ -1,7 +1,9 @@
 # coding: utf-8
+require 'cdo/url_converter'
+
+# coding: utf-8
 DEFAULT_WAIT_TIMEOUT = 2 * 60 # 2 minutes
 SHORT_WAIT_TIMEOUT = 30 # 30 seconds
-
 MODULE_PROGRESS_COLOR_MAP = {not_started: 'rgb(255, 255, 255)', in_progress: 'rgb(239, 205, 28)', completed: 'rgb(14, 190, 14)'}
 
 def wait_until(timeout = DEFAULT_WAIT_TIMEOUT)
@@ -38,25 +40,12 @@ def page_load(wait_until_unload)
 end
 
 def replace_hostname(url)
-  if ENV['DASHBOARD_TEST_DOMAIN']
-    raise 'Should not use learn.code.org' unless /\/\/learn.code.org\//.match(url).nil?
-    url = url.
-      gsub(/\/\/studio.code.org\//, "//" + ENV['DASHBOARD_TEST_DOMAIN'] + "/")
-  end
-  if ENV['PEGASUS_TEST_DOMAIN']
-    url = url.gsub(/\/\/code.org\//, "//" + ENV['PEGASUS_TEST_DOMAIN'] + "/")
-  end
-  if ENV['HOUROFCODE_TEST_DOMAIN']
-    url = url.gsub(/\/\/hourofcode.com\//, "//" + ENV['HOUROFCODE_TEST_DOMAIN'] + "/")
-  end
-  if ENV['CSEDWEEK_TEST_DOMAIN']
-    url = url.gsub(/\/\/csedweek.org\//, "//" + ENV['CSEDWEEK_TEST_DOMAIN'] + "/")
-  end
-
-  # Convert http to https
-  url = url.gsub(/^http:\/\//, 'https://') unless url.start_with? 'http://localhost'
-  # Convert x.y.code.org to x-y.code.org
-  url.gsub(/(\w+)\.(\w+)\.code\.org/, '\1-\2.code.org')
+  UrlConverter.new(
+    dashboard_host: ENV['DASHBOARD_TEST_DOMAIN'],
+    pegasus_host: ENV['PEGASUS_TEST_DOMAIN'],
+    hourofcode_host: ENV['HOUROFCODE_TEST_DOMAIN'],
+    csedweek_host: ENV['CSEDWEEK_TEST_DOMAIN']
+  ).replace_origin(url)
 end
 
 # When an individual step fails in a call to steps, one gets no feedback about
@@ -94,7 +83,13 @@ When /^I go to the newly opened tab$/ do
 end
 
 When /^I switch to the first iframe$/ do
+  $default_window = @browser.window_handle
   @browser.switch_to.frame @browser.find_element(tag_name: 'iframe')
+end
+
+# Can switch out of iframe content
+When /^I switch to the default content$/ do
+  @browser.switch_to.window $default_window
 end
 
 When /^I close the instructions overlay if it exists$/ do
@@ -146,6 +141,17 @@ end
 
 When /^I wait until (?:element )?"([^"]*)" (?:has|contains) text "([^"]*)"$/ do |selector, text|
   wait_until {@browser.execute_script("return $(#{selector.dump}).text();").include? text}
+end
+
+When /^I wait until (?:element )?"([^"]*)" does not (?:have|contain) text "([^"]*)"$/ do |selector, text|
+  wait_short_until do
+    element_text = @browser.execute_script("return $(#{selector.dump}).text();")
+    !element_text.include? text
+  end
+end
+
+When /^I wait until the first (?:element )?"([^"]*)" (?:has|contains) text "([^"]*)"$/ do |selector, text|
+  wait_until {@browser.execute_script("return $(#{selector.dump}).first().text();").include? text}
 end
 
 def jquery_is_element_visible(selector)
@@ -807,12 +813,22 @@ And(/^I set the language cookie$/) do
   debug_cookies(@browser.manage.all_cookies)
 end
 
-Given(/^I sign in as "([^"]*)"/) do |name|
+Given(/^I sign in as "([^"]*)"$/) do |name|
   steps %Q{
     Given I am on "http://studio.code.org/reset_session"
     Then I am on "http://studio.code.org/"
     And I wait to see "#signin_button"
     Then I click selector "#signin_button"
+    And I wait to see ".new_user"
+    And I fill in username and password for "#{name}"
+    And I click selector "#signin-button"
+    And I wait to see ".header_user"
+  }
+end
+
+Given(/^I sign in as "([^"]*)" from the sign in page$/) do |name|
+  steps %Q{
+    And check that the url contains "/users/sign_in"
     And I wait to see ".new_user"
     And I fill in username and password for "#{name}"
     And I click selector "#signin-button"
@@ -915,9 +931,9 @@ And /^I create a new section with course "([^"]*)"(?: and unit "([^"]*)")?$/ do 
     Then I should see the new section dialog
 
     When I select email login
-    Then I wait to see "#uitest-primary-assignment"
+    Then I wait to see "#uitest-assignment-family"
 
-    When I select the "#{primary}" option in dropdown "uitest-primary-assignment"
+    When I select the "#{primary}" option in dropdown "uitest-assignment-family"
   }
 
   if secondary
@@ -966,18 +982,37 @@ And(/^I create a student named "([^"]*)"$/) do |name|
   }
 end
 
+And(/^I create a young student named "([^"]*)"$/) do |name|
+  email, password = generate_user(name)
+
+  steps %Q{
+    Given I am on "http://studio.code.org/users/sign_up"
+    And I wait to see "#user_name"
+    And I select the "Student" option in dropdown "user_user_type"
+    And I type "#{name}" into "#user_name"
+    And I type "#{email}" into "#user_email"
+    And I type "#{password}" into "#user_password"
+    And I type "#{password}" into "#user_password_confirmation"
+    And I select the "10" option in dropdown "user_user_age"
+    And I click selector "#signup-button"
+    And I wait until I am on "http://studio.code.org/home"
+  }
+end
+
 And(/^I create a teacher named "([^"]*)"$/) do |name|
   email, password = generate_user(name)
 
   steps %Q{
     Given I am on "http://studio.code.org/reset_session"
-    Given I am on "http://studio.code.org/users/sign_up?user%5Buser_type%5D=teacher"
+    Given I am on "http://studio.code.org/users/sign_up"
     And I wait to see "#user_name"
+    And I select the "Teacher" option in dropdown "user_user_type"
     And I wait to see "#schooldropdown-block"
     And I type "#{name}" into "#user_name"
     And I type "#{email}" into "#user_email"
     And I type "#{password}" into "#user_password"
     And I type "#{password}" into "#user_password_confirmation"
+    And I select the "Yes" option in dropdown "user_email_preference_opt_in"
     And I click selector "#user_terms_of_service_version"
     And I click selector "#signup-button" to load a new page
     And I wait until I am on "http://studio.code.org/home"
@@ -1121,11 +1156,20 @@ When /^I press enter key$/ do
   @browser.action.send_keys(:return).perform
 end
 
+When /^I press double-quote key$/ do
+  @browser.action.send_keys('"').perform
+end
+
 When /^I disable onBeforeUnload$/ do
   @browser.execute_script("window.__TestInterface.ignoreOnBeforeUnload = true;")
 end
 
 Then /^I get redirected away from "([^"]*)"$/ do |old_path|
+  wait_short_until {!/#{old_path}/.match(@browser.execute_script("return location.pathname"))}
+end
+
+Then /^I get redirected away from the current page$/ do
+  old_path = @browser.execute_script("return location.pathname")
   wait_short_until {!/#{old_path}/.match(@browser.execute_script("return location.pathname"))}
 end
 
@@ -1142,23 +1186,32 @@ Then /^I get redirected to "(.*)" via "(.*)"$/ do |new_path, redirect_source|
 
   if redirect_source == 'pushState'
     state = {"modified" => true}
-  elsif redirect_source == 'dashboard' || redirect_source == 'none'
+  elsif ['dashboard', 'none'].include? redirect_source
     state = nil
   end
   expect(@browser.execute_script("return window.history.state")).to eq(state)
 end
 
 last_shared_url = nil
-Then /^I navigate to the share URL$/ do
+Then /^I save the share URL$/ do
   wait_short_until {@button = @browser.find_element(id: 'sharing-input')}
   last_shared_url = @browser.execute_script("return document.getElementById('sharing-input').value")
-  @browser.navigate.to last_shared_url
-  wait_for_jquery
+end
+
+Then /^I navigate to the share URL$/ do
+  steps <<-STEPS
+    Then I save the share URL
+    And I navigate to the last shared URL
+  STEPS
 end
 
 Then /^I navigate to the last shared URL$/ do
   @browser.navigate.to last_shared_url
   wait_for_jquery
+end
+
+Then /^I enter the last shared URL into input "(.*)"$/ do |selector|
+  @browser.execute_script("document.querySelector('#{selector}').value = \"#{last_shared_url}\"")
 end
 
 Then /^I copy the embed code into a new document$/ do
@@ -1322,17 +1375,72 @@ Then /^the section table should have (\d+) rows?$/ do |expected_row_count|
   expect(row_count.to_i).to eq(expected_row_count.to_i)
 end
 
-Then /^the section table row at index (\d+) has script href "([^"]+)"$/ do |row_index, expected_href|
-  actual_href = @browser.execute_script(
+Then /^the section table row at index (\d+) has script path "([^"]+)"$/ do |row_index, expected_path|
+  href = @browser.execute_script(
     "return $('.uitest-owned-sections tbody tr:eq(#{row_index}) td:eq(3) a:eq(1)').attr('href');"
   )
-  expect(actual_href).to eq(expected_href)
+  # ignore query params
+  actual_path = href.split('?')[0]
+  expect(actual_path).to eq(expected_path)
 end
 
-Then /^I scroll the save button into view$/ do
-  @browser.execute_script('$(".uitest-saveButton")[0].scrollIntoView(true)')
+Then /^I save the section id from row (\d+) of the section table$/ do |row_index|
+  @section_id = get_section_id_from_table(row_index)
+end
+
+Then /^the url contains the section id$/ do
+  expect(@section_id).to be > 0
+  expect(@browser.current_url).to include("?section_id=#{@section_id}")
+end
+
+Then /^the href of selector "([^"]*)" contains the section id$/ do |selector|
+  href = @browser.execute_script("return $(\"#{selector}\").attr('href');")
+  expect(@section_id).to be > 0
+
+  # make sure the query params do not come after the # symbol
+  expect(href.split('#')[0]).to include("?section_id=#{@section_id}")
+end
+
+# @return [Number] the section id for the corresponding row in the sections table
+def get_section_id_from_table(row_index)
+  # e.g. https://code.org/teacher-dashboard#/sections/54
+  href = @browser.execute_script(
+    "return $('.uitest-owned-sections tbody tr:eq(#{row_index}) td:eq(1) a').attr('href')"
+  )
+  section_id = href.split('/').last.to_i
+  expect(section_id).to be > 0
+  section_id
+end
+
+Then /^I scroll the "([^"]*)" element into view$/ do |selector|
+  @browser.execute_script("$('#{selector}')[0].scrollIntoView(true)")
 end
 
 Then /^I open the section action dropdown$/ do
   steps 'Then I click selector ".ui-test-section-dropdown" once I see it'
+end
+
+saved_url = nil
+Then /^I save the URL$/ do
+  saved_url = @browser.current_url
+end
+
+Then /^current URL is different from the last saved URL$/ do
+  expect(@browser.current_url).not_to include(saved_url)
+end
+
+Then /^I sign out using jquery$/ do
+  code = <<-JAVASCRIPT
+    window.signOutComplete = false;
+    function onSuccess() {
+      window.signOutComplete = true;
+    }
+    $.ajax({
+      url:'/users/sign_out',
+      method: 'GET',
+      success: onSuccess
+    });
+  JAVASCRIPT
+  @browser.execute_script(code)
+  wait_short_until {@browser.execute_script('return window.signOutComplete;')}
 end

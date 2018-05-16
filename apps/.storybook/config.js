@@ -1,8 +1,9 @@
 import React, {PropTypes} from 'react';
-import * as storybook from '@kadira/storybook';
-import infoAddon from '@kadira/react-storybook-addon-info';
-import Node from '@kadira/react-storybook-addon-info/dist/components/Node';
-import {Pre} from '@kadira/react-storybook-addon-info/dist/components/markdown/code';
+import * as storybook from '@storybook/react';
+import { setOptions } from '@storybook/addon-options';
+import Node from '@storybook/addon-info/dist/components/Node';
+import Props from '@storybook/addon-info/dist/components/Props';
+import {Pre} from '@storybook/addon-info/dist/components/markdown/code';
 import addStoriesGroup from 'react-storybook-addon-add-stories-group';
 import experiments from '@cdo/apps/util/experiments';
 import withReduxStore from '../test/util/withReduxStore';
@@ -11,6 +12,23 @@ import '../style/common.scss';
 import '../style/netsim/style.scss';
 import '../style/applab/style.scss';
 import '../src/templates/GameButtons.story.scss';
+
+// Workaround for missing required prop in addon-info components.
+Props.propTypes = {
+  ...Props.propTypes,
+  maxPropsIntoLine: PropTypes.number,
+  maxPropObjectKeys: PropTypes.number,
+  maxPropArrayLength: PropTypes.number,
+  maxPropStringLength: PropTypes.number,
+};
+
+Node.propTypes = {
+  ...Node.propTypes,
+  maxPropsIntoLine: PropTypes.number,
+  maxPropObjectKeys: PropTypes.number,
+  maxPropArrayLength: PropTypes.number,
+  maxPropStringLength: PropTypes.number,
+};
 
 const styles = {
   centeredStory: {
@@ -87,8 +105,11 @@ function loadStories() {
       return;
     }
   });
-
 }
+
+setOptions({
+  sortStoriesByKind: true
+});
 
 function Centered({children}) {
   return <div style={styles.centeredStory}>{children}</div>;
@@ -157,7 +178,6 @@ storybook.setAddon({
   }
 });
 
-storybook.setAddon(infoAddon);
 storybook.setAddon(addStoriesGroup);
 storybook.addDecorator(story => {
   var rendered = story();

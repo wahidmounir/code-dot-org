@@ -14,9 +14,10 @@ module CdoApps
       'RAILS_ENV' => node.chef_environment
     }
     execute "setup-#{app_name}" do
-      command "bundle exec rake #{app_name}:setup_db"
+      command "bundle exec rake #{app_name}:setup_db --trace"
       cwd app_root
       environment env.merge(node['cdo-apps']['bundle_env'])
+      live_stream true
       user user
       group user
       action :nothing
@@ -78,12 +79,13 @@ module CdoApps
       action [:enable]
 
       # Restart when Ruby is upgraded.
-      subscribes :reload, "apt_package[ruby#{node['cdo-ruby']['version']}]", :delayed if node['cdo-ruby']
+      # Full restart needed because the path to Unicorn executable changed.
+      subscribes :restart, "apt_package[ruby#{node['cdo-ruby']['version']}]", :delayed if node['cdo-ruby']
 
-      # Restart when gem bundle is updated.
+      # Reload when gem bundle is updated.
       subscribes :reload, 'execute[bundle-install]', :delayed
 
-      # Restart when application is rebuilt.
+      # Reload when application is rebuilt.
       subscribes :reload, 'execute[build-cdo]', :delayed
 
       # Ensure globals.yml is up-to-date before (re)starting service.
@@ -91,7 +93,7 @@ module CdoApps
       only_if {File.exist? init_script}
     end
 
-    # Always restart service whenever port/socket listener configuration is changed.
+    # Always reload service whenever port/socket listener configuration is changed.
     file "#{app_name}_listeners" do
       path "#{Chef::Config[:file_cache_path]}/#{app_name}_listeners"
       content lazy {"#{node['cdo-secrets']["#{app_name}_sock"]}:#{node['cdo-secrets']["#{app_name}_port"]}"}

@@ -8,7 +8,7 @@ We welcome elementary school teachers to sign up for a free, high-quality profes
 <br />
 ### No workshop in your area or outside the United States? <br />
 
-If you are in the United States, [find a CS Fundamentals Facilitator](/educate/k5-affiliates-directory) near you and ask them to host one. Many of our facilitators are happy to work with you to organize a training at your school. 
+If you are in the United States, [please contact your local Regional Partner](https://studio.code.org/pd/regional_partner_contact/new) and ask them to host one. Our Regional Partners are happy to work with you to organize a training at your school or district.
 
 If there is no workshop near you, teachers anywhere in the world can use [our self-paced online workshop](/educate/professional-development-online) to get started at no cost. And, the curriculum, lesson plans, tools, and support are also available at no cost worldwide. [Join our forums](https://forum.code.org) to connect with other teachers for support, teaching tips, and best practices.
 <br />
@@ -47,9 +47,29 @@ If there is no workshop near you, teachers anywhere in the world can use [our se
 
 <div style="clear:both"></div>
 
+## Benefits beyond the workshop
+
+[col-20]
+
+<img style="margin-top:-20px;margin-bottom:-30px" src="/images/avatars/fit-200/iste.png"/>
+
+[/col-20]
+
+Code.org and ISTE are partnering to expand teacher community and learning opportunities beyond Code.org’s professional learning. Through this partnership, [we can offer an ISTE membership](https://www.iste.org/membership/code-org) exclusively to Code.org teachers at the special price of $99 (regularly $125).
+
+Check out these 3 key benefits of ISTE membership:
+
+- Professional Learning Networks made up of peer experts, including computer science educators
+- Hundreds of webinar and ISTE Conference & Expo recordings on coding and other edtech topics
+- Empowered Learner, ISTE’s print and online magazine for members covering the most important topics in edtech ($49 retail value)
+
+
+
 ## Become a CS Fundamentals Facilitator
 Code.org's [Facilitator Development Program](/educate/professional-learning/facilitator) is a highly-selective professional learning program designed to prepare and support facilitators to deliver quality workshops on the CS Fundamentals curriculum.
 
 Help bring professional learning opportunities to your community by becoming a Code.org Facilitator!
 
 <a href="/educate/professional-learning/facilitator"><button>Learn more</button>
+
+<%= view :answerdash %>

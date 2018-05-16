@@ -1,10 +1,11 @@
 import React from 'react';
 import QuestionsTable from './QuestionsTable';
 import reactBootstrapStoryDecorator from '../reactBootstrapStoryDecorator';
+import {action} from '@storybook/addon-actions';
 
 export default storybook => {
   storybook
-    .storiesOf('QuestionsTable', module)
+    .storiesOf('FormComponents/QuestionsTable', module)
     .addDecorator(reactBootstrapStoryDecorator)
     .addStoryTable([{
       name: 'simple questions table',
@@ -38,7 +39,7 @@ export default storybook => {
           errors={[
             "theOneWithTheError"
           ]}
-          onChange={storybook.action('onChange')}
+          onChange={action('onChange')}
           options={[
             "first",
             "second",

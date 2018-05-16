@@ -10,7 +10,7 @@ cs,cs,cs,cs-CZ,Čeština,Czech,TRUE,TRUE,cs,Czech,FALSE,TRUE,FALSE,TRUE,FALSE
 da,da,da,da-DK,Dansk,Danish,TRUE,TRUE,da,Danish,TRUE,TRUE,TRUE,TRUE,FALSE
 de,de,de,de-DE,Deutsch,German,TRUE,TRUE,de,German,TRUE,TRUE,TRUE,TRUE,FALSE
 el,el,el,el-GR,Ελληνικά,Greek,TRUE,TRUE,el,Greek,FALSE,FALSE,FALSE,FALSE,FALSE
-en-GB,gb,en,en-GB,Engish (UK),English (UK),FALSE,TRUE,en-GB,"English, United Kingdom",FALSE,TRUE,TRUE,TRUE,FALSE
+en-GB,gb,en,en-GB,English (UK),English (UK),FALSE,TRUE,en-GB,"English, United Kingdom",FALSE,TRUE,TRUE,TRUE,FALSE
 en,en,en,en-US,English,English,TRUE,TRUE,en,English,TRUE,TRUE,TRUE,TRUE,FALSE
 es,es,es,es-ES,Español (España),Spanish (Spain),TRUE,TRUE,es-ES,Spanish,TRUE,TRUE,TRUE,TRUE,TRUE
 es-MX,la,es,es-MX,Español (México),Spanish (Mexico),TRUE,TRUE,es-MX,"Spanish, Mexico",TRUE,TRUE,TRUE,TRUE,TRUE
@@ -46,6 +46,7 @@ mk,mk,mk,mk-MK,Mакедонски,Macedonian (FYROM),FALSE,FALSE,mk,Macedonian 
 mr,mr,mr,mr-IN,मराठी,Marathi,FALSE,FALSE,mr,Marathi,FALSE,FALSE,FALSE,FALSE,FALSE
 ms,ms,ms,ms-MY,بهاس ملايو,Malay,FALSE,TRUE,ms,Malay,FALSE,FALSE,FALSE,FALSE,FALSE
 mt,mt,mt,mt-MT,Malti,Maltese,FALSE,FALSE,mt,Maltese,FALSE,FALSE,FALSE,FALSE,FALSE
+my,my,my,my-MM,ဗမာစာ,Burmese,TRUE,FALSE,my,Burmese,FALSE,FALSE,FALSE,FALSE,FALSE
 ne,ne,ne,ne-NP,नेपाली,Nepali,FALSE,TRUE,ne-NP,Nepali,TRUE,TRUE,FALSE,FALSE,FALSE
 nl,nl,nl,nl-NL,Nederlands,Dutch,TRUE,TRUE,nl,Dutch,TRUE,TRUE,FALSE,TRUE,TRUE
 nn,nn,nn,nn-NO,Norsk (Nynorsk),Norwegian (Nynorsk),TRUE,TRUE,nn-NO,Norwegian Nynorsk,TRUE,TRUE,TRUE,TRUE,FALSE

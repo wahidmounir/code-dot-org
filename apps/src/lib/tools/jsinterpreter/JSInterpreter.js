@@ -135,7 +135,7 @@ export default class JSInterpreter {
   parse(options) {
     this.calculateCodeInfo(options.code);
 
-    if (!this.studioApp.hideSource) {
+    if (!this.studioApp.hideSource && this.studioApp.editor) {
       const session = this.studioApp.editor.aceEditor.getSession();
       this.isBreakpointRow = (row) => codegen.isAceBreakpointRow(session, row);
     } else {
@@ -146,9 +146,8 @@ export default class JSInterpreter {
       this.eventQueue = [];
       // Append our mini-runtime after the user's code. This will spin and process
       // callback functions:
-      options.code += '\nwhile (true) { var obj = getCallback(); ' +
-                      'if (obj) { var ret = obj.fn.apply(null, obj.arguments ? obj.arguments : null);' +
-                      'setCallbackRetVal(ret); }}';
+      options.code += '\n;while(true){var __jsCB=getCallback();' +
+                      'if(__jsCB){setCallbackRetVal(__jsCB.fn.apply(null,__jsCB.arguments || null));}}';
 
       CustomMarshalingInterpreter.createNativeFunctionFromInterpreterFunction = (intFunc) => {
         return (...args) => {
@@ -288,6 +287,13 @@ export default class JSInterpreter {
       // away so it can be returned in the native event handler
       this.seenReturnFromCallbackDuringExecution = true;
       this.lastCallbackRetVal = retVal;
+
+      // If we were stepping in the debugger, go back to running state:
+      if (this.paused) {
+        this.nextStep = StepType.RUN;
+        this.onNextStepChanged.notifyObservers();
+        this.handlePauseContinue();
+      }
     }
     // Provide warnings to the user if this function has been called with a
     // meaningful return value while we are no longer in the native event handler
@@ -614,8 +620,10 @@ export default class JSInterpreter {
                        stackDepth > this.firstCallStackDepthThisStep) {
               // trying to step over, and we're in deeper inside a function call... continue next onTick
             } else {
-              // Our step operation is complete, reset nextStep to StepType.RUN to
-              // return to a normal 'break' state:
+              // Our step operation is complete, set reachedBreak to ensure the
+              // current code will be selected before returning from this function.
+              reachedBreak = true;
+              // Reset nextStep to StepType.RUN to return to a normal 'break' state:
               this.nextStep = StepType.RUN;
               this.onNextStepChanged.notifyObservers();
               if (inUserCode) {
@@ -636,10 +644,14 @@ export default class JSInterpreter {
         return;
       }
     }
-    if (reachedBreak && atMaxSpeed) {
-      // If we were running atMaxSpeed and just reached a breakpoint, the
-      // code may not be selected in the editor, so do it now:
-      this.selectCurrentCode();
+    if (atMaxSpeed) {
+      if (reachedBreak) {
+        // If we were running atMaxSpeed and just reached a breakpoint, the
+        // code may not be selected in the editor, so do it now:
+        this.selectCurrentCode();
+      } else if (this.studioApp.editor) {
+        codegen.clearDropletAceHighlighting(this.studioApp.editor);
+      }
     }
     this.isExecuting = false;
   }
@@ -804,7 +816,7 @@ export default class JSInterpreter {
    * because it is outside of the userCode area, the return value is -1
    */
   selectCurrentCode(highlightClass) {
-    if (this.studioApp.hideSource) {
+    if (this.studioApp.hideSource || !this.studioApp.editCode) {
       return -1;
     }
     return codegen.selectCurrentCode(this.interpreter,
@@ -1033,7 +1045,8 @@ export default class JSInterpreter {
    * Returns the current interpreter state object.
    */
   getCurrentState() {
-    return this.interpreter && this.interpreter.peekStackFrame();
+    const currentInterpreter = this.currentEvalInterpreter || this.interpreter;
+    return currentInterpreter && currentInterpreter.peekStackFrame();
   }
 
   /**
@@ -1050,6 +1063,7 @@ export default class JSInterpreter {
     // NOTE: we are being a little tricky here (we are re-running
     // part of the Interpreter constructor with a different interpreter's
     // scope)
+    evalInterpreter.global = this.interpreter.global;
     evalInterpreter.populateScope_(evalInterpreter.ast, currentScope);
     evalInterpreter.setStack([{
       node: evalInterpreter.ast,
@@ -1064,7 +1078,12 @@ export default class JSInterpreter {
      }, this);
 
     // run() may throw if there's a problem in the expression
-    evalInterpreter.run();
+    try {
+      this.currentEvalInterpreter = evalInterpreter;
+      evalInterpreter.run();
+    } finally {
+      this.currentEvalInterpreter = null;
+    }
     return evalInterpreter.value;
   }
 

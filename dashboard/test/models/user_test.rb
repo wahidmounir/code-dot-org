@@ -78,6 +78,11 @@ class UserTest < ActiveSupport::TestCase
     assert_equal teachers[0].school_info, teachers[1].school_info
   end
 
+  test 'single user experiment is enabled' do
+    experiment = create(:single_user_experiment, min_user_id: @user.id)
+    assert_equal [experiment[:name]], @user.get_active_experiment_names
+  end
+
   test 'normalize_email' do
     teacher = create :teacher, email: 'CAPS@EXAMPLE.COM'
     assert_equal 'caps@example.com', teacher.email
@@ -1133,6 +1138,74 @@ class UserTest < ActiveSupport::TestCase
     assert @student.can_edit_email?
   end
 
+  # Temporary constraint: Student accounts cannot be upgraded to teacher
+  # accounts without manual intervention.  This is because an intermediate
+  # state in our account page changes breaks the ability to confirm your
+  # email address as a student upgrading to a teacher.
+  # Captured in tests below, will be removed in the next few days.
+  # (Brad Buchanan, 2018-05-14.)
+  test 'can change own user type as a student with a password' do
+    student = create :student
+    refute_empty student.encrypted_password
+    # Temporary: Students can't upgrade
+    #assert student.can_change_own_user_type?
+    refute student.can_change_own_user_type?
+  end
+
+  test 'can change own user type as an oauth student' do
+    student = create :google_oauth2_student
+    # Temporary: Students can't upgrade
+    # assert student.can_change_own_user_type?
+    refute student.can_change_own_user_type?
+  end
+
+  test 'can change own user type as a teacher with a password' do
+    teacher = create :teacher
+    refute_empty teacher.encrypted_password
+    assert teacher.can_change_own_user_type?
+  end
+
+  test 'can change own user type as an oauth teacher' do
+    teacher = create :teacher,
+      encrypted_password: nil,
+      provider: 'facebook',
+      uid: '1111111'
+    assert teacher.can_change_own_user_type?
+  end
+
+  test 'cannot change own user type as a student with a picture or secret words' do
+    student = create :student_in_picture_section
+    refute student.can_change_own_user_type?
+  end
+
+  test 'cannot change own user type as a teacher with sections' do
+    section = create :section
+    teacher = section.teacher
+    refute_empty teacher.sections
+    refute teacher.can_change_own_user_type?
+  end
+
+  test 'can delete own account if teacher' do
+    user = create :teacher
+    assert user.can_delete_own_account?
+  end
+
+  test 'can delete own account if independent student' do
+    user = create :student
+    refute user.teacher_managed_account?
+    assert user.can_delete_own_account?
+  end
+
+  test 'cannot delete own account if teacher-managed student' do
+    picture_section = create(:section, login_type: Section::LOGIN_TYPE_PICTURE)
+    user = create(:student, encrypted_password: '')
+    create(:follower, student_user: user, section: picture_section)
+    user.reload
+
+    assert user.teacher_managed_account?
+    refute user.can_delete_own_account?
+  end
+
   test 'teacher_managed_account? is false for teacher' do
     refute @teacher.teacher_managed_account?
   end
@@ -1386,6 +1459,34 @@ class UserTest < ActiveSupport::TestCase
 
     User.expects(:track_proficiency).once
     track_progress(user.id, csf_script_level, 100)
+  end
+
+  test 'track_level_progress_sync stops incrementing attempts for perfect results' do
+    user = create :user
+    csf_script_level = Script.get_from_cache('20-hour').script_levels.third
+    ul = UserLevel.create!(
+      user: user,
+      level: csf_script_level.level,
+      script: Script.get_from_cache('20-hour'),
+      best_result: ActivityConstants::MINIMUM_FINISHED_RESULT
+    )
+
+    track_progress(user.id, csf_script_level, 10)
+    track_progress(user.id, csf_script_level, 20)
+    track_progress(user.id, csf_script_level, 30)
+
+    assert_equal 3, ul.reload.attempts
+
+    track_progress(user.id, csf_script_level, 31)
+
+    assert_equal 4, ul.reload.attempts
+
+    track_progress(user.id, csf_script_level, 31)
+    track_progress(user.id, csf_script_level, 31)
+    track_progress(user.id, csf_script_level, 100)
+    track_progress(user.id, csf_script_level, 101)
+
+    assert_equal 4, ul.reload.attempts
   end
 
   test 'track_level_progress_sync does not overwrite the level_source_id of the navigator' do
@@ -1977,6 +2078,17 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "'invalid' does not appear to be a valid e-mail address", e.message
   end
 
+  test 'deleting user deletes dependent pd applications' do
+    teacher = create :teacher
+    application = create :pd_teacher1819_application, user: teacher
+    assert_equal application.id, teacher.pd_applications.first.id
+
+    teacher.destroy
+
+    assert teacher.reload.deleted?
+    refute Pd::Application::Teacher1819Application.exists?(application.id)
+  end
+
   test 'deleting teacher deletes dependent sections and followers' do
     follower = create :follower
     teacher = follower.user
@@ -2271,28 +2383,6 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test 'clear_user removes all PII and other information' do
-    user = create :teacher
-
-    user.clear_user_and_mark_purged
-    user.reload
-
-    assert user.valid?
-    assert_nil user.name
-    refute_nil user.username =~ /sys_deleted_\w{8}/
-    assert_nil user.current_sign_in_ip
-    assert_nil user.last_sign_in_ip
-    assert_equal '', user.email
-    assert_equal '', user.hashed_email
-    assert_nil user.parent_email
-    assert_nil user.encrypted_password
-    assert_nil user.uid
-    assert_nil user.reset_password_token
-    assert_nil user.full_address
-    assert_equal({}, user.properties)
-    refute_nil user.purged_at
-  end
-
   test 'omniauth login stores auth token' do
     auth = OmniAuth::AuthHash.new(
       provider: 'google_oauth2',
@@ -2335,9 +2425,58 @@ class UserTest < ActiveSupport::TestCase
     )
   end
 
+  test 'under 13 students have sharing off by default' do
+    student = create :user, age: 10
+    assert student.reload.sharing_disabled
+  end
+
+  test 'over 13 students have sharing on by default' do
+    student = create :user, age: 14
+    refute student.reload.sharing_disabled
+  end
+
+  test 'students share setting updates after turning 13 if they are in no sections' do
+    # create a birthday 12 years ago
+    birthday = Date.today - (12 * 365)
+    student = create :user, birthday: birthday
+    assert student.reload.sharing_disabled
+
+    # go forward in time to a day past the student's 13th birthday
+    Timecop.travel (Date.today + 366) do
+      # student signs in
+      student.sign_in_count = 2
+      student.save
+
+      # check new share setting
+      refute student.reload.sharing_disabled
+    end
+  end
+
+  test 'students share setting does not update after turning 13 if they are in sections' do
+    # create a birthday 12 years ago
+    birthday = Date.today - (12 * 365)
+    student = create :user, birthday: birthday
+
+    teacher = create :teacher
+    section1 = create :section, user: teacher
+    section1.add_student(student)
+
+    assert student.reload.sharing_disabled
+
+    # go forward in time to a day past the student's 13th birthday
+    Timecop.travel (Date.today + 366) do
+      # student signs in
+      student.sign_in_count = 2
+      student.save
+
+      # check updated share setting is unchanged
+      assert student.reload.sharing_disabled
+    end
+  end
+
   test 'stage_extras_enabled?' do
-    script = create :script
-    other_script = create :script
+    script = create :script, stage_extras_available: true
+    other_script = create :script, stage_extras_available: true
     teacher = create :teacher
     student = create :student
 
@@ -2637,5 +2776,64 @@ class UserTest < ActiveSupport::TestCase
 
     user_scripts = UserScript.where(user: user)
     assert_equal 0, user_scripts.length
+  end
+
+  test 'primary email for migrated user is readable from user model' do
+    user = create(:teacher, :with_email_authentication_option)
+    user.primary_authentication_option = user.authentication_options.first
+    user.provider = 'migrated'
+    user.primary_authentication_option.update(email: 'eric@code.org')
+    assert_equal user.email, user.authentication_options.first.email
+    assert_equal user.email, user.primary_authentication_option.email
+  end
+
+  test 'primary email for non-migrated user is not readable from user model' do
+    user = create(:teacher, :with_email_authentication_option)
+    user.primary_authentication_option = user.authentication_options.first
+    user.primary_authentication_option.update(email: 'eric@code.org')
+    assert_not_equal user.email, user.authentication_options.first.email
+    assert_not_equal user.email, user.primary_authentication_option.email
+    assert_equal user.primary_authentication_option.email, user.authentication_options.first.email
+  end
+
+  test 'within_united_states? is false without UserGeo record' do
+    user = create :student
+    assert_empty user.user_geos
+    refute user.within_united_states?
+  end
+
+  test 'within_united_states? is false if latest UserGeo has incomplete data' do
+    # Based on behavior in trackable.rb where we push a UserGeo with just
+    # user_id and ip_address, no other geo information
+    user = create :student
+    Timecop.freeze do
+      create :user_geo, :seattle, user: user
+      Timecop.travel 1
+      create :user_geo, user: user
+    end
+    assert_equal 2, user.user_geos.count
+    refute user.within_united_states?
+  end
+
+  test 'within_united_states? is false if latest UserGeo from another country' do
+    user = create :student
+    Timecop.freeze do
+      create :user_geo, :seattle, user: user
+      Timecop.travel 1
+      create :user_geo, :sydney, user: user
+    end
+    assert_equal 2, user.user_geos.count
+    refute user.within_united_states?
+  end
+
+  test 'within_united_states? is true if latest UserGeo from the United States' do
+    user = create :student
+    Timecop.freeze do
+      create :user_geo, :sydney, user: user
+      Timecop.travel 1
+      create :user_geo, :seattle, user: user
+    end
+    assert_equal 2, user.user_geos.count
+    assert user.within_united_states?
   end
 end

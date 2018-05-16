@@ -59,7 +59,7 @@ sq:
   courses: 'Kurset'
   courses_page:
     title_student: "Mëso në Code Studio"
-    title_teacher: "Teach with Code Studio"
+    title_teacher: "Teach Computer Science"
   unplugged_activity: 'Aktiviteti Unplugged'
   of: "i"
   more: "MË SHUMË"
@@ -69,7 +69,7 @@ sq:
   try_k8intro: "Provo Hyrjen tonë K-8 tek Kursi i Shkencave Kompjuterike (15-25 orë)"
   k8intro: "Hyrja K-8 tek Kursi i Shkencave Kompjuterike (15-25 orë)"
   already_started: "Keni filluar tashmë? Vazhdoni këtu >> "
-  demos: 'Admin: Te gjitha Demot'
+  demos: "Admin: Te gjitha Demot"
   continue: 'Vazhdo'
   prize: 'çmim'
   more_info: 'Më shumë informacion'
@@ -123,6 +123,9 @@ sq:
     field_is_required: "E domosdoshme"
     accept_terms: "Ju duhet të jeni dakord për të krijuar një llogari"
     error: "An error occurred."
+    email_preference_question: "Can we email you about updates to our courses, local learning opportunities, or other computer science news?"
+    email_preference_yes: "Po"
+    email_preference_no: "Jo"
   school_info:
     title: 'School Information (optional)'
     school_country: 'School Country'
@@ -171,6 +174,7 @@ sq:
       email: 'Adresa Email-it'
       submit: 'Dorëzo'
     reset_errors:
+      captcha_required: 'Please fill out the CAPTCHA to reset your password.'
       invalid_email: 'It looks like you may have signed up with an invalid email address. Please email support@code.org to receive a password recovery link.'
     change_form:
       title: 'Ndrysho fjalëkalimin'
@@ -201,7 +205,7 @@ sq:
     remove: '(remove section)'
     type:
       picture: 'Picture Password'
-      word: 'Secret Words'
+      word: 'Fjala e Fshehtë'
       email: 'Email'
       google_classroom: 'Google Classroom'
       clever: 'Clever'
@@ -220,7 +224,7 @@ sq:
       provider_managed_section: "This section is managed by another provider and cannot be joined. Please ask your teacher to add you via %{provider} and re-sync their section."
     mail:
       student_disassociated:
-        subject: 'Lajmërim nga Code.org: %{student_name} nuk është më studenti yt.'
+        subject: "Lajmërim nga Code.org: %{student_name} nuk është më studenti yt."
   reports:
     error:
       access_denied: "Ju nuk keni akses te statistikat e këtij personi"
@@ -352,7 +356,7 @@ sq:
     current_password_hint: '(ne kemi nevojë për fjalëkalimin tënd aktual që të konfirmojmë ndryshimet e bëra)'
     delete: 'Fshini llogarinë tuaj'
     delete_text: "Duke klikuar butonin më poshtë, do të fshihni llogarinë tuaj."
-    delete_text_teacher_note: 'Ju lutem vini re: duke fshirë llogarinë tuaj nuk do të fshihen llogaritë e studentëve të tjerë.'
+    delete_text_teacher_note: "Ju lutem vini re: duke fshirë llogarinë tuaj nuk do të fshihen llogaritë e studentëve të tjerë."
     delete_confirm: 'A je i sigurtë që do të fshish llogarinë tënde?'
     deleted_user: 'deleted user'
     no_password_because_oauth: 'No password because you sign in with a third-party provider.'
@@ -363,10 +367,11 @@ sq:
     create_personal_login_under_13_parent_email: 'Parent/guardian email address'
     create_personal_login_info: 'If you want to keep using your Code.org account even after the end of the school year, you can create your own login below.'
     create_personal_login_terms: "By creating a personal login, I agree to be bound by the Code.org <a href='%{terms_of_service_url}', target='_blank'>terms of service</a>. If I am under 13 years of age, I confirm that I have my parent or legal guardian's permission to use the Code.org services even without a teacher."
-    create_personal_login_email_note: 'Note: Email addresses are not stored in a form that allows us to contact students. Students will never receive emails from Code.org except for password recovery. See our <a href=''%{privacy_policy_url}'', target=''_blank''>privacy policy</a> for more information.'
+    create_personal_login_email_note: "Note: Email addresses are not stored in a form that allows us to contact students. Students will never receive emails from Code.org except for password recovery. See our <a href='%{privacy_policy_url}', target='_blank'>privacy policy</a> for more information."
     enter_new_login_info: 'Enter your new login information'
     confirm_secret_words: 'Confirm that it is you by entering your current secret words'
     enter_parent_email: "Enter your parent or guardian's email address (for password recovery)"
+    update: "Update Account"
   user_level:
     completed: 'E përfunduar'
     tried: 'U përpoqe'
@@ -654,6 +659,7 @@ sq:
     correct_title: "Faleminderit"
     correct_body: "Ju faleminderit për përgjigjen."
     hide_survey_last_answer: "Ky studim është anonim. Ju lutem vizitoni panelin e mësuesve për rezultatet agregate. Vini re se rezultatet janë të dukshme vetëm në qoftë se të paktën pesë studentë kanë dorëzuar studimin."
+    survey_submission_thankyou: "Thank you for submitting this survey! The survey has been cleared so that your responses stay anonymous. Note that your teacher will still be able to see responses for the whole class, but without names attached."
   level_group-submittable:
     wrong_title: "Faleminderit"
     wrong_body: "Ju faleminderit për përgjigjen."
@@ -701,7 +707,7 @@ sq:
     sign_out: 'Nëse nuk do të japësh moshën tënde, ti mund të <a href="%{url}">dalësh</a>.'
   terms_interstitial:
     title: "Përditësimi i Kushtet e Shërbimit dhe Rregullave të Privatësisë"
-    intro_desc: 'Ne kemi përditësuar kushtet tona të sherbimit dhe Rregullat e Privatësisë, siç tregohet më poshtë. Ndryshimet janë në fuqi që nga 24 gusht 2016. Ndryshimi më i madh: ne  <i> nuk do të ruajmë me adresat e e-mail për llogaritë e  studentëve në Code Studio </ i> Kjo është një arritje e madhe për ne dhe ne shpresojmë që kjo të përcaktoj një standard i ri për privatësinë e studentëve në shkollat teknologjike. Ne ju kemi  dërguar një përmbledhje të ndryshimeve të tjera përmes emailit.'
+    intro_desc: "Ne kemi përditësuar kushtet tona të sherbimit dhe Rregullat e Privatësisë, siç tregohet më poshtë. Ndryshimet janë në fuqi që nga 24 gusht 2016. Ndryshimi më i madh: ne  <i> nuk do të ruajmë me adresat e e-mail për llogaritë e  studentëve në Code Studio </ i> Kjo është një arritje e madhe për ne dhe ne shpresojmë që kjo të përcaktoj një standard i ri për privatësinë e studentëve në shkollat teknologjike. Ne ju kemi  dërguar një përmbledhje të ndryshimeve të tjera përmes emailit."
     intro_instructions: "Ju do të duhet të pranoni këto kushte të reja për studentët nën moshën 13 në klasën tuaj për të pasur qasje të plotë në të gjitha vecoritë e fundit në Code Studio. Kur regjistrimit një llogari për një student nën 13, do ju kërkohet për të konfirmuar se shkolla juaj ka pëlqimin e prindërve për mbledhjen e informacionit personal të nxënësit për përdorimin dhe përfitimin e shkollës, duke përfshirë programet arsimore të tilla si Code Studio."
     tos: "Kushtet e shërbimit"
     privacy: "Rregullat e Privatësisë"
@@ -717,25 +723,25 @@ sq:
     message_with_suggestion: "Please verify that the following information is correct, or update as necessary."
     save: "Ruaj"
   race_interstitial:
-    title: 'Opsionale: Na ndihmoni të ndjekim progresin tonë drejt përmirësimit të diversitetit në shkenca kompjuterike'
+    title: "Opsionale: Na ndihmoni të ndjekim progresin tonë drejt përmirësimit të diversitetit në shkenca kompjuterike"
     message: "Ju lutem na tregoni garën tuaj (kontrollo të gjitha aplikimet)"
     races:
       - 
-        white: E bardhë
+        white: "E bardhë"
       - 
-        black: I zi ose Afrikano American
+        black: "I zi ose Afrikano American"
       - 
-        hispanic: Hispanik ose Latin
+        hispanic: "Hispanik ose Latin"
       - 
-        asian: Aziatik
+        asian: "Aziatik"
       - 
-        hawaiian: Vendas Havajan ose banues të  tjetër të Paqësorit
+        hawaiian: "Vendas Havajan ose banues të  tjetër të Paqësorit"
       - 
-        american_indian: Amerikano-Indian/Vendas nga Alaska
+        american_indian: "Amerikano-Indian/Vendas nga Alaska"
       - 
-        other: Tjetër
+        other: "Tjetër"
       - 
-        opt_out: Preferoj të mos përgjigjem
+        opt_out: "Preferoj të mos përgjigjem"
     submit: "Dorëzo"
     decline: "Mbyll"
   zendesk_too_young_message: 'Na vjen keq, përdoruesit e vegjël nuk mund të futen tek faqja jonë e suportit. Ju mund të shfletosh në <a href="http://support.code.org">support.code.org</a> pa u loguar ose pyet prindërit ose mësuesit e tu që të na kontaktojnë.'
@@ -761,7 +767,7 @@ sq:
     delete: "Fshi"
     import: "Import"
     share_link_import_bad_link_header: "Share link not recognized"
-    share_link_import_bad_link_body: 'We couldn''t import that share link. Make sure you are using a link from a Minecraft: Agent puzzle, and that you have copied the full link.'
+    share_link_import_bad_link_body: "We couldn't import that share link. Make sure you are using a link from a Minecraft: Agent puzzle, and that you have copied the full link."
     share_link_import_error_header: "Something went wrong."
     share_link_import_error_body: "There was a problem importing that share link. Please try again."
     exit: "Kthehu te Kursi"
@@ -864,8 +870,8 @@ sq:
     csd4_2: 'Chapter 2: App Prototyping'
     csd5_1: 'Chapter 1: Representing Information'
     csd5_2: 'Chapter 2: Solving Data Problems'
-    csd6_1: 'Chapter 1: Hardware Output'
-    csd6_2: 'Chapter 2: Hardware Input'
+    csd6_1: 'Chapter 1: Programming with Hardware'
+    csd6_2: 'Chapter 2: Building Physical Prototypes'
     csp1_1: 'Chapter 1: Representing and Transmitting Information'
     csp1_2: 'Chapter 2: Inventing the Internet'
     csp2_1: 'Chapter 1: Encoding and Compressing Complex Information'
@@ -879,6 +885,11 @@ sq:
     csp_ap_1: 'Chapter 1: AP Tech Setup'
     csp_ap_2: 'Chapter 2: AP Explore Performance Task'
     csp_ap_3: 'Chapter 3: AP Create Performance Task'
+    csp_postap_1: 'Chapter 1: Manipulating and Visualizing Data'
+    csp_postap_2: 'Chapter 2: Apps and Databases'
+    csp2_1_2018: 'Unit 2: Digital Information'
+    csp3_1_2018: 'Unit 3: Intro to Programming'
+    csp4_1_2018: 'Unit 4: Big Data and Privacy'
     dlp: 'Reflection Prompts'
   external_links:
     disclaimer: Mohim
@@ -983,3 +994,7 @@ sq:
       things_you_would_change_s: 'What are the two things you would change about the activities you did in this workshop?'
       anything_else_s: 'Is there anything else you’d like to tell us about your experience at this workshop?'
   courses_category: 'Full Courses'
+  cookie_banner:
+    message: 'By continuing to browse our site or clicking "I agree," you agree to the storing of cookies on your computer or device.'
+    more_information: "See Code.org's Privacy Policy."
+    accept: 'Pranoj'

@@ -12,6 +12,8 @@ module Api::V1::Pd::Application
 
     def on_successful_create
       @application.auto_score!
+      @application.assign_default_workshop!
+      @application.update_user_school_info!
 
       ::Pd::Application::Teacher1819ApplicationMailer.confirmation(@application).deliver_now
       ::Pd::Application::Teacher1819ApplicationMailer.principal_approval(@application).deliver_now

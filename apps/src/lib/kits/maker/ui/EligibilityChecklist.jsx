@@ -85,17 +85,17 @@ export default class EligibilityChecklist extends Component {
     this.setState({
       discountAmount: fullDiscount ? "$0" : "$97.50"
     });
-  }
+  };
 
   handleUnit6Submitted = eligible => {
     this.setState({
       statusYear: eligible ? Status.SUCCEEDED : Status.FAILED,
     });
-  }
+  };
 
-  confirmEligibility = () => this.setState({confirming: true})
+  confirmEligibility = () => this.setState({confirming: true});
 
-  handleCancelDialog = () => this.setState({confirming: false})
+  handleCancelDialog = () => this.setState({confirming: false});
 
   handleSuccessDialog = (discountCode, expiration) => {
     this.setState({discountCode, expiration});
@@ -147,8 +147,7 @@ export default class EligibilityChecklist extends Component {
             onSchoolConfirmed={this.handleSchoolConfirmed}
           />
         }
-        {this.state.discountAmount && !this.state.getsFullDiscount &&
-            !this.props.adminSetStatus &&
+        {this.state.discountAmount === "$97.50" && !this.props.adminSetStatus &&
           <div style={styles.discountMessage}>
             According to our data, your school has fewer than 50% of students that are
             eligible for free/reduced-price lunches. This means that we can bring down
@@ -156,7 +155,7 @@ export default class EligibilityChecklist extends Component {
             <strong style={styles.bold}>
               If this data seems inaccurate and you believe there are over 50% of students
               that are eligible for free/reduced-price lunch at your school, please contact
-              support@code.org.
+              teacher@code.org.
             </strong>
             {" "}
             Otherwise, click "Get Code" below.

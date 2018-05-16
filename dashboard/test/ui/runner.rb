@@ -587,6 +587,12 @@ def cucumber_arguments_for_browser(browser, options)
   arguments += ' -t ~@only_mobile' unless browser['mobile']
   arguments += ' -t ~@no_circle' if options.is_circle
   arguments += ' -t ~@no_ie' if browser['browserName'] == 'Internet Explorer'
+
+  # Only run in IE during a DTT. always run locally or during circle runs.
+  # Note that you may end up running in more than one browser if you use flags
+  # like [test safari], [test ie] or [test firefox] during a circle run.
+  arguments += ' -t ~@only_one_browser' if browser['browserName'] != 'Internet Explorer' && !options.local && !options.is_circle
+
   arguments += ' -t ~@chrome' if browser['browserName'] != 'chrome' && !options.local
   arguments += ' -t ~@chrome_before_62' if browser['browserName'] != 'chrome' || browser['version'].to_i == 0 || browser['version'].to_i >= 62
   arguments += ' -t ~@no_safari' if browser['browserName'] == 'Safari'
@@ -621,12 +627,6 @@ def run_feature(browser, feature, options)
   browser_name = browser_name_or_unknown(browser)
   test_run_string = test_run_identifier(browser, feature)
   log_prefix = "[#{feature.gsub(/.*features\//, '').gsub('.feature', '')}] "
-
-  if options.pegasus_domain =~ /test/ && rack_env?(:development) && RakeUtils.git_updates_available?
-    message = "Killing <b>dashboard</b> UI tests (changes detected)"
-    ChatClient.log message, color: 'yellow'
-    raise Parallel::Kill
-  end
 
   if options.browser && browser['browser'] && options.browser.casecmp(browser['browser']) != 0
     return
@@ -694,6 +694,14 @@ def run_feature(browser, feature, options)
     ChatClient.log output_synopsis(output_stdout, log_prefix), {wrap_with_tag: 'pre'} if options.output_synopsis
     # Since output_stderr is empty, we do not log it to ChatClient.
     ChatClient.log "<b>dashboard</b> UI tests failed with <b>#{test_run_string}</b> (#{RakeUtils.format_duration(test_duration)})#{log_link}, retrying (#{reruns}/#{max_reruns}, flakiness: #{TestFlakiness.test_flakiness[test_run_string] || '?'})..."
+    $lock.synchronize do
+      log_error prefix_string(Time.now, log_prefix)
+      log_error prefix_string(browser.to_yaml, log_prefix)
+      log_error prefix_string(log_link, log_prefix)
+      log_error prefix_string(output_stdout, log_prefix)
+      log_error prefix_string(output_stderr, log_prefix)
+      log_browser_error prefix_string(browser.to_yaml, log_prefix)
+    end
 
     rerun_arguments = File.exist?(rerun_file) ? " @#{rerun_file}" : ''
 
@@ -719,6 +727,7 @@ def run_feature(browser, feature, options)
     else
       log_error prefix_string(Time.now, log_prefix)
       log_error prefix_string(browser.to_yaml, log_prefix)
+      log_error prefix_string(log_link, log_prefix)
       log_error prefix_string(output_stdout, log_prefix)
       log_error prefix_string(output_stderr, log_prefix)
       log_browser_error prefix_string(browser.to_yaml, log_prefix)

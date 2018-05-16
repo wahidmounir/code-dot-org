@@ -1,18 +1,29 @@
-- display = entry[:active_s] == "hide" ? "none" : "block"
-.quarterslot-links.div.col-25.col-mobile-50{style: "display: #{display}"}
-  %a{id: "#{entry[:id_s]}_link", href: entry[:param4_s]}
-    - entry[:image_t] = entry[:image_t].gsub("/images/", "/images/fit-400/")
-    .slotbox{style: "background-image: url(#{entry[:image_t]})"}
-      .headerbox{style: "background-color: rgb(#{entry[:param2_s]}); background-color: rgba(#{entry[:param2_s]}, 0.92)"}
-        .header.underscorehover
-          = I18n.t(entry[:text1_s])
+- desktop_column_width ||= 25
+- layout_class ||= 'quarterslot-links-small'
+
+.quarterslot-links.col-mobile-50{class: "col-#{desktop_column_width} #{layout_class}"}
+  %a.linktag{href: entry[:url], id: entry[:id]}
+    - entry[:image] = entry[:image].gsub("/images/", "/images/fit-400/")
+    .slotbox{style: "background-image: url(#{entry[:image]})"}
+      .headerbox{style: "background-color: rgb(#{entry[:color1]}); background-color: rgba(#{entry[:color1]}, 0.92)"}
+        .header{class: entry[:url] ? "underscorehover" : ""}
+          - if !entry[:title_actual].nil_or_empty?
+            = entry[:title_actual]
+          - if !entry[:title].nil_or_empty?
+            = I18n.t(entry[:title])
         .sentence
-          - unless entry[:param1_s].nil_or_empty?
-            = I18n.t(entry[:param1_s])
+          - if !entry[:text_actual].nil_or_empty?
+            = entry[:text_actual]
+          - elsif !entry[:text].nil_or_empty?
+            = I18n.t(entry[:text])
           - else
             &nbsp;
-  .thelinks{style: "background-color: rgb(#{entry[:param3_s]})"}
-    - entry[:links].each do |link|
+  .thelinks{style: "background-color: rgb(#{entry[:color2]})"}
+    - entry[:links].each_with_index do |link, link_index|
       %p.linkentry
-        %a.link{id: "#{link[:id_s]}_link", href: link[:param2_s]}
-          = I18n.t(link[:param1_s]).gsub("#", format_integer_with_commas(fetch_hoc_metrics['started']).to_s)
+        %a.link.linktag{href: link[:url], id: "#{entry[:id]}-#{link_index}", target: link[:new_tab] ? "_blank" : "_self"}
+          - if !link[:text_actual].nil_or_empty?
+            - text = link[:text_actual]
+          - else
+            - text = I18n.t(link[:text])
+          = text.gsub("#", format_integer_with_commas(fetch_hoc_metrics['started']).to_s)

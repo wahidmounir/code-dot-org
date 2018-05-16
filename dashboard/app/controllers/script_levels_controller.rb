@@ -59,7 +59,9 @@ class ScriptLevelsController < ApplicationController
       redirect_to @script.finish_url
       return
     end
-    redirect_to(build_script_level_path(next_script_level)) && return
+    path = build_script_level_path(next_script_level)
+    path += "?section_id=#{params[:section_id]}" if params[:section_id]
+    redirect_to(path) && return
   end
 
   def show
@@ -374,6 +376,7 @@ class ScriptLevelsController < ApplicationController
       is_challenge_level: @script_level.challenge,
       is_bonus_level: @script_level.bonus,
     )
+    readonly_view_options if @level.channel_backed? && params[:version]
 
     @@fallback_responses ||= {}
     @fallback_response = @@fallback_responses[@script_level.id] ||= {

@@ -7,8 +7,8 @@ class VolunteerEngineerSubmission2015 < VolunteerEngineerSubmission
   # updated so that "until next year" was "until next Hour of Code." That way we don't
   # have to have an untilXXXX every year, and we can just update the query before
   # and after each Hour of Code.
-  UNSUBSCRIBE_HOC = "untilhoc"
-  UNSUBSCRIBE_FOREVER = "forever"
+  UNSUBSCRIBE_HOC = "untilhoc".freeze
+  UNSUBSCRIBE_FOREVER = "forever".freeze
   DEFAULT_DISTANCE = 24 # kilometers
   DEFAULT_NUM_VOLUNTEERS = 10
 
@@ -114,7 +114,7 @@ class VolunteerEngineerSubmission2015 < VolunteerEngineerSubmission
     # UNSUBSCRIBE_HOC means a volunteer said "I want to unsubscribe until the next Hour of Code".
     # We don't want them to be getting volunteer requests until then.  So, if we're not currently
     # in Hour of Code, don't show that volunteer, and do that by including UNSUBSCRIBE_HOC here.
-    unless ["soon-hoc", "actual-hoc"].include?(DCDO.get("hoc_mode", false))
+    unless ["soon-hoc", "actual-hoc"].include?(DCDO.get("hoc_mode", CDO.default_hoc_mode))
       query += " -unsubscribed_s:\"#{UNSUBSCRIBE_HOC}\""
     end
 

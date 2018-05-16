@@ -79,7 +79,7 @@
   already_started: 'Keni filluar tashmë? Vazhdoni këtu >> '
   demos: 'Admin: Te gjitha Demot'
   continue: Vazhdo
-  prize: "çmim"
+  prize: çmim
   more_info: Më shumë informacion
   auth:
     sign_in_with: Logohu me %{provider}
@@ -203,6 +203,7 @@
       email: Adresa Email-it
       submit: Dorëzo
     reset_errors:
+      captcha_required: Please fill out the CAPTCHA to reset your password.
       invalid_email: It looks like you may have signed up with an invalid email address.
         Please email support@code.org to receive a password recovery link.
     change_form:
@@ -231,7 +232,7 @@
     remove: "(remove section)"
     type:
       picture: Picture Password
-      word: Secret Words
+      word: Fjala e Fshehtë
       email: Email
       google_classroom: Google Classroom
       clever: Clever
@@ -417,6 +418,7 @@
     confirm_secret_words: Confirm that it is you by entering your current secret words
     enter_parent_email: Enter your parent or guardian's email address (for password
       recovery)
+    update: Update Account
   user_level:
     completed: E përfunduar
     tried: U përpoqe
@@ -453,8 +455,8 @@
     online: online
     see_details: Shiko detajet
     view_course: Shiko kursin
-    prize_info: "Çmimet për pjesmarrje (vetëm mësues të shkollave publike në SHBA):
-      Mbi 1000$ shpërblime për klasën."
+    prize_info: 'Çmimet për pjesmarrje (vetëm mësues të shkollave publike në SHBA):
+      Mbi 1000$ shpërblime për klasën.'
     tryfirst: 'Ose, mund ta provosh ne fillim, dhe rregjistrohesh më vonë:'
     trynow: Provo tani
     add_hint_help: Ju lutem na ndihmoni të shtojmë udhëzime më të goditura për tutorialet
@@ -598,8 +600,8 @@
       se ky mësues i ka tashmë ato në një seksion tjetër.
   share:
     title: Mëso në Code Studio
-    description: "Çdokush mund të mësojë shkencat kompjuterike. Krijoni lojra, aplikacione
-      dhe art me kode."
+    description: Çdokush mund të mësojë shkencat kompjuterike. Krijoni lojra, aplikacione
+      dhe art me kode.
     try_hour_of_code: Provo një Orë Kodimi!
   gender:
     male: Mashkull
@@ -762,6 +764,9 @@
         and games with objects and characters that interact with each other.
       audience: Moshat 13 +
       cta: 'Mëso si '
+    hoc-encryption:
+      title: Simple Encryption
+      body: Students will learn techniques to create and crack encrypted messages.
     weblab:
       title: Web Lab (beta)
       body: Web Lab is a programming environment where you can make simple web pages
@@ -783,6 +788,10 @@
       title: Minecraft
       body: Kafshët e programit dhe krijesa të tjera Minecraft në versionin tuaj të
         Minecraft.
+    hero:
+      title: Minecraft
+      body: Minecraft is back for the Hour of Code with a brand new activity! Journey
+        through Minecraft with code.
     sports:
       title: Sports
       body: Make a basketball game or mix and match across sports.
@@ -864,6 +873,9 @@
     hide_survey_last_answer: Ky studim është anonim. Ju lutem vizitoni panelin e mësuesve
       për rezultatet agregate. Vini re se rezultatet janë të dukshme vetëm në qoftë
       se të paktën pesë studentë kanë dorëzuar studimin.
+    survey_submission_thankyou: Thank you for submitting this survey! The survey has
+      been cleared so that your responses stay anonymous. Note that your teacher will
+      still be able to see responses for the whole class, but without names attached.
   level_group-submittable:
     wrong_title: Faleminderit
     wrong_body: Ju faleminderit për përgjigjen.

@@ -158,14 +158,18 @@
     user_type_student: Schüler
     field_is_required: ist erforderlich
     accept_terms: Du musst der Erstellung eines Kontos zustimmen
-    error: An error occurred.
+    error: Ein Fehler ist aufgetreten.
+    email_preference_question: Can we email you about updates to our courses, local
+      learning opportunities, or other computer science news?
+    email_preference_yes: Ja
+    email_preference_no: Nein
   school_info:
     title: Schulinformationen (optional)
     school_country: Land der Schule
     select_school_type: Wähle die Art der Schule
     charter: Charta
     private: Privat
-    public: "Öffentlich"
+    public: Öffentlich
     homeschool: Schule zu Hause
     after_school: Nach Schule
     other: Andere
@@ -209,11 +213,12 @@
       email: E-Mail-Adresse
       submit: Absenden
     reset_errors:
+      captcha_required: Please fill out the CAPTCHA to reset your password.
       invalid_email: Du scheinst dich mit einer ungültigen E-Mail-Adresse eingeloggt
         zu haben. Bitte emaile support@code.org um einen Link zur Wiederherstellung
         deines Passwortes zu erhalten.
     change_form:
-      title: "Ändere dein Passwort"
+      title: Ändere dein Passwort
       new_password: Neues Passwort
       confirm_password: Neues Passwort bestätigen
       submit: Mein Passwort ändern
@@ -230,7 +235,7 @@
   parent_mailer:
     student_associated_subject: Login information for Code.org
   teacher_mailer:
-    new_teacher_subject: Welcome to Code.org!
+    new_teacher_subject: Willkommen bei Code.org!
   section:
     your_section:
       one: 'Dein Bereich:'
@@ -241,7 +246,7 @@
     remove: "(Bereich löschen)"
     type:
       picture: Picture Password
-      word: Secret Words
+      word: Geheimwort
       email: E-Mail
       google_classroom: Google Classroom
       clever: Schlau
@@ -327,7 +332,7 @@
       educate_inspire: Inspiriere einen Schüler/eine Schülerin
       educate_community: Online Community
       educate_tools: Hilfsmittel und Videos
-      about_us: "Über uns "
+      about_us: 'Über uns '
       about_leadership: Die Leitung
       about_donors: Sponsoren
       about_partners: Partner
@@ -341,7 +346,7 @@
       stats: Statistiken
       help_us: Helfen Sie uns
       teach: Unterrichten
-      about: "Über"
+      about: Über
     user:
       classroom: Lehrer-Homepage
       district_dashboard: Landkreis-Dashboard
@@ -432,6 +437,7 @@
     confirm_secret_words: Confirm that it is you by entering your current secret words
     enter_parent_email: Enter your parent or guardian's email address (for password
       recovery)
+    update: Update Account
   user_level:
     completed: Abgeschlossen
     tried: Versucht
@@ -441,7 +447,7 @@
     lines_of_code: "%{lines_count} VON SCHÜLERN ERSTELLTE CODEZEILEN"
     lines_of_code_linebreak: "%{lines_count} CODE-ZEILEN, <br/> VON %{students_count}
       MILLIONEN SCHÜLERN GESCHRIEBEN"
-    all_courses: "Übersicht der Level 1, 2 und 3"
+    all_courses: Übersicht der Level 1, 2 und 3
     lesson_plans: Arbeitsplan
     signin_message: Schon registriert? %{link}
     student_reg_link: Schüler-Anmeldung
@@ -464,7 +470,7 @@
     student_left_off: 'Wo du aufgehört hast:'
     student_finished: Du hast alle Code.org-Tutorials abgeschlossen. Wähle einen anderen
       Kurs  %{online_link} oder in deiner %{local_school_link}
-    local_school: "örtlichen Schule."
+    local_school: örtlichen Schule.
     online: online
     see_details: Zeige Details
     view_course: Zeige Kurs
@@ -688,7 +694,7 @@
     autoplay_option: Autoplay Videos
     download: Video herunterladen
     show_notes: Show Notes
-    show_video: Show Video
+    show_video: Video anzeigen
   compatibility:
     upgrade:
       unsupported_message: Ihr Browser wird nicht unterstützt. Bitte aktualisieren
@@ -714,7 +720,7 @@
   next_stage: Geschafft! Fahre mit dem nächsten Level fort.
   download_pdf: Unterrichtsplan öffnen
   lesson_plan: Stundenplan
-  view_lesson_plan: "Überblick des Unterrichtsplans"
+  view_lesson_plan: Überblick des Unterrichtsplans
   pdf_download: PDF herunterladen
   download_coming_soon: 'Demnächst: Aktivitäten zum Herunterladen.'
   video_coming_soon: 'Demnächst: Video!'
@@ -895,6 +901,9 @@
     hide_survey_last_answer: Diese Umfrage ist anonym.  Bitte öffnen Sie das Lehrer-Dashboard,
       um die Ergebnisse anzusehen. Beachten Sie, dass Ergebnisse nur angezeigt werden,
       sofern mindesten fünf Teilnehmer an der Umfrage teilgenommen haben.
+    survey_submission_thankyou: Thank you for submitting this survey! The survey has
+      been cleared so that your responses stay anonymous. Note that your teacher will
+      still be able to see responses for the whole class, but without names attached.
   level_group-submittable:
     wrong_title: Vielen Dank
     wrong_body: Vielen Dank für das Einsenden Ihrer Fragen.
@@ -1138,7 +1147,7 @@
     review_submitted: Your peer review was submitted
     review_new_submission: Review a new submission
   flex_category:
-    required: "Übersicht"
+    required: Übersicht
     content: Inhalt
     practice: Lehrer Übungen
     peer_review: Peer Review
@@ -1176,6 +1185,11 @@
     csp_ap_1: 'Chapter 1: AP Tech Setup'
     csp_ap_2: 'Chapter 2: AP Explore Performance Task'
     csp_ap_3: 'Chapter 3: AP Create Performance Task'
+    csp_postap_1: 'Chapter 1: Manipulating and Visualizing Data'
+    csp_postap_2: 'Chapter 2: Apps and Databases'
+    csp2_1_2018: 'Einheit 2: Digitale Informationen'
+    csp3_1_2018: 'Unit 3: Intro to Programming'
+    csp4_1_2018: 'Unit 4: Big Data and Privacy'
     dlp: Reflection Prompts
   external_links:
     disclaimer: Haftungsausschluss
@@ -1319,3 +1333,8 @@
       anything_else_s: Is there anything else you’d like to tell us about your experience
         at this workshop?
   courses_category: Full Courses
+  cookie_banner:
+    message: By continuing to browse our site or clicking "I agree," you agree to
+      the storing of cookies on your computer or device.
+    more_information: See Code.org's Privacy Policy.
+    accept: Ich stimme zu

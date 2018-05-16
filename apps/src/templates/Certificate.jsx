@@ -60,6 +60,7 @@ class Certificate extends Component {
     certificateId: PropTypes.string,
     randomDonorTwitter: PropTypes.string,
     responsiveSize: PropTypes.oneOf(['lg', 'md', 'sm', 'xs']).isRequired,
+    userAge: PropTypes.number,
   };
 
   personalizeCertificate(session) {
@@ -79,7 +80,7 @@ class Certificate extends Component {
   }
 
   render() {
-    const {responsiveSize, tutorial, certificateId, randomDonorTwitter} = this.props;
+    const {responsiveSize, tutorial, certificateId, randomDonorTwitter, userAge} = this.props;
     const certificate = certificateId || 'blank';
     const personalizedCertificate = `${dashboard.CODE_ORG_URL}/api/hour/certificate/${certificate}.jpg`;
     const blankCertificate = blankCertificates[tutorial] || blankCertificates.hourOfCode;
@@ -120,7 +121,7 @@ class Certificate extends Component {
             linkText={i18n.backToActivity()}
           />
         )}
-        <div style={certificateStyle}>
+        <div id="uitest-certificate" style={certificateStyle}>
           <a href={certificateLink}>
             <img src={imgSrc} />
           </a>
@@ -130,6 +131,7 @@ class Certificate extends Component {
             <div>
               <h2>{i18n.congratsCertificatePersonalize()}</h2>
               <input
+                id="name"
                 type="text"
                 style={styles.nameInput}
                 placeholder={i18n.yourName()}
@@ -145,7 +147,7 @@ class Certificate extends Component {
           )}
           {tutorial && this.state.personalized && (
             <div>
-              <h2>{i18n.congratsCertificateThanks()}</h2>
+              <h2 id="uitest-thanks">{i18n.congratsCertificateThanks()}</h2>
               <p>{i18n.congratsCertificateContinue()}</p>
             </div>
           )}
@@ -154,6 +156,7 @@ class Certificate extends Component {
             facebook={facebook}
             twitter={twitter}
             print={print}
+            userAge={userAge}
           />
         </div>
       </div>

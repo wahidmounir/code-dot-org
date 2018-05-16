@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import ApplicationFormComponent from "../ApplicationFormComponent";
+import LabeledFormComponent from "../../form_components/LabeledFormComponent";
 import UsPhoneNumberInput from "../../form_components/UsPhoneNumberInput";
 import {PageLabels, SectionHeaders} from '@cdo/apps/generated/pd/teacher1819ApplicationConstants';
 import {isEmail, isZipCode} from '@cdo/apps/util/formatValidation';
@@ -11,16 +11,18 @@ import {
 
 const CSD_URL = 'https://code.org/educate/professional-learning/cs-discoveries';
 const CSP_URL = 'https://code.org/educate/professional-learning/cs-principles';
-const PD_RESOURCES_URL = 'https://code.org/educate';
+const PD_RESOURCES_URL = 'https://support.code.org/hc/en-us/articles/115003865532';
 const CS_TEACHERS_URL = 'https://code.org/educate/community';
 const WHICH_PROGRAM_URL = 'https://code.org/files/PL-Program-for-Me.pdf';
+const PL_FAQ_URL = 'https://docs.google.com/document/d/1d3BRQt7NARChV6ZPgwyxJNP4TSYyBlo06m2TvJjOnwQ/edit#heading=h.83a4cw26rwmq';
+const PL_LANDING_URL = 'https://code.org/educate/professional-learning-2018#open-regions';
 const TEACHER_EMAIL = 'teacher@code.org';
 const INTERNATIONAL = 'International';
 const US = 'United States';
 
-export default class Section1AboutYou extends ApplicationFormComponent {
+export default class Section1AboutYou extends LabeledFormComponent {
   static propTypes = {
-    ...ApplicationFormComponent.propTypes,
+    ...LabeledFormComponent.propTypes,
     accountEmail: PropTypes.string.isRequired
   };
 
@@ -78,20 +80,25 @@ export default class Section1AboutYou extends ApplicationFormComponent {
         </p>
         <p>
           <strong>
-            Applications are reviewed on a rolling basis, and spots will fill quickly.
-            The priority deadline to apply is March 30, 2018.
-            All applications received after March 30 will only be considered if space is available.
+            The priority deadline for applications has passed, and some regions are no
+            longer considering applicants. Please check
+            {' '}<a href={PL_LANDING_URL} target="_blank">this list</a>{' '}
+            to see which regions are still accepting applications.
+            If you have questions, be sure to
+            {' '}<a href={PL_FAQ_URL} target="_blank">check out our FAQs</a>{' '}
+            or contact us at
+            {' '}<a href={`mailto:${TEACHER_EMAIL}`}>{TEACHER_EMAIL}</a>.
           </strong>
         </p>
         <p>
-          If you need more information on the program before you apply,
+          If you need more information about the program before you apply,
           please visit
           {' '}<a href={CSD_URL} target="_blank">CS Discoveries</a>{' '}
           and
           {' '}<a href={CSP_URL} target="_blank">CS Principles</a>.{' '}
           If you’re not sure which program is the right fit for your classroom,
           we encourage you to check our guidance in
-          {' '}<a href={WHICH_PROGRAM_URL} target="_blank">Which Program is Right for Me?</a>.{' '}
+          {' '}<a href={WHICH_PROGRAM_URL} target="_blank">Which Program is Right for Me?</a>{' '}
           For additional questions regarding the program or application,
           please contact
           {' '}<a href={`mailto:${TEACHER_EMAIL}`}>{TEACHER_EMAIL}</a>.

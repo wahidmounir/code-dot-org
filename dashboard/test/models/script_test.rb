@@ -436,6 +436,34 @@ class ScriptTest < ActiveSupport::TestCase
     assert_nil script.summarize(false)[:stages]
   end
 
+  test 'summarize includes has_verified_resources' do
+    script = create(:script, name: 'resources-script')
+
+    script.has_verified_resources = true
+    assert script.has_verified_resources
+    summary = script.summarize
+    assert summary[:has_verified_resources]
+
+    script.has_verified_resources = false
+    refute script.has_verified_resources
+    summary = script.summarize
+    refute summary[:has_verified_resources]
+  end
+
+  test 'summarize includes has_lesson_plan' do
+    script = create(:script, name: 'resources-script')
+
+    script.has_lesson_plan = true
+    assert script.has_lesson_plan
+    summary = script.summarize
+    assert summary[:has_lesson_plan]
+
+    script.has_lesson_plan = false
+    refute script.has_lesson_plan
+    summary = script.summarize
+    refute summary[:has_lesson_plan]
+  end
+
   test 'should generate PLC objects' do
     script_file = File.join(self.class.fixture_path, 'test-plc.script')
     scripts, custom_i18n = Script.setup([script_file])
@@ -762,5 +790,151 @@ class ScriptTest < ActiveSupport::TestCase
     assert_equal 3, bonus_levels3[1][:stageNumber]
     assert_equal 2, bonus_levels3[0][:levels].length
     assert_equal 2, bonus_levels3[1][:levels].length
+  end
+
+  test 'can make a challenge level not a challenge level' do
+    l = create :level
+    old_dsl = <<-SCRIPT
+      stage 'Stage1'
+      level '#{l.name}', challenge: true
+    SCRIPT
+    new_dsl = <<-SCRIPT
+      stage 'Stage1'
+      level '#{l.name}'
+    SCRIPT
+    script = Script.add_script(
+      {name: 'challengeTestScript'},
+      ScriptDSL.parse(old_dsl, 'a filename')[0][:stages]
+    )
+    assert script.script_levels.first.challenge
+
+    script = Script.add_script(
+      {name: 'challengeTestScript'},
+      ScriptDSL.parse(new_dsl, 'a filename')[0][:stages]
+    )
+
+    refute script.script_levels.first.challenge
+  end
+
+  test 'can make a bonus level not a bonus level' do
+    l = create :level
+    old_dsl = <<-SCRIPT
+      stage 'Stage1'
+      level '#{l.name}', bonus: true
+    SCRIPT
+    new_dsl = <<-SCRIPT
+      stage 'Stage1'
+      level '#{l.name}'
+    SCRIPT
+    script = Script.add_script(
+      {name: 'challengeTestScript'},
+      ScriptDSL.parse(old_dsl, 'a filename')[0][:stages]
+    )
+    assert script.script_levels.first.bonus
+
+    script = Script.add_script(
+      {name: 'challengeTestScript'},
+      ScriptDSL.parse(new_dsl, 'a filename')[0][:stages]
+    )
+
+    refute script.script_levels.first.bonus
+  end
+
+  test 'can unset the project_widget_visible attribute' do
+    l = create :level
+    old_dsl = <<-SCRIPT
+      project_widget_visible true
+      stage 'Stage1'
+      level '#{l.name}'
+    SCRIPT
+    new_dsl = <<-SCRIPT
+      stage 'Stage1'
+      level '#{l.name}'
+    SCRIPT
+    script_data, _ = ScriptDSL.parse(old_dsl, 'a filename')
+    script = Script.add_script(
+      {
+        name: 'challengeTestScript',
+        properties: Script.build_property_hash(script_data)
+      },
+      script_data[:stages]
+    )
+    assert script.project_widget_visible
+
+    script_data, _ = ScriptDSL.parse(new_dsl, 'a filename')
+    script = Script.add_script(
+      {
+        name: 'challengeTestScript',
+        properties: Script.build_property_hash(script_data)
+      },
+      script_data[:stages]
+    )
+
+    refute script.project_widget_visible
+  end
+
+  test 'clone script with suffix' do
+    scripts, _ = Script.setup([@script_file])
+    script = scripts[0]
+
+    Script.stubs(:script_directory).returns(self.class.fixture_path)
+    script_copy = script.clone_with_suffix('copy')
+    assert_equal 'test-fixture-copy', script_copy.name
+
+    # Validate levels.
+    assert_equal 5, script_copy.levels.count
+    script_copy.levels.each_with_index do |level, i|
+      level_num = i + 1
+      assert_equal "Level #{level_num}_copy", level.name
+      old_level = Level.find_by_name("Level #{level_num}")
+      assert_equal old_level.level_num, level.level_num
+      assert_equal old_level.id, level.parent_level_id
+      assert_equal '_copy', level.name_suffix
+    end
+
+    # Validate stages. We've already done some validation of level contents, so
+    # this time just validate their names.
+    assert_equal 2, script_copy.stages.count
+    stage1 = script_copy.stages.first
+    stage2 = script_copy.stages.last
+    assert_equal(
+      'Level 1_copy,Level 2_copy,Level 3_copy',
+      stage1.script_levels.map(&:levels).flatten.map(&:name).join(',')
+    )
+    assert_equal(
+      'Level 4_copy,Level 5_copy',
+      stage2.script_levels.map(&:levels).flatten.map(&:name).join(',')
+    )
+  end
+
+  test 'clone script with inactive variant' do
+    script_file = File.join(self.class.fixture_path, "test-fixture-variants.script")
+    scripts, _ = Script.setup([script_file])
+    script = scripts[0]
+
+    Script.stubs(:script_directory).returns(self.class.fixture_path)
+    script_copy = script.clone_with_suffix('copy')
+    assert_equal 'test-fixture-variants-copy', script_copy.name
+
+    assert_equal 1, script_copy.script_levels.count
+    sl = script_copy.script_levels.first
+
+    assert_equal 'Level 1_copy', sl.levels.first.name
+    assert sl.active?(sl.levels.first)
+
+    assert_equal 'Level 2_copy', sl.levels.last.name
+    refute sl.active?(sl.levels.last)
+
+    # Ignore level names, since we are just testing whether the
+    # variants / active / endvariants structure is correct.
+    new_dsl_regex = <<-SCRIPT
+stage 'Stage1'
+variants
+  level '[^']+'
+  level '[^']+', active: false
+endvariants
+    SCRIPT
+
+    assert_match Regexp.new(new_dsl_regex), ScriptDSL.serialize_to_string(script_copy)
   end
 end

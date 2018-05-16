@@ -180,7 +180,8 @@ PROPERTIES[ElementType.CANVAS] = {
     'canvasWidth',
     'canvasHeight',
     'x',
-    'y'
+    'y',
+    'hidden',
   ]
 };
 PROPERTIES[ElementType.SCREEN] = {
@@ -202,7 +203,8 @@ PROPERTIES[ElementType.TEXT_AREA] = {
     'fontSize',
     'textAlign',
     'readonly',
-    'hidden'
+    'hidden',
+    'value'
   ]
 };
 PROPERTIES[ElementType.CHART] = {

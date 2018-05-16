@@ -244,6 +244,43 @@ class ApiController < ApplicationController
     render json: data
   end
 
+  # This API returns data similar to user_progress, but aggregated for all users
+  # in the section. It also only returns the "levels" portion
+  # If not specified, the API will default to a page size of 50, providing the first page
+  # of students
+  def section_level_progress
+    section = load_section
+    script = load_script(section)
+
+    data = {}
+
+    # Clients are seeing requests time out for large sections as we attempt to
+    # send back all of this data. Allow them to instead request paginated data
+    page = [params[:page].to_i, 1].max
+    per = params[:per].to_i || 50
+
+    paged_students = section.students.page(page).per(per)
+    # As designed, if there are 50 students, the client will ask for both
+    # page 1 and page 2, even though page 2 is out of range. However, it should
+    # never ask for page 3
+    if page > paged_students.total_pages + 1
+      return head :range_not_satisfiable
+    end
+
+    # Get the level progress for each student
+    paged_students.each do |student|
+      data[student.id] = user_progress_for_levels(script, student)
+    end
+    render json: {
+      students: data,
+      pagination: {
+        total_pages: paged_students.total_pages,
+        page: page,
+        per: per,
+      }
+    }
+  end
+
   def student_progress
     student = load_student(params.require(:student_id))
     section = load_section
@@ -269,17 +306,10 @@ class ApiController < ApplicationController
 
   def script_structure
     script = Script.get_from_cache(params[:script])
-    render json: script.summarize
-  end
-
-  # Return a JSON summary of the user's progress across all scripts.
-  def user_progress_for_all_scripts
-    user = current_user
-    if user
-      render json: summarize_user_progress_for_all_scripts(user)
-    else
-      render json: {}
-    end
+    overview_path = CDO.studio_url(script_path(script))
+    summary = script.summarize
+    summary[:path] = overview_path
+    render json: summary
   end
 
   # Return a JSON summary of the user's progress for params[:script].
@@ -307,7 +337,7 @@ class ApiController < ApplicationController
     level = params[:level] ? Script.cache_find_level(params[:level].to_i) : script_level.oldest_active_level
 
     if current_user
-      user_level = current_user.last_attempt(level)
+      user_level = current_user.last_attempt(level, script)
       level_source = user_level.try(:level_source).try(:data)
 
       response[:progress] = current_user.user_progress_by_stage(stage)

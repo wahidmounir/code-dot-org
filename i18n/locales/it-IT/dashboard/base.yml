@@ -59,7 +59,7 @@ it:
   courses: 'Corsi'
   courses_page:
     title_student: "Impara su Code Studio"
-    title_teacher: "Insegna con Code Studio"
+    title_teacher: "Insegna Informatica"
   unplugged_activity: 'Attività Tradizionale'
   of: "di"
   more: "DI PIÙ"
@@ -69,7 +69,7 @@ it:
   try_k8intro: "Prova il nostro corso introduttivo di informatica per scuole elementari e medie inferiori (in 20 lezioni)"
   k8intro: "Corso introduttivo di informatica per scuole elementari e medie inferiori (in 20 lezioni)"
   already_started: "Hai già iniziato? Riprendi qui >> "
-  demos: 'Amministratore: Tutte le dimostrazioni'
+  demos: "Amministratore: Tutte le dimostrazioni"
   continue: 'Prosegui'
   prize: 'Premio'
   more_info: 'Più informazioni'
@@ -123,6 +123,9 @@ it:
     field_is_required: "è un dato obbligatorio"
     accept_terms: "Devi accettare le condizioni per creare un account"
     error: "Si è verificato un errore."
+    email_preference_question: "Can we email you about updates to our courses, local learning opportunities, or other computer science news?"
+    email_preference_yes: "Sì"
+    email_preference_no: "No"
   school_info:
     title: 'Informazioni sulla scuola (opzionale)'
     school_country: 'Paese della Scuola'
@@ -171,6 +174,7 @@ it:
       email: 'Indirizzo di posta elettronica'
       submit: 'Invia'
     reset_errors:
+      captcha_required: 'Please fill out the CAPTCHA to reset your password.'
       invalid_email: 'Sembra tu ti sia loggato con un indirizzo email non valido. Invia una mail a support@code.org per ricevere il link per il recupero della password.'
     change_form:
       title: 'Cambia la tua password'
@@ -220,7 +224,7 @@ it:
       provider_managed_section: "Questa sezione è gestita da un altro provider e non può essere unita. Chiedi al tuo insegnante di aggiungerti via %{provider} e risincronizza la loro sezione."
     mail:
       student_disassociated:
-        subject: 'Notifica da Code.org: %{student_name} non è più iscritto come tuo studente.'
+        subject: "Notifica da Code.org: %{student_name} non è più iscritto come tuo studente."
   reports:
     error:
       access_denied: "Non hai accesso alle statistiche di questa persona"
@@ -249,7 +253,7 @@ it:
       finished_hoc: "Ho finito la mia Ora del Codice"
       sign_in_to_save: 'Accedi per salvare i progressi fatti'
       free_play:
-        playlab: 'Costruisci un Gioco'
+        playlab: 'Costruisci un Gioco nel Laboratorio'
         artist: 'Disegna qualcosa'
         calculate: 'Calculate something'
         applab: 'Costruisci una App in Sviluppo App'
@@ -352,7 +356,7 @@ it:
     current_password_hint: '(inserisci la tua password corrente per confermare i cambiamenti)'
     delete: 'Elimina il tuo account'
     delete_text: "Cliccando sul pulsante qua sotto elimini il tuo account."
-    delete_text_teacher_note: Nota che eliminando il tuo account non verranno eliminati gli account dei tuoi studenti.
+    delete_text_teacher_note: "Nota che eliminando il tuo account non verranno eliminati gli account dei tuoi studenti."
     delete_confirm: 'Sei sicuro di voler eliminare il tuo account?'
     deleted_user: 'utente eliminato'
     no_password_because_oauth: 'Nessuna password perché ti sei loggato con provider di terze parti.'
@@ -363,10 +367,11 @@ it:
     create_personal_login_under_13_parent_email: 'Email del genitore/tutore (per recuperare la tua password)'
     create_personal_login_info: 'Se vuoi continuare ad usare il tuo account Code.org anche dopo la fine dell''anno scolastico, puoi creare le tue credenziali di accesso personali, in basso.'
     create_personal_login_terms: "Creando le mie informazioni d'accesso personali, accetto di essere vincolato dalle <a href='%{terms_of_service_url}', target='_blank'>condizioni d'uso</a>di Code.org. Se ho meno 13 anni, confermo di avere il permesso del mio genitore o tutore di usare i servizi di Code.org anche senza insegnante."
-    create_personal_login_email_note: 'Nota: Gli indirizzi email non sono memorizzati in una forma tale da permetterci di contattare gli studenti. Gli studenti non riceveranno mai email da Code.org tranne per il recupero della password. Consulta le nostre <a href=''%{privacy_policy_url}'', target=''_blank''>politiche per il rispetto della privacy</a> per ulteriori informazioni.'
+    create_personal_login_email_note: "Nota: Gli indirizzi email non sono memorizzati in una forma tale da permetterci di contattare gli studenti. Gli studenti non riceveranno mai email da Code.org tranne per il recupero della password. Consulta le nostre <a href='%{privacy_policy_url}', target='_blank'>politiche per il rispetto della privacy</a> per ulteriori informazioni."
     enter_new_login_info: 'Inserisci le nuove informazioni di accesso'
     confirm_secret_words: 'Conferma la tua identità inserendo le tue parole segrete'
     enter_parent_email: "Inserisci l'email del tuo genitore o tutore (per il recupero della password)"
+    update: "Aggiorna Account"
   user_level:
     completed: 'Completato'
     tried: 'Provato'
@@ -415,7 +420,7 @@ it:
     print_certificate: "Stampa l'attestato"
     announcement_title: "Avvisi"
     announcement_message_fall2016_features: "Abbiamo passato l'estate a trasformare le vostre segnalazioni in nuove funzionalità. Ora, potete <a href=\"%{pp_url}\" target=\"_blank\">monitorare i vari progressi degli studenti</a> anche se stanno programmando in coppia su un unico dispositivo. Potete utilizzare <a href=\"%{csp_widgets_url}\" target=\"_blank\">i migliori strumenti interattivi</a> dal nostro corso CS prinicipale in <i>qualsiasi</i> aula. E i vostri studenti possono <a href=\"%{unused_code_url}\" target=\"_blank\">tenere i codici inutilizzati</a> nella loro area di lavoro per incoraggiare la sperimentazione! Scoprite tutte le nostre nuove funzionalità e fateci sapere che ne pensate."
-    announcement_csp_widgets_message: "Stai cercando dei modi divertenti per insegnare alla tua classe come funziona Internet, come fa la crittografia a garantire la sicurezza dei dati, e altri concetti simili? Abbiamo preso i migliori strumenti interattivi dal nostro corso \"Principi dell'Informatica\" e li abbiamo resi disponibili come strumenti autonomi che puoi usare in qualunque momento!"
+    announcement_csp_widgets_message: "Stai cercando dei modi divertenti per insegnare alla tua classe come funziona Internet, come fa la crittografia a garantire la sicurezza dei dati, e altri concetti simili? Abbiamo preso i migliori strumenti interattivi dal nostro corso \"Principi dell'Informatica\" e li abbiamo resi disponibili come componenti autonomi che puoi usare in qualunque momento!"
     announcement_learn_more_button: "Ulteriori informazioni"
     announcement_try_now_button: "Prova adesso"
     announcement_host_an_hour_button: "Ospita un'ora"
@@ -480,7 +485,7 @@ it:
     secure: 'Versione sicura'
     report_abuse: 'Segnala un abuso'
     built_on_code_studio: 'Costruito con Code Studio'
-    make_my_own_app: 'Crea la tua App'
+    make_my_own_app: 'Creo la mia App'
     how_it_works: 'Come funziona'
     try_hour_of_code: 'Prova un Ora di Programmazione!'
   reference_area:
@@ -569,7 +574,7 @@ it:
       cta: "Scopri come"
     hoc-encryption:
       title: "Crittografia semplice"
-      body: "Students will learn techniques to create and crack encrypted messages."
+      body: "Gli studenti impareranno tecniche per creare e decifrare un messaggio cifrato."
     weblab:
       title: "Sviluppo Web (versione provvisoria)"
       body: "Sviluppo Web è un ambiente di programmazione in cui si possono realizzare semplici pagine web con HTML e CSS. Progetta le tue pagine web e condividi il tuo sito in pochi secondi."
@@ -580,8 +585,8 @@ it:
     starwars:
       title: "Guerre Stellari"
     infinity:
-      title: "Disney Infinity"
-      body: "Crea una storia o inventa un gioco con i personaggi di Disney Infinity come protagonisti!"
+      title: "Laboratorio con Disney Infinity"
+      body: "Usa il Laboratorio per creare una storia o inventare un gioco con i personaggi di Disney Infinity come protagonisti!"
     minecraft:
       title: "Minecraft"
       body: "Esplora il mondo di Minecraft attraverso il codice."
@@ -606,9 +611,9 @@ it:
       title: "Istruzioni condizionali"
       body: "Quest'attività tradizionale ti introduce algoritmi ed istruzioni condizionali usando un mazzo di carte."
     widgets:
-      title: "Widget"
+      title: "Componenti"
       body: "Students can explore concepts from our Computer Science Principles course hands-on using these digital tools. Use the widgets on their own, or create a single-concept lesson for your class."
-      audience: "Dai 14 anni"
+      audience: "Dai 14 anni in su"
       cta: "Scopri come"
   gallery:
     students_drew_these_with_code: "Gli studenti li hanno disegnati con dei programmi!"
@@ -654,6 +659,7 @@ it:
     correct_title: "Grazie!"
     correct_body: "Grazie per aver inviato delle risposte."
     hide_survey_last_answer: "Questo sondaggio è anonimo. Puoi consultare i risultati aggregati sul cruscotto di controllo dell’ insegnante. I risultati vengono visualizzati solo se almeno cinque studenti hanno risposto."
+    survey_submission_thankyou: "Grazie per aver presentato questo sondaggio! Abbiamo fatto in modo che le risposte rimangano anonime. Tieni conto che il tuo insegnante sarà ancora in grado di vedere le risposte di tutta la classe, ma senza i nomi associati alle risposte."
   level_group-submittable:
     wrong_title: "Grazie!"
     wrong_body: "Grazie per aver inviato delle risposte."
@@ -701,7 +707,7 @@ it:
     sign_out: 'Se non desideri fornire la tua età puoi <a href="%{url}">uscire</a>.'
   terms_interstitial:
     title: "Aggiornati i termini e le condizioni della privacy"
-    intro_desc: 'Abbiamo aggiornato i nostri Termini di Servizio e la nostra Informativa sulla Privacy, come mostrato di seguito. I cambiamenti saranno effettivi a partire dal 24 agosto 2016. La modifica più importante: noi <i>non memorizzeremo più le e-mail degli account degli studenti su Code studio.</i> Questo è molto importante per noi, e speriamo che stabilisca un nuovo standard per la privacy degli studenti nella tecnologia di formazione. Ti abbiamo inviato un riassunto delle altre modifiche via e-mail.'
+    intro_desc: "Abbiamo aggiornato i nostri Termini di Servizio e la nostra Informativa sulla Privacy, come mostrato di seguito. I cambiamenti saranno effettivi a partire dal 24 agosto 2016. La modifica più importante: noi <i>non memorizzeremo più le e-mail degli account degli studenti su Code studio.</i> Questo è molto importante per noi, e speriamo che stabilisca un nuovo standard per la privacy degli studenti nella tecnologia di formazione. Ti abbiamo inviato un riassunto delle altre modifiche via e-mail."
     intro_instructions: "È necessario accettare questi nuovi termini per gli studenti con un'età minore di 13 anni nella tua classe per avere accesso completo alle ultime caratteristiche di Code studio. Registrando uno studente con un'età minore di 13 anni, ti verrà chiesto se la tua scuola abbia il consenso dei genitori per la raccolta di dati personali dello studente per uso e beneficio della scuola, tra cui programmi educativi come Code studio."
     tos: "Termini di servizio"
     privacy: "Informativa sulla privacy"
@@ -717,25 +723,25 @@ it:
     message_with_suggestion: "Per favore verifica che le seguenti informazioni siano corrette e aggiornale se necessario."
     save: "Salva"
   race_interstitial:
-    title: 'Optionale: Aiutaci a tracciare i vostri progressi per superare le diversità in informatica'
+    title: "Optionale: Aiutaci a tracciare i vostri progressi per superare le diversità in informatica"
     message: "Si prega di riferirci la gara (controllare che tutti partecipino)"
     races:
       - 
-        white: Bianco
+        white: "Bianco"
       - 
-        black: Neri o afroamericani
+        black: "Neri o afroamericani"
       - 
-        hispanic: Ispano o Latino
+        hispanic: "Ispano o Latino"
       - 
-        asian: Asiatico
+        asian: "Asiatico"
       - 
-        hawaiian: Nativi hawaiani o altre isole del Pacifico
+        hawaiian: "Nativi hawaiani o altre isole del Pacifico"
       - 
-        american_indian: Nativo Americano Indiano/Alaska
+        american_indian: "Nativo Americano Indiano/Alaska"
       - 
-        other: Altro
+        other: "Altro"
       - 
-        opt_out: Preferisco non dirlo
+        opt_out: "Preferisco non dirlo"
     submit: "Invia"
     decline: "Chiudi"
   zendesk_too_young_message: 'Siamo spiacenti, gli utenti più giovani non possono accedere al nostro sito di supporto.<a href="http://support.code.org"></a> Contattaci su <a href="http://programmailfuturo.it">programmailfuturo.it</a> oppure chiedi ai tuoi genitori o insegnanti di contattarci al posto tuo.'
@@ -761,7 +767,7 @@ it:
     delete: "Elimina"
     import: "Importa"
     share_link_import_bad_link_header: "Collegamento di condivisione non riconosciuto"
-    share_link_import_bad_link_body: 'Non siamo riusciti a importare il collegamento di condivisione. Assicurati di usare un collegamento creato da un rompicapo di Minecraft: Agent e di aver copiato il collegamento completo.'
+    share_link_import_bad_link_body: "Non siamo riusciti a importare il collegamento di condivisione. Assicurati di usare un collegamento creato da un rompicapo di Minecraft: Agent e di aver copiato il collegamento completo."
     share_link_import_error_header: "Si è verificato un errore."
     share_link_import_error_body: "Si è verificato un errore durante l'importazione del collegamento di condivisione. Riprova."
     exit: "Ritorna al corso"
@@ -782,7 +788,7 @@ it:
     name: "Nome"
     updated: "Aggiornato"
     project_type: "Tipo di progetto"
-    help_text: "Clicca qui sotto su <strong>Costruisci una App</strong> o <strong>Costruisci un Gioco</strong> o <strong>Disegna qualcosa</strong> per creare un nuovo progetto negli ambienti \"AppLab\" o del Laboratorio o dell'Artista! <br/> Puoi salvare i progetti e riprenderli in qualsiasi momento."
+    help_text: "Clicca qui sotto su <strong>Costruisci una App</strong> o <strong>Costruisci un Gioco</strong> o <strong>Disegna qualcosa</strong> per creare un nuovo progetto negli ambienti \"Sviluppo App\" o del Laboratorio o dell'Artista! <br/> Puoi salvare i progetti e riprenderli in qualsiasi momento."
     need_help: "Hai bisogno di aiuto per iniziare?"
     thumbnail_help: "Non trovi l'anteprima del tuo progetto? Esegui la tua App per generare una nuova anteprima. Considera che ci vogliono un paio d'ore affinché le anteprime si aggiornino ovunque."
     really_delete: 'Elimina?'
@@ -879,6 +885,11 @@ it:
     csp_ap_1: 'Capitolo 1: Installazione di AP Tech'
     csp_ap_2: 'Capitolo 2: AP analizzare il Task Performance'
     csp_ap_3: 'Capitolo 3: AP creare il Task Performance'
+    csp_postap_1: 'Chapter 1: Manipulating and Visualizing Data'
+    csp_postap_2: 'Chapter 2: Apps and Databases'
+    csp2_1_2018: 'Unità 2: Informazioni digitali'
+    csp3_1_2018: 'Unit 3: Intro to Programming'
+    csp4_1_2018: 'Unit 4: Big Data and Privacy'
     dlp: 'Punti di riflessione'
   external_links:
     disclaimer: Limiti di responsabilità
@@ -949,7 +960,7 @@ it:
       confirm_focus_areas: 'Confirm Focus Areas'
   locked_stage: 'I contenuti di questa fase non sono visibili perché questa fase è al momento bloccata. Il/La tuo/a insegnante può sbloccare questa fase quando è il momento di lavorarci su o revisionare le tue risposte.'
   hidden_stage: "Il/La tuo/a insegnante non ti aspettava qui. Per favore chiedi al/alla tuo/a insegnante su quale lezione dovresti essere."
-  hidden_script: "Il tuo insegnante non si aspettava che tu sia qui. Per favore, chiedigli in quale lezione dovresti essere."
+  hidden_script: "Il tuo insegnante non si aspettava che tu arrivassi qui. Per favore, chiedigli in quale lezione dovresti essere."
   return_unit_overview: 'Vai alla panoramica della lezione'
   return_course_overview: 'Vai alla visualizzazione delle unità'
   view_all_units: 'Visualizza tutte le lezioni'
@@ -983,3 +994,7 @@ it:
       things_you_would_change_s: 'What are the two things you would change about the activities you did in this workshop?'
       anything_else_s: 'Is there anything else you’d like to tell us about your experience at this workshop?'
   courses_category: 'Corsi Avanzati'
+  cookie_banner:
+    message: 'By continuing to browse our site or clicking "I agree," you agree to the storing of cookies on your computer or device.'
+    more_information: "See Code.org's Privacy Policy."
+    accept: 'Firmo'
