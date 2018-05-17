@@ -37,6 +37,8 @@ module Pd::WorkshopSurveyResultsHelper
   TEACHERCON_MULTIPLE_CHOICE_FIELDS = (Pd::TeacherconSurvey.public_required_fields & Pd::TeacherconSurvey.options.keys).freeze
   TEACHERCON_FIELDS_IN_SUMMARY = (Pd::TeacherconSurvey.public_fields).freeze
 
+  include Pd::JotForm
+
   # The output is a hash where
   # - Multiple choice answers (aka scored answers) that are not facilitator specific turn
   #   into an average of all responses
@@ -177,9 +179,6 @@ module Pd::WorkshopSurveyResultsHelper
   def generate_workshops_survey_summary(workshop)
     surveys = get_surveys_for_workshops(workshop)
 
-    surveys['Pre Workshop'] = get_pre_workshop_surveys(workshop)
-    surveys['Post Workshop'] = get_post_workshop_surveys(workshop)
-
     workshop_summary = {}
 
     get_questions_for_forms.each do |session, response_sections|
@@ -234,6 +233,7 @@ module Pd::WorkshopSurveyResultsHelper
               session_summary[:facilitator][q_key] = facilitator_response_averages
             else
               # For non facilitator specific responses, just return the average
+              puts q_key
               sum = surveys_for_session.map {|survey| survey[response_section][q_key]}.reduce(0, :+)
               session_summary[response_section][q_key] = (sum / surveys_for_session.size.to_f).round(2)
             end
@@ -247,145 +247,37 @@ module Pd::WorkshopSurveyResultsHelper
     workshop_summary
   end
 
-  # Below functions generate fake data.
-  def get_pre_workshop_surveys(workshop)
-    rand(10..20).times.map do |_|
-      {
-        general: {
-          how_excited: rand(3..5),
-          lunch_aspirations: %w(Tacos Burritos Pizza Sandwiches).sample
-        }
-      }
-    end
-  end
-
   def get_surveys_for_workshops(workshop)
     {
       'Day 1' => rand(10..20).times.map do |_|
         {
           general: {
-            how_was_intro: rand(3..5),
-            bakers_speech_feedback: %w(Cool Awesome Funny Weird).sample
+            5 => rand(1..7),
+            6 => %w(Work\ it\ harder Make\ it\ better Do\ it\ faster\ Makes\ us\ stronger).sample,
+            13 => rand(1..7),
+            15 => rand(1..7),
+            16 => rand(1..7),
+            17 => rand(1..7),
+            18 => rand(1..7),
+            21 => "They were #{%w(funny helpful engaging witty bright).sample}",
+            22 => "They could be more #{%w(energetic thoughtful pensive).sample}",
+            23 => %w(Peers Slides Activities).sample,
+            24 => %w(Heat Food Phones).sample,
+            25 => %w(Nope Nothing Nada Zip Zilch).sample,
+            28 => rand(1..7)
           },
-          facilitator: {
-            rate_your_facilitator: {
-              500 => rand(1..5),
-              501 => rand(4..5)
-            },
-            describe_your_facilitator: {
-              500 => %w(Helpful Effective Smart Funny Engaging Boring).sample,
-              501 => %w(Amazing Super Brilliant Perfect).sample
-            }
-          }
         }
-      end,
-      'Day 2' => rand(10..20).times.map do |_|
-        {
-          general: {
-            how_was_day_2_activity: rand(3..5),
-            how_was_day_2_food: rand(2..5),
-            cats_or_dogs: %w(Cats Cats! Dogs Puppies! Lizards).sample
-          }
-        }
-      end,
-      'Day 3' => rand(10..20).times.map do |_|
-        {
-          general: {
-            how_was_day_3_activity: rand(3..5),
-            how_were_animals: rand(4..5),
-            favorite_sport: %w(Football Baseball Basketball Soccer Hockey Judo).sample
-          }
-        }
-      end,
-      'Day 4' => rand(10..20).times.map do |_|
-        {
-          general: {
-            how_was_day_4_activity: rand(3..5),
-            how_was_meeting_lebron: rand(1..5),
-            favorite_tv_show: %w(Westworld Brooklyn\ 99 West\ Wing The\ Wire Breaking\ Bad).sample
-          }
-        }
-      end,
-      'Day 5' => rand(10..20).times.map do |_|
-        {
-          general: {
-            how_was_day_5_activity: rand(4..5),
-            how_was_meeting_andy_sandberg: rand(4..5),
-            how_got_home: %w(Walk Rideshare Bus Car Train).sample,
-            how_do_you_feel: %w(Good Great Awesome Amazing Excellent Fantabulous).sample
-          }
-        }
-      end,
+      end
     }
   end
 
-  def get_post_workshop_surveys(workshops)
-    rand(10..20).times.map do |_|
-      {
-        general: {
-          overall: rand(4..5),
-          how_prepared: rand(4..5),
-          any_feedback: %W(It\ was\ great! I'm\ psyched! More\ cats\ next\ time).sample,
-          last_words: %W(Hasta\ la\ vista Peace Sayonara Nope).sample
-        }
-      }
-    end
-  end
-
   def get_questions_for_forms
+    day_1_general = Hash[*Pd::JotForm::Translation.new(81_236_323_593_153).get_questions.
+      select {|q| Constants::SURVEY_REPORT_TYPES.include? q.type}.
+      map {|q| [q.id, {free_response: q.type == Constants::TYPE_TEXTAREA, text: q.text}]}.flatten]
     {
-      'Pre Workshop' => {
-        general: {
-          how_excited: {text: 'How excited are you?'},
-          lunch_aspirations: {text: 'What do you hope lunch will be?', free_response: true}
-        }
-      },
       'Day 1' => {
-        general: {
-          how_was_intro: {text: 'How was the course introduction?'},
-          bakers_speech_feedback: {text: 'What did you think of Baker?', free_response: true}
-        },
-        facilitator: {
-          rate_your_facilitator: {text: 'How was your facilitator?'},
-          describe_your_facilitator: {text: 'What words best describe your facilitator?', free_response: true}
-        }
-      },
-      'Day 2' => {
-        general: {
-          how_was_day_2_activity: {text: 'How were the day 2 activities?'},
-          how_was_day_2_food: {text: 'How was the food on day 2?'},
-          cats_or_dogs: {text: 'Do you like cats or dogs?', free_response: true}
-        }
-      },
-      'Day 3' => {
-        general: {
-          how_was_day_3_activity: {text: 'How were the day 3 activities?'},
-          how_were_animals: {text: 'How successful was the animal-based activity?'},
-          favorite_sport: {text: 'What is your favorite sport?', free_response: true}
-        }
-      },
-      'Day 4' => {
-        general: {
-          how_was_day_4_activity: {text: 'How were the day 4 activities?'},
-          how_was_meeting_lebron: {text: 'Did you enjoy meeting LeBron?'},
-          favorite_tv_show: {text: 'What is your favorite TV show?', free_response: true}
-        }
-      },
-      'Day 5' => {
-        general: {
-          how_was_day_5_activity: {text: 'How was the day 5 activity?'},
-          how_was_meeting_andy_sandberg: {text: 'How awesome was meeting Andy Sandberg?'},
-          how_got_home: {text: 'How did you get home?', free_response: true},
-          how_do_you_feel: {text: 'How do you really feel?', free_response: true}
-        }
-      },
-      'Post Workshop' => {
-        general: {
-          overall: {text: 'Overall, how successful was the workshop?'},
-          how_prepared: {text: 'How prepared do you feel for the coming year?'},
-          any_feedback: {text: 'Any feedback?', free_response: true},
-          last_words: {text: 'Any last words?', free_response: true}
-        }
+        general: day_1_general
       }
     }
   end

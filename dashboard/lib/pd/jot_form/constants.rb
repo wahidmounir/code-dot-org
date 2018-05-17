@@ -10,12 +10,16 @@ module Pd
         TYPE_CHECKBOX = 'checkbox'.freeze,
         TYPE_SCALE = 'scale'.freeze,
         TYPE_MATRIX = 'matrix'.freeze,
-        TYPE_BUTTON = 'button'.freeze
+        TYPE_BUTTON = 'button'.freeze,
+        TYPE_DIVIDER = 'divider'.freeze,
+        TYPE_TEXT = 'text'.freeze
       ].freeze
 
       IGNORED_TYPES = [
         TYPE_HEADING,
-        TYPE_BUTTON
+        TYPE_BUTTON,
+        TYPE_DIVIDER,
+        TYPE_TEXT
       ].freeze
 
       ANSWER_TYPES = [
@@ -32,6 +36,11 @@ module Pd
         # No answer, just question metadata, e.g. matrix heading
         ANSWER_NONE = 'none'.freeze
       ].freeze
+
+      SURVEY_REPORT_TYPES = [
+        TYPE_SCALE,
+        TYPE_TEXTAREA
+      ]
     end
   end
 end
