@@ -195,7 +195,6 @@ module Pd::WorkshopSurveyResultsHelper
               # For facilitator specific free responses, we want a hash of facilitator IDs
               # to an array of all of their specific responses
               facilitator_responses = Hash.new []
-
               surveys_for_session.each do |survey|
                 survey[:facilitator][q_key].each do |facilitator, answer|
                   facilitator_responses[facilitator] += [answer]
@@ -233,7 +232,6 @@ module Pd::WorkshopSurveyResultsHelper
               session_summary[:facilitator][q_key] = facilitator_response_averages
             else
               # For non facilitator specific responses, just return the average
-              puts q_key
               sum = surveys_for_session.map {|survey| survey[response_section][q_key]}.reduce(0, :+)
               session_summary[response_section][q_key] = (sum / surveys_for_session.size.to_f).round(2)
             end
@@ -266,6 +264,26 @@ module Pd::WorkshopSurveyResultsHelper
             25 => %w(Nope Nothing Nada Zip Zilch).sample,
             28 => rand(1..7)
           },
+          facilitator: {
+            21 => {
+              [500, 501].sample => "They were #{%w(punctual sweet smart).sample}"
+            },
+            22 => {
+              [500, 501].sample => "They could be more #{%w(harsh unyielding forceful).sample}"
+            },
+            23 => {
+              [500, 501].sample => %w(Computers slides instructors).sample
+            },
+            24 => {
+              [500, 501].sample => %w(bugs boredom hunger).sample
+            },
+            25 => {
+              [500, 501].sample => %w(Meh Dunno Whatevs).sample
+            },
+            48 => {
+              [500, 501].sample => %w(Yes No).sample
+            }
+          }
         }
       end
     }
@@ -275,9 +293,14 @@ module Pd::WorkshopSurveyResultsHelper
     day_1_general = Hash[*Pd::JotForm::Translation.new(81_236_323_593_153).get_questions.
       select {|q| Constants::SURVEY_REPORT_TYPES.include? q.type}.
       map {|q| [q.id, {free_response: q.type == Constants::TYPE_TEXTAREA, text: q.text}]}.flatten]
+
+    day_1_facilitator = Hash[*Pd::JotForm::Translation.new(81_276_605_393_158).get_questions.
+      select {|q| Constants::SURVEY_REPORT_TYPES.include? q.type}.
+      map {|q| [q.id, {free_response: q.type == Constants::TYPE_TEXTAREA, text: q.text}]}.flatten]
     {
       'Day 1' => {
-        general: day_1_general
+        general: day_1_general,
+        facilitator: day_1_facilitator
       }
     }
   end
