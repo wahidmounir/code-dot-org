@@ -186,8 +186,9 @@ module Pd::WorkshopSurveyResultsHelper
 
     get_questions_for_forms.each do |session, response_sections|
       surveys_for_session = surveys[session]
+      survey_count = surveys_for_session.first.second.size
       session_summary = {
-        survey_count: surveys_for_session.size,
+        survey_count: survey_count,
       }
 
       response_sections.each do |response_section, questions|
@@ -236,7 +237,7 @@ module Pd::WorkshopSurveyResultsHelper
             else
               # For non facilitator specific responses, just return the average
               sum = surveys_for_session[response_section].map {|survey| survey[q_key].to_i || 0}.reduce(0, :+)
-              session_summary[response_section][q_key] = (sum / surveys_for_session.size.to_f).round(2)
+              session_summary[response_section][q_key] = (sum / survey_count.to_f).round(2)
             end
           end
         end
