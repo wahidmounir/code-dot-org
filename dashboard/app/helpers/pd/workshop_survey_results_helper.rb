@@ -167,17 +167,20 @@ module Pd::WorkshopSurveyResultsHelper
     summary = {
       this_workshop: {},
     }
-    summary['questions'] = get_questions_for_forms
 
-    summary[:this_workshop] = generate_workshops_survey_summary(workshop)
+    questions = get_questions_for_forms
+
+    summary['questions'] = questions
+
+    summary[:this_workshop] = generate_workshops_survey_summary(workshop, questions)
 
     summary[:facilitators] = Hash[*workshop.facilitators.pluck(:id, :name).flatten]
 
     summary
   end
 
-  def generate_workshops_survey_summary(workshop)
-    surveys = get_surveys_for_workshops(workshop)
+  def generate_workshops_survey_summary(workshop, survey_questions)
+    surveys = get_surveys_for_workshops(workshop, survey_questions)
 
     workshop_summary = {}
 
@@ -195,8 +198,8 @@ module Pd::WorkshopSurveyResultsHelper
               # For facilitator specific free responses, we want a hash of facilitator IDs
               # to an array of all of their specific responses
               facilitator_responses = Hash.new []
-              surveys_for_session.each do |survey|
-                survey[:facilitator][q_key].each do |facilitator, answer|
+              surveys_for_session[:facilitator].each do |survey|
+                survey[q_key].each do |facilitator, answer|
                   facilitator_responses[facilitator] += [answer]
                 end
               end
@@ -204,7 +207,7 @@ module Pd::WorkshopSurveyResultsHelper
               session_summary[:facilitator][q_key] = facilitator_responses
             else
               # Otherwise, we just want a list of all responses
-              sum = surveys_for_session.map {|survey| survey[response_section][q_key]}.reduce([], :append)
+              sum = surveys_for_session[response_section].map {|survey| survey[q_key]}.reduce([], :append).compact
               session_summary[response_section][q_key] = sum
             end
           else
@@ -214,8 +217,8 @@ module Pd::WorkshopSurveyResultsHelper
               # sum by responses to get the average for that facilitator.
               facilitator_response_sums = {}
 
-              surveys_for_session.each do |survey|
-                survey[:facilitator][q_key].each do |facilitator, answer|
+              surveys_for_session[:facilitator].each do |survey|
+                survey[q_key].each do |facilitator, answer|
                   if facilitator_response_sums[facilitator].nil?
                     facilitator_response_sums[facilitator] = {responses: 0, sum: 0}
                   end
@@ -232,7 +235,7 @@ module Pd::WorkshopSurveyResultsHelper
               session_summary[:facilitator][q_key] = facilitator_response_averages
             else
               # For non facilitator specific responses, just return the average
-              sum = surveys_for_session.map {|survey| survey[response_section][q_key]}.reduce(0, :+)
+              sum = surveys_for_session[response_section].map {|survey| survey[q_key].to_i || 0}.reduce(0, :+)
               session_summary[response_section][q_key] = (sum / surveys_for_session.size.to_f).round(2)
             end
           end
@@ -245,26 +248,19 @@ module Pd::WorkshopSurveyResultsHelper
     workshop_summary
   end
 
-  def get_surveys_for_workshops(workshop)
+  def get_surveys_for_workshops(workshop, questions)
+    day_1_general_submissions = Pd::JotForm::Translation.new(81_236_323_593_153).get_submissions
+
+    day_1_general_answers = day_1_general_submissions.map do |submission|
+      answers = submission[:answers]
+
+      answers.select {|k, _| questions['Day 1'][:general].key? k} unless answers.nil?
+    end
     {
-      'Day 1' => rand(10..20).times.map do |_|
-        {
-          general: {
-            5 => rand(1..7),
-            6 => %w(Work\ it\ harder Make\ it\ better Do\ it\ faster\ Makes\ us\ stronger).sample,
-            13 => rand(1..7),
-            15 => rand(1..7),
-            16 => rand(1..7),
-            17 => rand(1..7),
-            18 => rand(1..7),
-            21 => "They were #{%w(funny helpful engaging witty bright).sample}",
-            22 => "They could be more #{%w(energetic thoughtful pensive).sample}",
-            23 => %w(Peers Slides Activities).sample,
-            24 => %w(Heat Food Phones).sample,
-            25 => %w(Nope Nothing Nada Zip Zilch).sample,
-            28 => rand(1..7)
-          },
-          facilitator: {
+      'Day 1' => {
+        general: day_1_general_answers,
+        facilitator: day_1_general_answers.size.times.map do |_|
+          {
             21 => {
               [500, 501].sample => "They were #{%w(punctual sweet smart).sample}"
             },
@@ -284,8 +280,8 @@ module Pd::WorkshopSurveyResultsHelper
               [500, 501].sample => %w(Yes No).sample
             }
           }
-        }
-      end
+        end
+      }
     }
   end
 
