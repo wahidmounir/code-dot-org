@@ -4,7 +4,7 @@ set -e
 # 'npm test' normally does all three of these things.
 # We break them up here so they each run in isolation.
 
-GRUNT_CMD="`npm bin`/grunt"
+GRUNT_CMD="node_modules/.bin/grunt"
 export NODE_OPTIONS="--max-old-space-size=4096"
 
 if [ -n "$CIRCLECI" ]; then
