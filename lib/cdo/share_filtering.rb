@@ -1,6 +1,7 @@
 require 'cdo/regexp'
 require 'cdo/geocoder'
 require 'cdo/web_purify'
+require 'dynamic_config/gatekeeper'
 
 USER_ENTERED_TEXT_INDICATORS = ['TITLE', 'TEXT', 'title name\=\"VAL\"'].freeze
 PLAYLAB_APP_INDICATOR = 'studio_'.freeze
