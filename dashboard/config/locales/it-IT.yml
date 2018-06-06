@@ -5,18 +5,18 @@
       too_young: Questo contenuto ha attivi dei limiti di età e non è disponibile
         per gli studenti più giovani.
       teacher_must_accept_terms: Questo contenuto ha restrizioni di età in corso e
-        non è disponibile per gli studenti più giovani. Chiedi al tuo/a insegnante
-        di accettare i Termini di Servizio aggiornati per accedere a questo contenuto.
-        Il/La tuo/a insegnante può farlo effettuando il login a Code Studio e cliccando
-        sul bottone "Revisiona Termini Aggiornati" in alto nella pagina iniziale di
-        Code Studio.
+        non è disponibile per gli studenti più giovani. Chiedi al tuo (o alla tua)
+        insegnante di accettare i Termini di Servizio aggiornati per accedere a questo
+        contenuto. Il tuo (o la tua) insegnante può farlo effettuando il login in
+        Code Studio e cliccando sul bottone "Revisiona Termini Aggiornati" in alto
+        nella pagina iniziale di Code Studio.
       pair_programmer: Attualmente stai programmando in coppia con uno studente che
         non ha accesso a questo contenuto. Per accedervi, ferma la programmazione
         in coppia e riprova.
   activerecord:
     errors:
       messages:
-        blank: "è un dato obbligatorio"
+        blank: è un dato obbligatorio
         blank_plural: sono richiesti
         invalid_plural: non sono validi
     attributes:
@@ -69,7 +69,7 @@
   courses: Corsi
   courses_page:
     title_student: Impara su Code Studio
-    title_teacher: Insegna con Code Studio
+    title_teacher: Insegna Informatica
   unplugged_activity: Attività Tradizionale
   of: di
   more: DI PIÙ
@@ -142,6 +142,13 @@
     valid_password: Password valida!
     invalid_password: La password deve essere lunga almeno 6 caratteri
     mismatch_password: Le due password che hai inserito non corrispondono
+    agree_tos_privacy: Accetto i <a href='http://code.org/tos'>Termini di Servizio</a>
+      e l'<a href='http://code.org/privacy'>Informativa sulla Privacy</a>.
+    under_13_consent: Se ho meno di 13 anni, confermo che i miei genitori o di chi
+      ne fa le veci mi hanno dato il permesso di utilizzare i servizi di Code.org.
+    agree_us_website: Accetto di utilizzare un sito web con sede negli Stati Uniti.
+    my_data_to_us: I dati del mio utilizzo di questo sito possono essere inviati e
+      memorizzati o elaborati negli Stati Uniti.
     student_terms: Accetto di essere legato ai <a href='http://code.org/tos'> Termini
       di Servizio </a> di Code.org. Se ho meno di 13 anni, confermo, sottoscrivendo
       a questo modulo che ho il permesso da parte di un genitore o di un tutore legale
@@ -154,12 +161,20 @@
       la nostra <a href='http://code.org/privacy'>Informativa sulla Privacy</a>.
     additional_information: Abbiamo bisogno di alcune informazioni aggiuntive per
       continuare la tua iscrizione.
+    user_type_button: Aggiorna Tipologia di Account
     user_type_label: Tipo di account
     user_type_teacher: Insegnante
     user_type_student: Studente
-    field_is_required: "è un dato obbligatorio"
+    field_is_required: è un dato obbligatorio
     accept_terms: Devi accettare le condizioni per creare un account
     error: Si è verificato un errore.
+    email_preference_question: Possiamo inviarti email sulle novità dei nostri corsi
+      o su altre notizie legate all'informatica?
+    email_preference_privacy: "(Vedi la nostra informativa sulla privacy)"
+    email_preference_yes: Sì
+    email_preference_no: 'No'
+    email_preference_required: Devi specificare una preferenza relativa all'indirizzo
+      email.
   school_info:
     title: Informazioni sulla scuola (opzionale)
     school_country: Paese della Scuola
@@ -211,6 +226,7 @@
       email: Indirizzo di posta elettronica
       submit: Invia
     reset_errors:
+      captcha_required: Please fill out the CAPTCHA to reset your password.
       invalid_email: Sembra tu ti sia loggato con un indirizzo email non valido. Invia
         una mail a support@code.org per ricevere il link per il recupero della password.
     change_form:
@@ -429,6 +445,7 @@
     confirm_secret_words: Conferma la tua identità inserendo le tue parole segrete
     enter_parent_email: Inserisci l'email del tuo genitore o tutore (per il recupero
       della password)
+    update: Aggiorna Account
   user_level:
     completed: Completato
     tried: Provato
@@ -619,6 +636,8 @@
       appartenere alla tua classe.
     already_enrolled_in_new_section: Non puoi spostare questi studenti perché appartengono
       già ad una classe di questo insegnante.
+    third_party_login: Non puoi spostare gli studenti in una classe sincronizzata
+      con un strumento di terze parti.
   share:
     title: Impara su Code Studio
     description: Chiunque può imparare l'informatica. Realizza giochi, app e lavori
@@ -627,6 +646,8 @@
   gender:
     male: Maschile
     female: Femminile
+    non_binary: Non-binario
+    not_listed: Preferred term not listed
     none: Preferisco non rispondere
   user_type:
     student: Studente
@@ -673,7 +694,7 @@
     secure: Versione sicura
     report_abuse: Segnala un abuso
     built_on_code_studio: Costruito con Code Studio
-    make_my_own_app: Crea la tua App
+    make_my_own_app: Creo la mia App
     how_it_works: Come funziona
     try_hour_of_code: Prova un Ora di Programmazione!
   reference_area:
@@ -788,7 +809,8 @@
       cta: Scopri come
     hoc-encryption:
       title: Crittografia semplice
-      body: Students will learn techniques to create and crack encrypted messages.
+      body: Gli studenti impareranno tecniche per creare e decifrare un messaggio
+        cifrato.
     weblab:
       title: Sviluppo Web (versione provvisoria)
       body: Sviluppo Web è un ambiente di programmazione in cui si possono realizzare
@@ -963,12 +985,12 @@
       per noi, e speriamo che stabilisca un nuovo standard per la privacy degli studenti
       nella tecnologia di formazione. Ti abbiamo inviato un riassunto delle altre
       modifiche via e-mail.'
-    intro_instructions: "È necessario accettare questi nuovi termini per gli studenti
+    intro_instructions: È necessario accettare questi nuovi termini per gli studenti
       con un'età minore di 13 anni nella tua classe per avere accesso completo alle
       ultime caratteristiche di Code studio. Registrando uno studente con un'età minore
       di 13 anni, ti verrà chiesto se la tua scuola abbia il consenso dei genitori
       per la raccolta di dati personali dello studente per uso e beneficio della scuola,
-      tra cui programmi educativi come Code studio."
+      tra cui programmi educativi come Code studio.
     tos: Termini di servizio
     privacy: Informativa sulla privacy
     privacy_notice: Informativa sulla privacy
@@ -1044,8 +1066,8 @@
     share: Condividi
     share_title: Condividi il tuo progetto
     share_copy_link: 'Copia il link:'
-    share_embed_description: "È possibile incollare il codice da incorporare in una
-      pagina HTML per visualizzare il progetto in una pagina Web."
+    share_embed_description: È possibile incollare il codice da incorporare in una
+      pagina HTML per visualizzare il progetto in una pagina Web.
     share_u13_warning: Chiedi al tuo insegnante prima di condividere qualcosa. Condividi
       solo con persone della tua classe/scuola.
     embed: Incorpora
@@ -1166,6 +1188,7 @@
     csd5_2: 'Capitolo 2: Risoluzione dei problemi di dati'
     csd6_1: 'Capitolo 1: Output Hardware'
     csd6_2: 'Capitolo 2: Input Hardware'
+    csd_survey: Post-Course Survey
     csp1_1: 'Capitolo 1: Rappresentazione e trasmissione delle informazioni'
     csp1_2: 'Capitolo 2: Inventare Internet'
     csp2_1: 'Capitolo 1: Codifica e compressione delle informazioni complesse'
@@ -1179,6 +1202,11 @@
     csp_ap_1: 'Capitolo 1: Installazione di AP Tech'
     csp_ap_2: 'Capitolo 2: AP analizzare il Task Performance'
     csp_ap_3: 'Capitolo 3: AP creare il Task Performance'
+    csp_postap_1: 'Chapter 1: Manipulating and Visualizing Data'
+    csp_postap_2: 'Chapter 2: Apps and Databases'
+    csp2_1_2018: 'Unità 2: Informazioni digitali'
+    csp3_1_2018: 'Unit 3: Intro to Programming'
+    csp4_1_2018: 'Unit 4: Big Data and Privacy'
     dlp: Punti di riflessione
   external_links:
     disclaimer: Limiti di responsabilità
@@ -1322,3 +1350,16 @@
       anything_else_s: Is there anything else you’d like to tell us about your experience
         at this workshop?
   courses_category: Corsi Avanzati
+  cookie_banner:
+    message: Continuando a navigare nel nostro sito o cliccando su "Accetto", accetti
+      la memorizzazione dei cookie sul tuo computer o dispositivo.
+    more_information: Leggi l'informativa sulla privacy di Code.org.
+    accept: Accetto
+  gdpr_dialog:
+    heading: Accetti di utilizzare un sito web con sede negli Stati Uniti?
+    message: I dati del tuo utilizzo di questo sito possono essere inviati e memorizzati
+      o elaborati negli Stati Uniti.
+    link_intro: Per ulteriori informazioni vedi la nostra
+    privacy_policy: informativa sulla privacy
+    logout: Esci
+    true: Sì

@@ -106,8 +106,15 @@ class Ability
           workshop.facilitators.include? user
         end
         can [:read, :start, :end, :workshop_survey_report, :summary, :filter], Pd::Workshop, facilitators: {id: user.id}
+        can [:read, :update], Pd::Workshop, organizer_id: user.id
         can :manage_attendance, Pd::Workshop, facilitators: {id: user.id}, ended_at: nil
         can :create, Pd::FacilitatorProgramRegistration, user_id: user.id
+        can :read, Pd::CourseFacilitator, facilitator_id: user.id
+
+        if Pd::CourseFacilitator.exists?(facilitator: user, course: Pd::Workshop::COURSE_CSF)
+          can :create, Pd::Workshop
+          can :update, Pd::Workshop, facilitators: {id: user.id}
+        end
       end
 
       if user.district_contact?
@@ -123,10 +130,17 @@ class Ability
         end
       end
 
-      if user.workshop_organizer?
+      if user.workshop_organizer? || user.program_manager?
         can :create, Pd::Workshop
         can [:read, :start, :end, :update, :destroy, :summary, :filter], Pd::Workshop, organizer_id: user.id
         can :manage_attendance, Pd::Workshop, organizer_id: user.id, ended_at: nil
+
+        # Regional partner program managers can access workshops assigned to their regional partner
+        if user.regional_partners.any?
+          can [:read, :start, :end, :update, :destroy, :summary, :filter], Pd::Workshop, regional_partner_id: user.regional_partners.pluck(:id)
+          can :manage_attendance, Pd::Workshop, regional_partner_id: user.regional_partners.pluck(:id), ended_at: nil
+        end
+
         can :read, Pd::CourseFacilitator
         can :index, :workshop_organizer_survey_report
         can :read, :pd_workshop_summary_report
@@ -140,11 +154,12 @@ class Ability
           group_3_partner_ids = user.regional_partners.where(group: 3).pluck(:id)
           unless group_3_partner_ids.empty?
             can :manage, Pd::Application::ApplicationBase, regional_partner_id: group_3_partner_ids
+            cannot :delete, Pd::Application::ApplicationBase, regional_partner_id: group_3_partner_ids
           end
         end
       end
 
-      if user.permission?(UserPermission::WORKSHOP_ADMIN)
+      if user.workshop_admin?
         can :manage, Pd::Workshop
         can :manage, Pd::WorkshopMaterialOrder
         can :manage, Pd::CourseFacilitator
@@ -206,11 +221,13 @@ class Ability
     # permissions.
     if user.persisted? && user.permission?(UserPermission::LEVELBUILDER)
       can :manage, [
+        Block,
         Game,
         Level,
         Course,
         Script,
-        ScriptLevel
+        ScriptLevel,
+        Video,
       ]
 
       # Only custom levels are editable.
@@ -222,6 +239,10 @@ class Ability
     if user.persisted? && user.permission?(UserPermission::PROJECT_VALIDATOR)
       # let them change the hidden state
       can :manage, LevelSource
+    end
+
+    if user.permission?(UserPermission::CENSUS_REVIEWER)
+      can :manage, Census::CensusInaccuracyInvestigation
     end
 
     if user.admin?

@@ -59,7 +59,7 @@ sk:
   courses: 'Kurzy'
   courses_page:
     title_student: "Informácie o Code štúdiu"
-    title_teacher: "Teach with Code Studio"
+    title_teacher: "Teach Computer Science"
   unplugged_activity: 'Aktivity bez počítača'
   of: "z"
   more: "VIAC"
@@ -69,7 +69,7 @@ sk:
   try_k8intro: "Vyskúšaj si náš K-8 Úvod do Kurzu Počítačovej Vedy (15-25 hodín)"
   k8intro: "K-8 Úvod do Kurzu Počítačovej Vedy (15-25 hours)"
   already_started: "Už si začal(a)? Pokračuj tu >> "
-  demos: 'Admin: Všetky ukážky'
+  demos: "Admin: Všetky ukážky"
   continue: 'Pokračovať'
   prize: 'trofej'
   more_info: 'Viac info'
@@ -114,15 +114,25 @@ sk:
     valid_password: "Platné heslo!"
     invalid_password: "Heslo musí obsahovať aspoň 6 znakov"
     mismatch_password: "Zadané dve heslá sa nezhodujú"
+    agree_tos_privacy: "I agree to the <a href='http://code.org/tos'>Terms of Service</a> and <a href='http://code.org/privacy'>Privacy Policy</a>."
+    under_13_consent: "If I am under 13 years of age, I confirm that I have my parent or legal guardian's permission to use the Code.org services."
+    agree_us_website: "I agree to using a website based in the United States."
+    my_data_to_us: "Data from my use of this site may be sent to and stored or processed in the United States."
     student_terms: "Súhlasím, že budem dodržiavať <a href='http://code.org/tos'>Podmienky Služieb</a>. Ak som mladší ako 13 rokov, dám si potvrdiť predložený formulár môjmu zákonnému zástupcovi, aby som mohol využívať služby Code.org.<br/><br/>Emailové adresy nie sú uložené a nekontaktujú študentov. Študenti nebudú dostávať emaily od Code.org okrem obnovenia hesla. Pre viac informácií <a href='http://code.org/privacy'> Zásady ochrany osobných údajov</a>."
     teacher_terms: "Súhlasím, že budem dodržiavať Podmienky služieb. Pre viac informácií o súkromí, nájdete na <a href='http://code.org/privacy'> Zásady ochrany osobných údajov</a>."
     additional_information: "Potrebujeme niektoré ďalšie informácie pre pokračovanie vášho prihlásenia/registrácie."
+    user_type_button: "Update Account Type"
     user_type_label: "Typ účtu"
     user_type_teacher: "Učiteľ"
     user_type_student: "Študent"
     field_is_required: "sa vyžaduje"
     accept_terms: "Musíte súhlasiť s vytvorením účtu"
     error: "An error occurred."
+    email_preference_question: "Can we email you about updates to our courses, local opportunities, or other computer science news?"
+    email_preference_privacy: "(See our privacy policy)"
+    email_preference_yes: "Áno"
+    email_preference_no: "Nie"
+    email_preference_required: "You must specify an email preference."
   school_info:
     title: 'School Information (optional)'
     school_country: 'School Country'
@@ -171,6 +181,7 @@ sk:
       email: 'E-mailová adresa'
       submit: 'Odoslať'
     reset_errors:
+      captcha_required: 'Please fill out the CAPTCHA to reset your password.'
       invalid_email: 'It looks like you may have signed up with an invalid email address. Please email support@code.org to receive a password recovery link.'
     change_form:
       title: 'Zmeňte Vaše heslo'
@@ -201,7 +212,7 @@ sk:
     remove: '(remove section)'
     type:
       picture: 'Picture Password'
-      word: 'Secret Words'
+      word: 'Tajné slovo'
       email: 'E-mail'
       google_classroom: 'Google Classroom'
       clever: 'Clever'
@@ -220,7 +231,7 @@ sk:
       provider_managed_section: "This section is managed by another provider and cannot be joined. Please ask your teacher to add you via %{provider} and re-sync their section."
     mail:
       student_disassociated:
-        subject: 'Code.org upozornenie: %{student_name} už nie je tvoj študent.'
+        subject: "Code.org upozornenie: %{student_name} už nie je tvoj študent."
   reports:
     error:
       access_denied: "Nemáš prístup k štatistikám tejto osoby"
@@ -304,7 +315,7 @@ sk:
       already_registered: 'Ste už zaregistrovaný?'
       pair_programming: 'Pair Programming'
       team: 'Tím'
-      driver: 'Ovládač'
+      driver: 'Prihlásený'
       navigator: 'Navigátor'
     popup:
       progress_for_user: "Pokrok pre užívateľa %{name}"
@@ -352,7 +363,7 @@ sk:
     current_password_hint: '(potrebujeme Vaše aktuálne heslo na potvrdenie týchto zmien)'
     delete: 'Zmazať svoj účet'
     delete_text: "Klinutím na tlačítko nižšie, vymažete svoj účet."
-    delete_text_teacher_note: 'Poznámka: vymazaním svojho účtu nevymažete účty Vašich študentov.'
+    delete_text_teacher_note: "Poznámka: vymazaním svojho účtu nevymažete účty Vašich študentov."
     delete_confirm: 'Naozaj chcete odstrániť tento účet?'
     deleted_user: 'zmazaný používateľ'
     no_password_because_oauth: 'Heslo nie je požadované, pretože ste prihlásený cez poskytovateľa služieb.'
@@ -363,10 +374,11 @@ sk:
     create_personal_login_under_13_parent_email: 'Parent/guardian email address'
     create_personal_login_info: 'If you want to keep using your Code.org account even after the end of the school year, you can create your own login below.'
     create_personal_login_terms: "By creating a personal login, I agree to be bound by the Code.org <a href='%{terms_of_service_url}', target='_blank'>terms of service</a>. If I am under 13 years of age, I confirm that I have my parent or legal guardian's permission to use the Code.org services even without a teacher."
-    create_personal_login_email_note: 'Note: Email addresses are not stored in a form that allows us to contact students. Students will never receive emails from Code.org except for password recovery. See our <a href=''%{privacy_policy_url}'', target=''_blank''>privacy policy</a> for more information.'
+    create_personal_login_email_note: "Note: Email addresses are not stored in a form that allows us to contact students. Students will never receive emails from Code.org except for password recovery. See our <a href='%{privacy_policy_url}', target='_blank'>privacy policy</a> for more information."
     enter_new_login_info: 'Enter your new login information'
     confirm_secret_words: 'Confirm that it is you by entering your current secret words'
     enter_parent_email: "Enter your parent or guardian's email address (for password recovery)"
+    update: "Update Account"
   user_level:
     completed: 'Dokončené'
     tried: 'Vyskúšaný'
@@ -448,6 +460,7 @@ sk:
     student_not_found: "Jeden alebo viac študentov nemožno nájsť."
     all_students_must_be_in_current_section: "Všetci študenti musia byť v súčasnosti zapísaní v sekcii."
     already_enrolled_in_new_section: "Títo študenti sa nesmú premiestniť, pretože tento učiteľ ich už má v inej sekcii."
+    third_party_login: "You cannot move students to a section that is synced with a third party tool."
   share:
     title: "Informácie o Code štúdiu"
     description: "Ktokoľvek sa môže naučiť informatiku. Programujte hry a aplikácie s Code štúdiom."
@@ -455,6 +468,8 @@ sk:
   gender:
     male: 'Muž'
     female: 'Žena'
+    non_binary: 'Non-binary'
+    not_listed: 'Preferred term not listed'
     none: 'Preferujem neodpovedať'
   user_type:
     student: 'Študent'
@@ -702,7 +717,7 @@ sk:
     sign_out: 'Ak si neželáte poskytnúť váš vek môže sa <a href="%{url}"> odhlásiť</a>.'
   terms_interstitial:
     title: "Aktualizované podmienky poskytovania služby a ochrany súkromia"
-    intro_desc: Aktualizovali sme naše zmluvné podmienky a dokument o ochrane osovných údajov. Zmeny sú účinné od 24. augusta 2016.  Najväčšou zmenou je,  že <i>už viac nebudeme uchovávať e-mailové adresy študentských účtov na v Code Studio.</i> Je to pre nás veľký krok a dúfame, že sme nastavili nový štandard pre súkromie študentov v technológiách pre vzdelávanie. Súhrn zmien sme vám poslali e-mailom.
+    intro_desc: "Aktualizovali sme naše zmluvné podmienky a dokument o ochrane osovných údajov. Zmeny sú účinné od 24. augusta 2016.  Najväčšou zmenou je,  že <i>už viac nebudeme uchovávať e-mailové adresy študentských účtov na v Code Studio.</i> Je to pre nás veľký krok a dúfame, že sme nastavili nový štandard pre súkromie študentov v technológiách pre vzdelávanie. Súhrn zmien sme vám poslali e-mailom."
     intro_instructions: "Je potrebné, aby ste akceptovali tieto nové podmienky pre študentov vo veku menej ako 13 rokov vo vašej triede, aby získali plný prístup k všetkýn najnovším funkciám v Code Studio.  Pri registrácii účtu pre študenta s vekom menej ako 13 rokov, budete musieť potvrdiť, že vaša škola má súhlas rodiča pre zhromažďovanie osobných údajov študenta na využitie a prínos pre školu, vrátane vzdelávacích programov, ako napríklad Code Studio."
     tos: "Podmienky"
     privacy: "Zásady ochrany súkromia"
@@ -718,25 +733,25 @@ sk:
     message_with_suggestion: "Please verify that the following information is correct, or update as necessary."
     save: "Uložiť"
   race_interstitial:
-    title: 'Dobrovoľné: Pomôžte nám sledovať náš pokrok ku zlepšeniu diverzity v informatike'
+    title: "Dobrovoľné: Pomôžte nám sledovať náš pokrok ku zlepšeniu diverzity v informatike"
     message: "Prosím zvoľte vašu rasu (označte všetky ktoré platia)"
     races:
       - 
-        white: Biela
+        white: "Biela"
       - 
-        black: Africká alebo Afroamerická
+        black: "Africká alebo Afroamerická"
       - 
-        hispanic: Hispánska alebo Latinoamerická
+        hispanic: "Hispánska alebo Latinoamerická"
       - 
-        asian: Ázijská
+        asian: "Ázijská"
       - 
-        hawaiian: Pôvodná havajská alebo iná tichomorská
+        hawaiian: "Pôvodná havajská alebo iná tichomorská"
       - 
-        american_indian: Pôvodná americká alebo alijašská
+        american_indian: "Pôvodná americká alebo alijašská"
       - 
-        other: Ostatné
+        other: "Ostatné"
       - 
-        opt_out: Preferujem neodpovedať
+        opt_out: "Preferujem neodpovedať"
     submit: "Odoslať"
     decline: "Zatvoriť"
   zendesk_too_young_message: 'Prepáč, mladší užívatelia sa nemôžu prihlásiť na našu stránku podpory. Môžeš si prezerať <a href="http://support.code.org">support.code.org</a> bez prihlásenia, prípadne požiadať tvojich rodičov alebo učiteľov, aby nás za teba kontaktovali.'
@@ -762,7 +777,7 @@ sk:
     delete: "Odstrániť"
     import: "Import"
     share_link_import_bad_link_header: "Prepojenie na zdieľanie sa nerozpoznalo"
-    share_link_import_bad_link_body: 'Prepojenie na zdieľanie sa nemohlo importovať. Uistite sa, že používate prepojenie z hlavolamu Minecraft: Agent a že ste skopírovali celé prepojenie.'
+    share_link_import_bad_link_body: "Prepojenie na zdieľanie sa nemohlo importovať. Uistite sa, že používate prepojenie z hlavolamu Minecraft: Agent a že ste skopírovali celé prepojenie."
     share_link_import_error_header: "Vyskytla sa chyba."
     share_link_import_error_body: "Vyskytol sa problém s importom tohto prepojenia na zdieľanie. Skúste to znova."
     exit: "Vrátiť sa do kurzu"
@@ -865,8 +880,9 @@ sk:
     csd4_2: 'Chapter 2: App Prototyping'
     csd5_1: 'Chapter 1: Representing Information'
     csd5_2: 'Chapter 2: Solving Data Problems'
-    csd6_1: 'Chapter 1: Hardware Output'
-    csd6_2: 'Chapter 2: Hardware Input'
+    csd6_1: 'Chapter 1: Programming with Hardware'
+    csd6_2: 'Chapter 2: Building Physical Prototypes'
+    csd_survey: 'Post-Course Survey'
     csp1_1: 'Chapter 1: Representing and Transmitting Information'
     csp1_2: 'Chapter 2: Inventing the Internet'
     csp2_1: 'Chapter 1: Encoding and Compressing Complex Information'
@@ -880,6 +896,11 @@ sk:
     csp_ap_1: 'Chapter 1: AP Tech Setup'
     csp_ap_2: 'Chapter 2: AP Explore Performance Task'
     csp_ap_3: 'Chapter 3: AP Create Performance Task'
+    csp_postap_1: 'Chapter 1: Manipulating and Visualizing Data'
+    csp_postap_2: 'Chapter 2: Apps and Databases'
+    csp2_1_2018: 'Unit 2: Digital Information'
+    csp3_1_2018: 'Unit 3: Intro to Programming'
+    csp4_1_2018: 'Unit 4: Big Data and Privacy'
     dlp: 'Reflection Prompts'
   external_links:
     disclaimer: Upozornenie
@@ -984,3 +1005,14 @@ sk:
       things_you_would_change_s: 'What are the two things you would change about the activities you did in this workshop?'
       anything_else_s: 'Is there anything else you’d like to tell us about your experience at this workshop?'
   courses_category: 'Full Courses'
+  cookie_banner:
+    message: 'By continuing to browse our site or clicking "I agree," you agree to the storing of cookies on your computer or device.'
+    more_information: "See Code.org's Privacy Policy."
+    accept: 'súhlasím'
+  gdpr_dialog:
+    heading: 'Do you agree to using a web site based in the United States?'
+    message: 'Data from your use of this site may be sent to and stored or processed in the United States.'
+    link_intro: 'For details see our'
+    privacy_policy: 'privacy policy'
+    logout: 'Logout'
+    yes: 'Áno'

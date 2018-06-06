@@ -7,6 +7,7 @@ import { mergeActivityResult, activityCssClass } from './activityUtils';
 import { LevelStatus, LevelKind } from '@cdo/apps/util/sharedConstants';
 import { TestResults } from '@cdo/apps/constants';
 import { ViewType, SET_VIEW_TYPE } from './viewAsRedux';
+import { processedLevel } from '@cdo/apps/templates/progress/progressHelpers';
 
 // Action types
 export const INIT_PROGRESS = 'progress/INIT_PROGRESS';
@@ -406,16 +407,9 @@ const levelWithStatus = ({levelProgress, currentLevelId}, level) => {
     }
   }
   return {
+    ...processedLevel(level),
     status: statusForLevel(level, levelProgress),
-    url: level.url,
-    name: level.name,
-    progression: level.progression,
-    kind: level.kind,
-    icon: level.icon,
-    isUnplugged: level.kind === LevelKind.unplugged,
-    levelNumber: level.kind === LevelKind.unplugged ? undefined : level.title,
     isCurrentLevel: isCurrentLevel(currentLevelId, level),
-    isConceptLevel: level.is_concept_level,
   };
 };
 
@@ -447,6 +441,17 @@ export const isPerfect = (state, levelId) => (
   !!state.levelProgress &&
     state.levelProgress[levelId] >= TestResults.MINIMUM_OPTIMAL_RESULT
 );
+
+export const getPercentPerfect = levels => {
+  const puzzleLevels = levels.filter(level => !level.isConceptLevel);
+  if (puzzleLevels.length === 0) {
+    return 0;
+  }
+
+  const perfected = puzzleLevels.reduce((accumulator, level) =>
+    accumulator + (level.status === LevelStatus.perfect), 0);
+  return perfected / puzzleLevels.length;
+};
 
 /**
  * Given a level and levelProgress (both from our redux store state), determine

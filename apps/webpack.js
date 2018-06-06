@@ -15,7 +15,9 @@ var toTranspileWithinNodeModules = [
   // playground-io ships in ES6 as of 0.3.0
   path.resolve(__dirname, 'node_modules', 'playground-io'),
   path.resolve(__dirname, 'node_modules', 'chai-as-promised'),
+  path.resolve(__dirname, 'node_modules', 'enzyme-wait'),
   path.resolve(__dirname, 'node_modules', 'json-parse-better-errors'),
+  path.resolve(__dirname, 'node_modules', '@code-dot-org', 'artist'),
   path.resolve(__dirname, 'node_modules', '@code-dot-org', 'craft'),
 ];
 
@@ -39,11 +41,13 @@ var baseConfig = {
   },
   module: {
     rules: [
+      {test: /\.exported_json$/, loader: 'raw-loader'},
       {test: /\.json$/, loader: 'json-loader'},
       {test: /\.ejs$/, loader: 'ejs-compiled-loader'},
       {test: /\.css$/, loader: 'style-loader!css-loader'},
       {test: /\.scss$/, loader: `style-loader!css-loader!sass-loader?includePaths=${scssIncludePath}`},
       {test: /\.interpreted.js$/, loader: 'raw-loader'},
+      {test: /\.exported_js$/, loader: 'raw-loader'},
       {
         test:/\.(png|jpg|jpeg|gif|svg)$/,
         include: [

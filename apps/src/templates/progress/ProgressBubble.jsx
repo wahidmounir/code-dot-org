@@ -26,6 +26,7 @@ import TooltipWithIcon from './TooltipWithIcon';
 
 const styles = {
   main: {
+    boxSizing: 'content-box',
     fontFamily: '"Gotham 5r", sans-serif',
     width: DOT_SIZE,
     height: DOT_SIZE,
@@ -50,7 +51,9 @@ const styles = {
     width: DIAMOND_DOT_SIZE,
     height: DIAMOND_DOT_SIZE,
     borderRadius: 4,
-    transform: 'rotate(45deg)'
+    transform: 'rotate(45deg)',
+    marginTop: 6,
+    marginBottom: 6,
   },
   small: {
     width: SMALL_DOT_SIZE,
@@ -83,10 +86,20 @@ class ProgressBubble extends React.Component {
     level: levelType.isRequired,
     disabled: PropTypes.bool.isRequired,
     smallBubble: PropTypes.bool,
-    selectedSectionId: PropTypes.string,
+    //TODO: (ErinB) probably change to use just number during post launch clean-up.
+    selectedSectionId: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    selectedStudentId: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
     // This prop is provided as a testing hook, in normal use it will just be
     // set to window.location; see defaultProps.
     currentLocation: PropTypes.object.isRequired,
+    stageTrophyEnabled: PropTypes.bool,
+    hideToolTips: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -94,7 +107,7 @@ class ProgressBubble extends React.Component {
   };
 
   render() {
-    const { level, smallBubble, selectedSectionId, currentLocation } = this.props;
+    const { level, smallBubble, selectedSectionId, selectedStudentId, currentLocation, stageTrophyEnabled } = this.props;
 
     const number = level.levelNumber;
     const url = level.url;
@@ -108,7 +121,7 @@ class ProgressBubble extends React.Component {
       ...(!disabled && hoverStyle),
       ...(smallBubble && styles.small),
       ...(level.isConceptLevel && (smallBubble ? styles.smallDiamond : styles.largeDiamond)),
-      ...levelProgressStyle(level, disabled)
+      ...levelProgressStyle(level, disabled),
     };
 
     let href = '';
@@ -116,6 +129,9 @@ class ProgressBubble extends React.Component {
       const queryParams = queryString.parse(currentLocation.search);
       if (selectedSectionId) {
         queryParams.section_id = selectedSectionId;
+      }
+      if (selectedStudentId) {
+        queryParams.user_id = selectedStudentId;
       }
       const paramString = queryString.stringify(queryParams);
       href = url;
@@ -145,18 +161,21 @@ class ProgressBubble extends React.Component {
           levels={[level]}
           text={i18n.unpluggedActivity()}
           fontSize={16}
-          tooltip={tooltip}
+          tooltip={this.props.hideToolTips ? null : tooltip}
         />
       );
     }
+
+    // Two pixels on each side for border, 2 pixels on each side for margin.
+    const width = (smallBubble ? SMALL_DOT_SIZE : DOT_SIZE) + 8;
 
     // Outer div here is used to make sure our bubbles all take up equivalent
     // amounts of space, whether they're diamonds or circles
     let bubble = (
       <div
         style={{
-          // two pixles on each side for border, 2 pixels on each side for margin
-          width: (smallBubble ? SMALL_DOT_SIZE : DOT_SIZE) + 8,
+          // two pixels on each side for border, 2 pixels on each side for margin
+          width: stageTrophyEnabled ? width - 3 : width,
           display: 'flex',
           justifyContent: 'center'
         }}
@@ -181,7 +200,7 @@ class ProgressBubble extends React.Component {
                 {smallBubble ? '' : number}
               </span>
             )}
-            {tooltip}
+            {!this.props.hideToolTips && tooltip}
           </div>
         </div>
       </div>

@@ -1,7 +1,8 @@
+import sinon from 'sinon';
 import {expect} from '../../util/configuredChai';
 import {parseElement} from '@cdo/apps/xml';
-const Artist = require('@cdo/apps/turtle/turtle');
-const constants = require('@cdo/apps/constants');
+import {Position} from '@cdo/apps/constants';
+const Artist = require('@cdo/apps/turtle/artist');
 
 const SHORT_DIAGONAL = 50 * Math.sqrt(2);
 const VERY_LONG_DIAGONAL = 150 * Math.sqrt(2);
@@ -55,6 +56,167 @@ describe('Artist', () => {
     });
   });
 
+  describe('drawing with patterns', () => {
+    it('draws a pattern backwards', () => {
+      let artist = new Artist();
+      let width = 100;
+      let height = 100;
+      let img = new Image(width, height);
+
+      artist.visualization = new Artist.Visualization();
+      artist.visualization.currentPathPattern = img;
+      const setDrawPatternBackwardSpy = sinon.spy(artist.visualization.ctxScratch, 'drawImage');
+      artist.visualization.drawForwardLineWithPattern_(-100);
+
+      expect(setDrawPatternBackwardSpy).to.be.have.been.calledWith(img, 100, 0, -100, 100, -25, -50, -50, 100);
+
+      setDrawPatternBackwardSpy.restore();
+    });
+
+    it('draws a pattern forward', () => {
+      let artist = new Artist();
+      let width = 100;
+      let height = 100;
+      let img = new Image(width, height);
+
+      artist.visualization = new Artist.Visualization();
+      artist.visualization.currentPathPattern = img;
+      const setDrawPatternForwardSpy = sinon.spy(artist.visualization.ctxScratch, 'drawImage');
+      artist.visualization.drawForwardLineWithPattern_(100);
+
+      expect(setDrawPatternForwardSpy).to.be.have.been.calledWith(img, 0, 0, 100, 100, -25, -50, 150, 100);
+
+      setDrawPatternForwardSpy.restore();
+    });
+  });
+
+  describe('Accepts a third argument parameter', () => {
+    it('draws a sticker when size is null', () => {
+      let artist = new Artist();
+      const img = new Image(100, 100);
+      let size = null;
+      let blockId = "block_id_4";
+      let options = {smoothAnimate: false};
+
+      artist.visualization = new Artist.Visualization();
+      const setStickerSize = sinon.spy(artist.visualization.ctxScratch, 'drawImage');
+      artist.stickers = {Alien:img};
+      artist.step('sticker', ['Alien', size, blockId], options);
+
+      expect(setStickerSize).to.be.have.been.calledWith(img, 0, 0, 100, 100, -50, -100, 100, 100);
+
+      setStickerSize.restore();
+    });
+    it('draws a sticker when size is 0', () => {
+      let artist = new Artist();
+      const img = new Image(100, 100);
+      let size = 0;
+      let blockId = "block_id_4";
+      let options = {smoothAnimate: false};
+
+      artist.visualization = new Artist.Visualization();
+      const setStickerSize = sinon.spy(artist.visualization.ctxScratch, 'drawImage');
+      artist.stickers = {Alien:img};
+      artist.step('sticker', ['Alien', size, blockId], options);
+
+      expect(setStickerSize).to.be.have.been.calledWith(img, 0, 0, 100, 100, -0, -0, 0, 0);
+
+      setStickerSize.restore();
+    });
+    it('draws a sticker when size is 50 px', () => {
+      let artist = new Artist();
+      const img = new Image(100, 100);
+      let size = 50;
+      let blockId = "block_id_4";
+      let options = {smoothAnimate: false};
+
+      artist.visualization = new Artist.Visualization();
+      const setStickerSize = sinon.spy(artist.visualization.ctxScratch, 'drawImage');
+      artist.stickers = {Alien:img};
+      artist.step('sticker', ['Alien', size, blockId], options);
+
+      expect(setStickerSize).to.be.have.been.calledWith(img, 0, 0, 100, 100, -25, -50, 50, 50);
+
+      setStickerSize.restore();
+    });
+    it('draws a sticker when size is 200 px', () => {
+      // Test condition when width < size && height < size
+      let artist = new Artist();
+      const img = new Image(100, 100);
+      let size = 200;
+      let blockId = "block_id_4";
+      let options = {smoothAnimate: false};
+
+      artist.visualization = new Artist.Visualization();
+      const setStickerSize = sinon.spy(artist.visualization.ctxScratch, 'drawImage');
+      artist.stickers = {Alien:img};
+      artist.step('sticker', ['Alien', size, blockId], options);
+
+      expect(setStickerSize).to.be.have.been.calledWith(img, 0, 0, 100, 100, -50, -100, 100, 100);
+
+      setStickerSize.restore();
+    });
+    it('draws a sticker when size is 30 px', () => {
+      let artist = new Artist();
+      // Test condition when width > height
+      const img = new Image(100, 40);
+      let size = 30;
+      let blockId = "block_id_4";
+      let options = {smoothAnimate: false};
+
+      artist.visualization = new Artist.Visualization();
+      const setStickerSize = sinon.spy(artist.visualization.ctxScratch, 'drawImage');
+      artist.stickers = {Alien:img};
+      artist.step('sticker', ['Alien', size, blockId], options);
+
+      expect(setStickerSize).to.be.have.been.calledWith(img, 0, 0, 100, 40, -15, -12, 30, 12);
+
+      setStickerSize.restore();
+    });
+  });
+
+  describe('pointTo', () => {
+    let artist;
+    beforeEach(() => {
+      artist = new Artist();
+      artist.visualization = new Artist.Visualization();
+    });
+
+    it('can point to a specific direction', () => {
+      const absoluteDirection = [0, 30, 45, 60, 180, 270];
+      const blockId = "block_id_4";
+      const pointToSpy = sinon.spy(artist.visualization, 'pointTo');
+
+      absoluteDirection.forEach(angle => {
+        artist.step('PT', [angle, blockId]);
+        expect(pointToSpy).to.be.have.been.calledWith(angle);
+      });
+      pointToSpy.restore();
+    });
+
+    it('can point to a 50 degrees', () => {
+      let angle = 50;
+      let blockId = "block_id_5";
+
+      artist.visualization.angle = 50;
+      artist.step('PT', [angle, blockId]);
+
+      expect(artist.visualization.angle).to.equal(angle);
+    });
+
+    it('should call setHeading', () => {
+      let angle = 60;
+      let blockId = "block_id_8";
+
+      const setHeadingStub = sinon.stub(artist.visualization, 'setHeading');
+      artist.step('PT', [angle, blockId]);
+
+      expect(setHeadingStub).to.be.have.been.calledOnce;
+
+      setHeadingStub.restore();
+    });
+  });
+
   describe('jumpTo', () => {
     let artist;
     beforeEach(() => {
@@ -89,7 +251,7 @@ describe('Artist', () => {
 
       Object.keys(expectations).forEach(position => {
         const [x, y] = expectations[position];
-        artist.step('JT', [constants.Position[position]]);
+        artist.step('JT', [Position[position]]);
         expect(artist.visualization.x).to.equal(x);
         expect(artist.visualization.y).to.equal(y);
       });

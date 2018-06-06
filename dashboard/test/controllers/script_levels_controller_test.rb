@@ -1104,8 +1104,10 @@ class ScriptLevelsControllerTest < ActionController::TestCase
     assert_equal POST_MILESTONE_MODE.all, assigns(:view_options)[:post_milestone_mode]
   end
 
+  STUB_ENCRYPTION_KEY = SecureRandom.base64(Encryption::KEY_LENGTH / 8)
+
   test "should not see examples if an unauthorized teacher is signed in" do
-    CDO.stubs(:properties_encryption_key).returns('here is a fake properties encryption key')
+    CDO.stubs(:properties_encryption_key).returns(STUB_ENCRYPTION_KEY)
 
     sign_in create(:teacher)
 
@@ -1118,7 +1120,7 @@ class ScriptLevelsControllerTest < ActionController::TestCase
   end
 
   test "should see examples if an authorized teacher is signed in" do
-    CDO.stubs(:properties_encryption_key).returns('here is a fake properties encryption key')
+    CDO.stubs(:properties_encryption_key).returns(STUB_ENCRYPTION_KEY)
 
     authorized_teacher = create(:teacher)
     cohort = create(:cohort)
@@ -1257,6 +1259,7 @@ class ScriptLevelsControllerTest < ActionController::TestCase
       )
     )
     assert_equal assigns(:level), level
+    experiment.destroy
   end
 
   test "should present experiment level if in the section experiment" do
@@ -1272,6 +1275,7 @@ class ScriptLevelsControllerTest < ActionController::TestCase
       )
     )
     assert_equal assigns(:level), level
+    experiment.destroy
   end
 
   test "should present experiment level if in one of the experiments" do
@@ -1288,6 +1292,8 @@ class ScriptLevelsControllerTest < ActionController::TestCase
       )
     )
     assert_equal assigns(:level), level
+    experiment1.destroy
+    experiment2.destroy
   end
 
   test "should not present experiment level if not in the experiment" do
@@ -1303,6 +1309,7 @@ class ScriptLevelsControllerTest < ActionController::TestCase
       )
     )
     assert_equal assigns(:level), level2
+    experiment.destroy
   end
 
   test "hidden_stage_ids for user not signed in" do
@@ -1311,6 +1318,17 @@ class ScriptLevelsControllerTest < ActionController::TestCase
 
     hidden = JSON.parse(response.body)
     assert_equal [], hidden
+  end
+
+  test "hidden_stage_ids for user signed in" do
+    SectionHiddenStage.create(section_id: @section.id, stage_id: @custom_stage_1.id)
+
+    sign_in @student
+    response = get :hidden_stage_ids, params: {script_id: @script.name}
+    assert_response :success
+
+    hidden = JSON.parse(response.body)
+    assert_equal [@custom_stage_1.id.to_s], hidden
   end
 
   def put_student_in_section(student, teacher, script)
@@ -1466,7 +1484,7 @@ class ScriptLevelsControllerTest < ActionController::TestCase
     script.update(redirect_to: new_script.name)
 
     get :show, params: {script_id: script.name, stage_position: '1', id: '2'}
-    assert_redirected_to "/s/#{new_script.name}/stage/1/puzzle/1"
+    assert_redirected_to "/s/#{new_script.name}/stage/1/puzzle/2"
   end
 
   test "should indicate challenge levels as challenge levels" do

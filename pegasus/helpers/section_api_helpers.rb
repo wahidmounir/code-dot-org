@@ -24,7 +24,7 @@ class DashboardStudent
     gender = valid_gender?(params[:gender]) ? params[:gender] : nil
     birthday = age_to_birthday(params[:age]) ?
       age_to_birthday(params[:age]) : params[:birthday]
-
+    sharing_disabled = !!params[:sharing_disabled]
     created_at = DateTime.now
 
     row = Dashboard.db[:users].insert(
@@ -33,6 +33,7 @@ class DashboardStudent
         user_type: 'student',
         provider: 'sponsored',
         gender: gender,
+        properties: {sharing_disabled: sharing_disabled}.to_json,
         birthday: birthday,
         created_at: created_at,
         updated_at: created_at,
@@ -82,7 +83,8 @@ class DashboardStudent
       left_outer_join(:secret_pictures, id: :secret_picture_id).
       select(*fields,
         :secret_pictures__name___secret_picture_name,
-        :secret_pictures__path___secret_picture_path
+        :secret_pictures__path___secret_picture_path,
+        :properties___properties,
       )
 
     # Convert allowed_rows from an array of hashes (each representing a user)
@@ -93,11 +95,12 @@ class DashboardStudent
       end
     end
 
-    # Add user age to the hash.
+    # Add user age and sharing_disabled to the hash.
     ids.map do |id|
-      if allowed_rows.key? id
-        allowed_rows[id][:age] = birthday_to_age(allowed_rows[id][:birthday])
-      end
+      next unless allowed_rows.key? id
+      allowed_rows[id][:age] = birthday_to_age(allowed_rows[id][:birthday])
+      allowed_rows[id][:sharing_disabled] = JSON.parse(allowed_rows[id][:properties])["sharing_disabled"]
+      allowed_rows[id].delete(:properties)
     end
 
     # Return an array of hashes.
@@ -396,6 +399,15 @@ class DashboardSection
     courses
   end
 
+  # This only applies to courses because scripts are currently assumed to be in
+  # their own assignment family, e.g. "coursea-2018" would be in assignment family
+  # "coursea-2018" not "coursea". This will change once we start recognizing
+  # multiple versions of scripts.
+  def self.course_assignment_family(course)
+    m = ScriptConstants::VERSIONED_COURSE_NAME_REGEX.match(course[:name])
+    m ? m[1] : course[:name]
+  end
+
   # Gets a list of valid scripts in which progress tracking has been disabled via
   # the gatekeeper key postMilestone.
   def self.progress_disabled_scripts(user_id = nil)
@@ -606,18 +618,10 @@ class DashboardSection
           }
         )
       end
-    # Though it would be simpler to query the level counts for each student via
-    # DashboardStudent#completed_levels and inject them to @students via the row.merge above,
-    # querying all students together (as below) is significantly more performant.
-    student_ids = @students.map {|s| s[:id]}
-    level_counts = Dashboard.db[:user_levels].
-      group_and_count(:user_id).
-      where(user_id: student_ids).
-      where("best_result >= #{ActivityConstants::MINIMUM_PASS_RESULT}").
-      all
+    # completed_levels_count is deprecated and is no longer needed on the UI,
+    # but adding this field to not break anything unexpected.
     @students.each do |datum|
-      level_count = level_counts.find {|x| x[:user_id] == datum[:id]}
-      datum[:completed_levels_count] = level_count ? level_count[:count] : 0
+      datum[:completed_levels_count] = 0
     end
 
     @students
@@ -642,9 +646,11 @@ class DashboardSection
   end
 
   def to_owner_hash
+    course_name = @row[:course_id] ? Dashboard.db[:courses].where(id: @row[:course_id]).select(:name).first[:name] : ''
     to_member_hash.merge(
       script: script,
       course_id: @row[:course_id],
+      course_name: course_name,
       teachers: teachers,
       students: students,
       studentCount: students.count,

@@ -2,52 +2,53 @@
 #
 # Table name: users
 #
-#  id                       :integer          not null, primary key
-#  studio_person_id         :integer
-#  email                    :string(255)      default(""), not null
-#  parent_email             :string(255)
-#  encrypted_password       :string(255)      default("")
-#  reset_password_token     :string(255)
-#  reset_password_sent_at   :datetime
-#  remember_created_at      :datetime
-#  sign_in_count            :integer          default(0)
-#  current_sign_in_at       :datetime
-#  last_sign_in_at          :datetime
-#  current_sign_in_ip       :string(255)
-#  last_sign_in_ip          :string(255)
-#  created_at               :datetime
-#  updated_at               :datetime
-#  username                 :string(255)
-#  provider                 :string(255)
-#  uid                      :string(255)
-#  admin                    :boolean
-#  gender                   :string(1)
-#  name                     :string(255)
-#  locale                   :string(10)       default("en-US"), not null
-#  birthday                 :date
-#  user_type                :string(16)
-#  school                   :string(255)
-#  full_address             :string(1024)
-#  school_info_id           :integer
-#  total_lines              :integer          default(0), not null
-#  secret_picture_id        :integer
-#  active                   :boolean          default(TRUE), not null
-#  hashed_email             :string(255)
-#  deleted_at               :datetime
-#  purged_at                :datetime
-#  secret_words             :string(255)
-#  properties               :text(65535)
-#  invitation_token         :string(255)
-#  invitation_created_at    :datetime
-#  invitation_sent_at       :datetime
-#  invitation_accepted_at   :datetime
-#  invitation_limit         :integer
-#  invited_by_id            :integer
-#  invited_by_type          :string(255)
-#  invitations_count        :integer          default(0)
-#  terms_of_service_version :integer
-#  urm                      :boolean
-#  races                    :string(255)
+#  id                               :integer          not null, primary key
+#  studio_person_id                 :integer
+#  email                            :string(255)      default(""), not null
+#  parent_email                     :string(255)
+#  encrypted_password               :string(255)      default("")
+#  reset_password_token             :string(255)
+#  reset_password_sent_at           :datetime
+#  remember_created_at              :datetime
+#  sign_in_count                    :integer          default(0)
+#  current_sign_in_at               :datetime
+#  last_sign_in_at                  :datetime
+#  current_sign_in_ip               :string(255)
+#  last_sign_in_ip                  :string(255)
+#  created_at                       :datetime
+#  updated_at                       :datetime
+#  username                         :string(255)
+#  provider                         :string(255)
+#  uid                              :string(255)
+#  admin                            :boolean
+#  gender                           :string(1)
+#  name                             :string(255)
+#  locale                           :string(10)       default("en-US"), not null
+#  birthday                         :date
+#  user_type                        :string(16)
+#  school                           :string(255)
+#  full_address                     :string(1024)
+#  school_info_id                   :integer
+#  total_lines                      :integer          default(0), not null
+#  secret_picture_id                :integer
+#  active                           :boolean          default(TRUE), not null
+#  hashed_email                     :string(255)
+#  deleted_at                       :datetime
+#  purged_at                        :datetime
+#  secret_words                     :string(255)
+#  properties                       :text(65535)
+#  invitation_token                 :string(255)
+#  invitation_created_at            :datetime
+#  invitation_sent_at               :datetime
+#  invitation_accepted_at           :datetime
+#  invitation_limit                 :integer
+#  invited_by_id                    :integer
+#  invited_by_type                  :string(255)
+#  invitations_count                :integer          default(0)
+#  terms_of_service_version         :integer
+#  urm                              :boolean
+#  races                            :string(255)
+#  primary_authentication_option_id :integer
 #
 # Indexes
 #
@@ -71,9 +72,9 @@
 require 'digest/md5'
 require 'cdo/user_helpers'
 require 'cdo/race_interstitial_helper'
-require 'cdo/school_info_interstitial_helper'
 require 'cdo/chat_client'
 require 'cdo/shared_cache'
+require 'school_info_interstitial_helper'
 
 class User < ActiveRecord::Base
   include SerializedProperties
@@ -106,6 +107,14 @@ class User < ActiveRecord::Base
     closed_dialog
     nonsense
   ).freeze
+
+  # Notes:
+  #   data_transfer_agreement_source: Indicates the source of the data transfer
+  #     agreement.
+  #   data_transfer_agreement_kind: "0", "1", etc.  Indicates which version
+  #     of the data transfer agreement string the user to agreed to, for a given
+  #     data_transfer_agreement_source.  This value should be bumped each time
+  #     the corresponding user-facing string is updated.
   serialized_attrs %w(
     ops_first_name
     ops_last_name
@@ -121,6 +130,11 @@ class User < ActiveRecord::Base
     oauth_token_expiration
     sharing_disabled
     next_census_display
+    data_transfer_agreement_accepted
+    data_transfer_agreement_request_ip
+    data_transfer_agreement_source
+    data_transfer_agreement_kind
+    data_transfer_agreement_at
   )
 
   # Include default devise modules. Others available are:
@@ -142,9 +156,14 @@ class User < ActiveRecord::Base
     the_school_project
     twitter
     windowslive
+    powerschool
   ).freeze
 
   SYSTEM_DELETED_USERNAME = 'sys_deleted'
+
+  # constants for resetting user secret words/picture
+  RESET_SECRETS = 'reset_secrets'.freeze
+  MAX_SECRET_RESET_ATTEMPTS = 5
 
   # :user_type is locked. Use the :permissions property for more granular user permissions.
   USER_TYPE_OPTIONS = [
@@ -190,13 +209,38 @@ class User < ActiveRecord::Base
   has_many :districts_users, class_name: 'DistrictsUsers'
   has_many :districts, through: :districts_users
 
+  has_many :authentication_options, dependent: :destroy
+  belongs_to :primary_authentication_option, class_name: 'AuthenticationOption'
+
   belongs_to :school_info
   accepts_nested_attributes_for :school_info, reject_if: :preprocess_school_info
   validates_presence_of :school_info, unless: :school_info_optional?
 
   has_one :circuit_playground_discount_application
 
+  has_many :pd_applications,
+    class_name: 'Pd::Application::ApplicationBase',
+    dependent: :destroy
+
+  has_many :user_geos, -> {order 'updated_at desc'}
+
+  validate :validate_parent_email
+
   after_create :associate_with_potential_pd_enrollments
+
+  after_save :save_email_preference, if: -> {email_preference_opt_in.present?}
+
+  def save_email_preference
+    if teacher?
+      EmailPreference.upsert!(
+        email: email,
+        opt_in: email_preference_opt_in.downcase == "yes",
+        ip_address: email_preference_request_ip,
+        source: email_preference_source,
+        form_kind: email_preference_form_kind,
+      )
+    end
+  end
 
   # after_create :send_new_teacher_email
   # def send_new_teacher_email
@@ -233,12 +277,26 @@ class User < ActiveRecord::Base
     end
   end
 
+  def email
+    return read_attribute(:email) unless provider == 'migrated'
+    primary_authentication_option.try(:email)
+  end
+
+  def hashed_email
+    return read_attribute(:hashed_email) unless provider == 'migrated'
+    primary_authentication_option.try(:hashed_email)
+  end
+
   def facilitator?
     permission? UserPermission::FACILITATOR
   end
 
   def workshop_organizer?
     permission? UserPermission::WORKSHOP_ORGANIZER
+  end
+
+  def program_manager?
+    permission? UserPermission::PROGRAM_MANAGER
   end
 
   def workshop_admin?
@@ -384,10 +442,24 @@ class User < ActiveRecord::Base
     [nil, ''],
     ['gender.male', 'm'],
     ['gender.female', 'f'],
-    ['gender.none', '-']
+    ['gender.non_binary', 'n'],
+    ['gender.not_listed', 'o'],
+    ['gender.none', '-'],
+  ].freeze
+
+  DATA_TRANSFER_AGREEMENT_SOURCE_TYPES = [
+    ACCOUNT_SIGN_UP = 'ACCOUNT_SIGN_UP'.freeze,
+    ACCEPT_DATA_TRANSFER_DIALOG = 'ACCEPT_DATA_TRANSFER_DIALOG'.freeze
   ].freeze
 
   attr_accessor :login
+  attr_accessor :email_preference_opt_in_required
+  attr_accessor :email_preference_opt_in
+  attr_accessor :email_preference_request_ip
+  attr_accessor :email_preference_source
+  attr_accessor :email_preference_form_kind
+
+  attr_accessor :data_transfer_agreement_required
 
   has_many :plc_enrollments, class_name: '::Plc::UserCourseEnrollment', dependent: :destroy
 
@@ -413,6 +485,8 @@ class User < ActiveRecord::Base
 
   before_create :suppress_ui_tips_for_new_users
 
+  before_create :update_default_share_setting
+
   # a bit of trickery to sort most recently started/assigned/progressed scripts first and then completed
   has_many :user_scripts, -> {order "-completed_at asc, greatest(coalesce(started_at, 0), coalesce(assigned_at, 0), coalesce(last_progress_at, 0)) desc, user_scripts.id asc"}
   has_many :scripts, -> {where hidden: false}, through: :user_scripts, source: :script
@@ -421,7 +495,7 @@ class User < ActiveRecord::Base
   validates :name, length: {within: 1..70}, allow_blank: true
   validates :name, no_utf8mb4: true
 
-  defer_age = proc {|user| user.provider == 'google_oauth2' || user.provider == 'clever'}
+  defer_age = proc {|user| user.provider == 'google_oauth2' || user.provider == 'clever' || user.provider == User::PROVIDER_SPONSORED}
   validates :age, presence: true, on: :create, unless: defer_age # only do this on create to avoid problems with existing users
   AGE_DROPDOWN_OPTIONS = (4..20).to_a << "21+"
   validates :age, presence: false, inclusion: {in: AGE_DROPDOWN_OPTIONS}, allow_blank: true
@@ -451,6 +525,17 @@ class User < ActiveRecord::Base
     true
   end
 
+  validates_presence_of :email_preference_opt_in, if: :email_preference_opt_in_required
+  validates_presence_of :email_preference_request_ip, if: -> {email_preference_opt_in.present?}
+  validates_presence_of :email_preference_source, if: -> {email_preference_opt_in.present?}
+  validates_presence_of :email_preference_form_kind, if: -> {email_preference_opt_in.present?}
+
+  validates :data_transfer_agreement_accepted, acceptance: true, if: :data_transfer_agreement_required
+  validates_presence_of :data_transfer_agreement_request_ip, if: -> {data_transfer_agreement_accepted.present?}
+  validates_inclusion_of :data_transfer_agreement_source, in: DATA_TRANSFER_AGREEMENT_SOURCE_TYPES, if: -> {data_transfer_agreement_accepted.present?}
+  validates_presence_of :data_transfer_agreement_kind, if: -> {data_transfer_agreement_accepted.present?}
+  validates_presence_of :data_transfer_agreement_at, if: -> {data_transfer_agreement_accepted.present?}
+
   # When adding a new version, append to the end of the array
   # using the next increasing natural number.
   TERMS_OF_SERVICE_VERSIONS = [
@@ -468,6 +553,8 @@ class User < ActiveRecord::Base
     :fix_by_user_type
 
   before_save :log_admin_save, if: -> {admin_changed? && User.should_log?}
+
+  before_validation :update_share_setting, unless: :under_13?
 
   def make_teachers_21
     return unless teacher?
@@ -535,7 +622,7 @@ class User < ActiveRecord::Base
 
     # As we want teachers to explicitly accept our Terms of Service, when the user_type is changing
     # without an explicit acceptance, we clear the version accepted.
-    if teacher?
+    if teacher? && purged_at.nil?
       self.studio_person = StudioPerson.create!(emails: email) unless studio_person
       if user_type_changed? && !terms_of_service_version_changed?
         self.terms_of_service_version = nil
@@ -554,6 +641,8 @@ class User < ActiveRecord::Base
     owner_storage_id, _ = storage_decrypt_channel_id(encrypted_channel_id)
     user_id = PEGASUS_DB[:user_storage_ids].first(id: owner_storage_id)[:user_id]
     User.find(user_id)
+  rescue ArgumentError, OpenSSL::Cipher::CipherError
+    nil
   end
 
   validate :presence_of_email, if: -> {teacher? && purged_at.nil?}
@@ -603,6 +692,10 @@ class User < ActiveRecord::Base
       'f'
     when 'm', 'male'
       'm'
+    when 'o', 'notlisted'
+      'o'
+    when 'n', 'nonbinary', 'non-binary'
+      'n'
     else
       nil
     end
@@ -888,6 +981,10 @@ class User < ActiveRecord::Base
       first
   end
 
+  def hidden_script_access?
+    admin? || permission?(UserPermission::HIDDEN_SCRIPT_ACCESS)
+  end
+
   # Is the provided script_level hidden, on account of the section(s) that this
   # user is enrolled in
   def script_level_hidden?(script_level)
@@ -1142,12 +1239,38 @@ class User < ActiveRecord::Base
     return nil
   end
 
+  def reset_secrets
+    generate_secret_picture
+    generate_secret_words
+  end
+
   def generate_secret_picture
-    self.secret_picture = SecretPicture.random
+    MAX_SECRET_RESET_ATTEMPTS.times do
+      new_secret_picture = SecretPicture.random
+
+      # retry if random picture is same as user's current secret picture
+      next if new_secret_picture == secret_picture
+
+      self.secret_picture = new_secret_picture
+      break
+    end
   end
 
   def generate_secret_words
-    self.secret_words = [SecretWord.random.word, SecretWord.random.word].join(" ")
+    MAX_SECRET_RESET_ATTEMPTS.times do
+      new_secret_words = [SecretWord.random.word, SecretWord.random.word].join(" ")
+
+      # retry if random words are same as user's current secret words
+      next if new_secret_words == secret_words
+
+      self.secret_words = new_secret_words
+      break
+    end
+  end
+
+  # Returns an array of experiment name strings
+  def get_active_experiment_names
+    Experiment.get_all_enabled(user: self).pluck(:name)
   end
 
   def suppress_ui_tips_for_new_users
@@ -1405,7 +1528,7 @@ class User < ActiveRecord::Base
       script = Script.get_from_cache(script_id)
       script_valid = script.csf? && script.name != Script::COURSE1_NAME
       if (!user_level.perfect? || user_level.best_result == ActivityConstants::MANUAL_PASS_RESULT) &&
-        new_result == 100 &&
+        new_result >= ActivityConstants::BEST_PASS_RESULT &&
         script_valid &&
         HintViewRequest.no_hints_used?(user_id, script_id, level_id) &&
         AuthoredHintViewRequest.no_hints_used?(user_id, script_id, level_id)
@@ -1413,7 +1536,8 @@ class User < ActiveRecord::Base
       end
 
       # Update user_level with the new attempt.
-      user_level.attempts += 1 unless user_level.best?
+      # We increment the attempt count unless they've already perfected the level.
+      user_level.attempts += 1 unless user_level.perfect? && user_level.best_result != ActivityConstants::FREE_PLAY_RESULT
       user_level.best_result = new_result if user_level.best_result.nil? ||
         new_result > user_level.best_result
       user_level.submitted = submitted
@@ -1551,6 +1675,24 @@ class User < ActiveRecord::Base
     encrypted_password.present?
   end
 
+  # Whether the current user has permission to change their own account type
+  # from the account edit page.
+  def can_change_own_user_type?
+    # Don't allow editing user type unless we can also edit email, because
+    # changing from a student (encrypted email) to a teacher (plaintext email)
+    # requires entering an email address.
+    # Don't allow editing user type for teachers with sections, as our validations
+    # require sections to be owned by teachers.
+    can_edit_email? && (student? || sections.empty?)
+  end
+
+  # Whether the current user has permission to delete their own account from
+  # the account edit page.
+  def can_delete_own_account?
+    # All accounts except teacher-managed accounts may delete their own account.
+    !teacher_managed_account?
+  end
+
   # Users who might otherwise have orphaned accounts should have the option
   # to create personal logins (using e-mail/password or oauth) so they can
   # continue to use our site without losing progress.
@@ -1584,6 +1726,8 @@ class User < ActiveRecord::Base
   end
 
   def stage_extras_enabled?(script)
+    return false unless script.stage_extras_available?
+
     sections_to_check = teacher? ? sections : sections_as_student
     sections_to_check.any? do |section|
       section.script_id == script.id && section.stage_extras
@@ -1641,6 +1785,11 @@ class User < ActiveRecord::Base
   def clear_user_and_mark_purged
     random_suffix = (('0'..'9').to_a + ('a'..'z').to_a).sample(8).join
 
+    authentication_options.with_deleted.each(&:really_destroy!)
+
+    districts.clear
+    self.district_as_contact = nil
+
     self.studio_person_id = nil
     self.name = nil
     self.username = "#{SYSTEM_DELETED_USERNAME}_#{random_suffix}"
@@ -1653,11 +1802,23 @@ class User < ActiveRecord::Base
     self.uid = nil
     self.reset_password_token = nil
     self.full_address = nil
+    self.secret_picture_id = nil
+    self.secret_words = nil
+    self.school = nil
+    self.school_info_id = nil
     self.properties = {}
+    unless within_united_states?
+      self.urm = nil
+      self.races = nil
+    end
 
     self.purged_at = Time.zone.now
 
     save!
+  end
+
+  def within_united_states?
+    'United States' == user_geos.first&.country
   end
 
   def associate_with_potential_pd_enrollments
@@ -1666,6 +1827,19 @@ class User < ActiveRecord::Base
         enrollment.update(user: self)
       end
     end
+  end
+
+  # Disable sharing of advanced projects for students under 13 upon
+  # account creation
+  def update_default_share_setting
+    self.sharing_disabled = true if under_13?
+  end
+
+  # If a user is now over age 13, we should update
+  # their share setting to enabled, if they are in no sections.
+  def update_share_setting
+    self.sharing_disabled = false if sections_as_student.empty?
+    return true
   end
 
   # When creating an account, we want to look for any channels that got created
@@ -1786,5 +1960,12 @@ class User < ActiveRecord::Base
       counts = all_ids.each_with_object(Hash.new(0)) {|id, hash| hash[id] += 1}
       return counts.select {|_, val| val == assigned_sections.length}.keys
     end
+  end
+
+  # Parent email is not required, but if it is present, it must be a
+  # well-formed email address.
+  def validate_parent_email
+    errors.add(:parent_email) unless parent_email.nil? ||
+      Cdo::EmailValidator.email_address?(parent_email)
   end
 end
