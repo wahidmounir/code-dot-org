@@ -7,7 +7,7 @@ class Pd::Teachercon1819RegistrationMailerPreview < ActionMailer::Preview
   end
 
   def withdrawn
-    Pd::Teachercon1819RegistrationMailer.teacher build_teacher_registration(:withdrawn)
+    Pd::Teachercon1819RegistrationMailer.teacher build_teacher_registration(:declined)
   end
 
   def waitlisted
@@ -30,6 +30,14 @@ class Pd::Teachercon1819RegistrationMailerPreview < ActionMailer::Preview
     Pd::Teachercon1819RegistrationMailer.regional_partner build_regional_partner_registration(:partner_declined)
   end
 
+  def lead_facilitator_accepted
+    Pd::Teachercon1819RegistrationMailer.lead_facilitator build_lead_facilitator_registration(:lead_facilitator_accepted)
+  end
+
+  def lead_facilitator_declined
+    Pd::Teachercon1819RegistrationMailer.lead_facilitator build_lead_facilitator_registration(:lead_facilitator_declined)
+  end
+
   private
 
   def build_teacher_registration(status)
@@ -37,7 +45,8 @@ class Pd::Teachercon1819RegistrationMailerPreview < ActionMailer::Preview
 
     application_hash = build :pd_teacher1819_application_hash, school: School.first
     application = build :pd_teacher1819_application, user: user, form_data: application_hash.to_json
-    workshop = application.find_teachercon_workshop(course: 'CS Discoveries', city: 'Phoenix', year: 2018)
+    workshop = application.find_teachercon_workshop(course: Pd::Workshop::COURSE_CSD, city: 'Phoenix', year: 2018) ||
+      create(:pd_workshop, course: Pd::Workshop::COURSE_CSD, subject: Pd::Workshop::SUBJECT_CSD_TEACHER_CON, processed_location: {city: 'Phoenix'}, num_sessions: 5)
     application.pd_workshop_id = workshop.id
 
     build :pd_teachercon1819_registration, pd_application: application, hash_trait: status
@@ -49,7 +58,9 @@ class Pd::Teachercon1819RegistrationMailerPreview < ActionMailer::Preview
     application_hash = build :pd_facilitator1819_application_hash
     application = build :pd_facilitator1819_application, user: user, form_data: application_hash.to_json
 
-    workshop = application.find_teachercon_workshop(course: 'CS Discoveries', city: 'Phoenix', year: 2018)
+    workshop = application.find_teachercon_workshop(course: Pd::Workshop::COURSE_CSD, city: 'Phoenix', year: 2018) ||
+      create(:pd_workshop, course: Pd::Workshop::COURSE_CSD, subject: Pd::Workshop::SUBJECT_CSD_TEACHER_CON, processed_location: {city: 'Phoenix'}, num_sessions: 5)
+
     application.pd_workshop_id = workshop.id
 
     build :pd_teachercon1819_registration, pd_application: application, hash_trait: status
@@ -61,5 +72,12 @@ class Pd::Teachercon1819RegistrationMailerPreview < ActionMailer::Preview
 
     build :pd_teachercon1819_registration, pd_application: nil,
       regional_partner: regional_partner, user: regional_partner_contact, hash_trait: status
+  end
+
+  def build_lead_facilitator_registration(status)
+    user = build :facilitator, email: 'flitwick@hogwarts.co.uk'
+
+    build :pd_teachercon1819_registration, pd_application: nil, regional_partner: nil, user: user,
+      hash_trait: status
   end
 end

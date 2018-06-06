@@ -715,9 +715,6 @@
         alg_15_biggame_update_player: CS in Algebra - Big Game Update Player
         alg_16_biggame_collision_detection: CS in Algebra - Big Game Collision Detection
         alg_17_sambat_compound_booleans: CS in Algebra - Compound Booleans
-        hoc2015_preview_blocks: Make your own game blocks
-        hoc2015_preview_typing: Make your own game typing
-        hoc2015_preview_conclusion: Make your own game conclusion
         starwars_intro: 'Tähtien Sota: Kasaa koodista Galaksi - Johdanto'
         starwars_typing: 'Tähtien Sota: Kasaa koodista Galaksi - JavaScript'
         starwars_events: 'Tähtien Sota: Kasaa koodista Galaksi - Tapahtumat'
@@ -775,6 +772,17 @@
         applab_intro_share: Sovelluslabra - Jaa Sovelluksesi
         csd_applab_arrays: Introduction to Arrays
         CSF_skinOverview_Harvester: The Harvester
+        CSF_bb8_skinOverview_C-F: BB-8
+        CSF_bb8_skinOverview_K-1: BB-8
+        CSF_bb8_loops_C-F: Loops with BB-8
+        CSF_harvester_skinOverview_K-1: The Harvester
+        CSF_harvester_loops_K1: Loops in Harvester
+        CSF_scrat_loops_K1: Loops in Ice Age
+        CSF_scrat_loops_CF: Loops in Ice Age
+        CSF_if_allskins: The If Block
+        CSF_ifelse_allskins: Using If/Else Blocks
+        CSF_ifelseifelse_allskins: Using If/ElseIf/Else Blocks
+        CSF_loops_AB: Silmukat
     callout:
       text:
         drag_blocks: Vedä "liiku"-lohko ja napsauta se kiinni toisen lohkon alalaitaan
@@ -829,8 +837,8 @@
         length_parameter: Osaatko päivittää tämän funktion niin, että se käyttää "pituus"
           parametria?
         frozen_diamond_repeat: Käytä "toista"-lohkoa luodaksesi tämä muoto.
-        frozen_circle_function_in_circle_turn: "Älä unohda kääntyä luotuasi kunkin
-          ympyrän."
+        frozen_circle_function_in_circle_turn: Älä unohda kääntyä luotuasi kunkin
+          ympyrän.
         frozen_circle_function_with_parameter_circle: Käytä "Luo ympyrä"-lohkoa ja
           muuta kokoa.
         frozen_snowflake_branch: Käytä "luo lumihiutalehaara" -lohkoa

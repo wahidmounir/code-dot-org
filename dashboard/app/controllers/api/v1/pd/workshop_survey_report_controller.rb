@@ -9,7 +9,7 @@ module Api::V1::Pd
     # GET /api/v1/pd/workshops/:id/workshop_survey_report
     def workshop_survey_report
       all_my_workshops = params[:organizer_view] ? Pd::Workshop.organized_by(current_user) : Pd::Workshop.facilitated_by(current_user)
-      all_my_completed_workshops = all_my_workshops.where(course: @workshop.course).in_state(Pd::Workshop::STATE_ENDED)
+      all_my_completed_workshops = all_my_workshops.where(course: @workshop.course).in_state(Pd::Workshop::STATE_ENDED).exclude_summer
 
       survey_report = generate_summary_report(
         workshop: @workshop,
@@ -96,6 +96,21 @@ module Api::V1::Pd
 
       survey_report[:facilitator_breakdown] = facilitator_name.nil?
       survey_report[:facilitator_names] = @workshop.facilitators.pluck(:name) if facilitator_name.nil?
+
+      respond_to do |format|
+        format.json do
+          render json: survey_report
+        end
+      end
+    end
+
+    # GET /api/v1/pd/workshops/:id/local_workshop_daily_survey_report
+    def local_workshop_daily_survey_report
+      unless @workshop.local_summer? # Do we have to filter workshops that don't have daily results?
+        raise 'Only call this route for local workshop daily survey reports'
+      end
+
+      survey_report = generate_workshop_daily_session_summary(@workshop)
 
       respond_to do |format|
         format.json do

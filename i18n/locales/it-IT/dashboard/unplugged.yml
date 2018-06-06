@@ -81,7 +81,7 @@ it:
         desc: Gli studenti costruiscono una struttura usando solo il materiale disponibile. Le strutture devono soddisfare alcuni requisiti (raggiungere una specifica altezza o sopportare un determinato peso) e gli studenti riflettono sull'importanza di insistere quando i problemi sono complicati.
       GettingLoopy:
         title: Diventare Ripetitivi
-        desc: Questa lezione introduce il costrutto di programmazione detto <i>ciclo</i> (istruzioni ripetute) attraverso una danza. Gli studenti imparano una semplice coreografia e sono istruiti a ripeterla.
+        desc: Questa lezione introduce il costrutto di programmazione detto ciclo (istruzioni ripetute) attraverso una danza. Gli studenti imparano una semplice coreografia e sono istruiti a ripeterla.
       RelayProgramming:
         title: Programmazione a Staffetta
         desc: Gli studenti fanno una corsa a staffetta, nella quale uno alla volta corrono a scrivere un algoritmo basato su un disegno dalla lezione "Programmazione su carta a quadretti". Possono scrivere una sola istruzione alla volta, e se trovano un errore in qualche punto, devono cancellare tutto fino a quel punto.
@@ -171,10 +171,10 @@ it:
         desc: In questa lezione, "programmerai" i tuoi amici!
       courseB_unplugged_loopyMRF:
         title: 'Attività Tradizionale: I Miei Ciclici Amici Robotici'
-        desc: Just like in "My Robotic Friends", you will be "programming" your friends, but this time with loops!
+        desc: Come nella lezione "I Miei Amici Robotici", dovrai "programmare" i tuoi amici, ma questa volta usando i cicli!
       courseC_Unplugged_ScreenOutTheMean:
         title: Attività Tradizionale
-        desc: Today you will learn about what to do if someone is being mean online.
+        desc: Oggi impareremo come comportarsi quando qualcuno viene maltrattato in rete.
       courseD_unplugged_digitalCitizenship:
         title: Attività Tradizionale
         desc: Today you will learn what it means to be a Digital Citizen.
@@ -183,7 +183,7 @@ it:
         desc: Today you will learn the difference between private and personal information!
       courseF_unplugged_powerOfWords:
         title: Attività Tradizionale
-        desc: Today you will learn about what to do if someone is being mean online.
+        desc: Oggi impareremo come comportarsi quando qualcuno viene maltrattato in rete.
       deeper learning description:
         title: ''
         desc: 'translation missing: en-US.data.unplugged.desc'
@@ -210,7 +210,7 @@ it:
         desc: Questa lezione tratta degli algoritmi nella vita quotidiana, nel caso specifico costruire un aeroplano di carta. Viene discussa anche una visione più generale dell'informatica  e il fatto che gli algoritmi ne sono una parte essenziale.
       courseC_unplugged_gettingLoopy:
         title: Diventare Ripetitivi
-        desc: Questa lezione introduce il costrutto di programmazione detto <i>ciclo</i> (istruzioni ripetute) attraverso una danza. Gli studenti imparano una semplice coreografia e sono istruiti a ripeterla.
+        desc: Questa lezione introduce il costrutto di programmazione detto ciclo (istruzioni ripetute) attraverso una danza. Gli studenti imparano una semplice coreografia e sono istruiti a ripeterla.
       courseC_unplugged_binaryBracelets:
         title: Braccialetti Binari
         desc: Gli studenti creano dei braccialetti che rappresentano con l'alfabeto binario la prima lettera del loro nome. Imparano quindi che i dati possono essere rappresentati e memorizzati in più di un modo.
@@ -266,41 +266,41 @@ it:
         title: 'translation missing: en-US.data.unplugged.courseB_unplugged_MRF_2018.title'
         desc: 'translation missing: en-US.data.unplugged.courseB_unplugged_MRF_2018.desc'
       BuildingAFoundation_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       courseB_unplugged_loopyMRF_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       DiceRace_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       courseE_unplugged_privateInformation_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       SongwritingParameters_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       Internet_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       Crowdsourcing_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       TangramAlgorithms_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       courseF_unplugged_powerOfWords_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       EnvelopeVariables_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       ForLoopFun_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       SongwritingWithParameters_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       PlantASeed_2018:
         title: 'Algoritmi della Vita Reale: Piantare un Seme'
         desc: Questa lezione tratta degli algoritmi nella vita quotidiana, usando come esempio l'atto del piantare un seme. Viene discussa anche una visione più generale dell'informatica  e il fatto che gli algoritmi ne sono una parte essenziale.
@@ -316,3 +316,42 @@ it:
       BigEvent_2018:
         title: Gli Eventi
         desc: Gli studenti vengono introdotti al concetto di "eventi" nella programmazione. Gli eventi sono azioni che un calcolatore continuamente controlla se accadono o meno. In questa lezione l'insegnante "cliccherà" i pulsanti di un controller di carta e gli studenti dovranno reagire in funzione del pulsante cliccato.
+      GraphPaperProgramming_2018:
+        title: Programmazione su carta a quadretti
+        desc: Gli studenti scrivono un algoritmo (una sequenza di istruzioni) usando un insieme di comandi predefiniti per guidare i loro compagni di classe nel riprodurre il disegno.
+      courseD_unplugged_digitalCitizenship_2018:
+        title: Attività Tradizionale
+        desc: Today you will learn what it means to be a Digital Citizen.
+      courseC_Unplugged_ScreenOutTheMean_2018:
+        title: 'Cittadinanza Digitale: Caccia Via le Cattiverie dallo Schermo'
+        desc: Oggi impareremo come comportarsi quando qualcuno viene maltrattato in rete.
+      Conditionals_2018:
+        title: Istruzioni condizionali
+        desc: Per imparare le istruzioni condizionali, gli studenti giocano con le carte e creano regole del tipo "SE estraggo una carta rossa ottengo un punto" e "SE estraggo una carta nera tu ottieni un punto".
+      DigitalFootprint_2018:
+        title: La tua Impronta Digitale
+        desc: L'insegnante introduce agli studenti l'idea che mettere su Internet le loro informazioni personali crea un'impronta digitale che lascia tracce riconoscibili e sfruttabili.
+      BinaryImages_2018:
+        title: Immagini binarie
+        desc: Anche se molti pensano al sistema binario come costituito rigorosamente da zeri e uni, nelle precedenti lezioni gli studenti hanno visto che le informazioni possono essere rappresentate in una varietà di opzioni binarie.  Questa lezione sviluppa ulteriormente questo concetto illustrando come un computer possa memorizzare informazioni ancora più complesse (ad esempio immagini e colori) in formato binario.
+      PaperPlanes_2018:
+        title: 'Algoritmi della Vita Reale: Aeroplani di Carta'
+        desc: Questa lezione tratta degli algoritmi nella vita quotidiana, nel caso specifico costruire un aeroplano di carta. Viene discussa anche una visione più generale dell'informatica  e il fatto che gli algoritmi ne sono una parte essenziale.
+      GettingLoopy_2018:
+        title: Diventare Ripetitivi
+        desc: Questa lezione introduce il costrutto di programmazione detto ciclo (istruzioni ripetute) attraverso una danza. Gli studenti imparano una semplice coreografia e sono istruiti a ripeterla.
+      BinaryBracelets_2018:
+        title: Braccialetti Binari
+        desc: Gli studenti creano dei braccialetti che rappresentano con l'alfabeto binario la prima lettera del loro nome. Imparano quindi che i dati possono essere rappresentati e memorizzati in più di un modo.
+      MoveItMoveIt_2018:
+        title: Muovilo, muovilo
+        desc: ''
+      courseB_unplugged_CnC_2018:
+        title: It's Great to Create and Play Fair
+        desc: Loaned to Computer Science Fundamentals by the team over at Copyright and Creativity, this lesson exists to help students understand the creative process of sharing and inspiration.  Along with that comes the promotion of creative expression and the need to be fair with creative work.
+      courseE_unplugged_CnC_2018:
+        title: Digital Sharing
+        desc: Loaned to Computer Science Fundamentals by the team over at Copyright and Creativity, this lesson exists to help students understand the challenges and beneﬁts of respecting ownership and copyright, particularly in digital environments. Students should be encouraged to respect artists’ rights as an important part of being an ethical digital citizen.
+      RelayProgramming_2018:
+        title: Programmazione a Staffetta
+        desc: This activity will begin with a short lesson on debugging and persistence, then will quickly move to a race against the clock as students break into teams and work together to write a program one instruction at a time.

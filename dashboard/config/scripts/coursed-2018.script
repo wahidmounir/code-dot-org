@@ -1,7 +1,11 @@
+hidden false
+family_name 'coursed'
+version_year '2018'
+
 stage 'Algorithms: Graph Paper Programming'
 level 'GraphPaperProgramming_2018'
 
-stage 'Introduction'
+stage 'Introduction to Online Puzzles'
 level 'courseD_video_ramp1_2018'
 level 'courseD_maze_ramp1_2018'
 level 'courseD_maze_ramp2_2018'
@@ -13,8 +17,8 @@ level 'courseD_maze_ramp5b_2018', challenge: true
 level 'courseD_maze_ramp5c_2018'
 level 'courseD_maze_ramp5d_2018'
 
-stage 'Building a Foundation'
-level 'BuildingAFoundation_2018'
+stage 'Relay Programming'
+level 'RelayProgramming_2018'
 
 stage 'Debugging in Collector'
 level 'courseD_video_debugging_2018'
@@ -28,38 +32,28 @@ level 'courseD_collector_debugging8a_2018'
 level 'courseD_collector_debugging9a_2018'
 
 stage 'Events in Bounce'
-variants
-  level 'courseD_bounce_events1s_2018'
-  level 'bounce_1_2018'
-endvariants
-variants
-  level 'courseD_bounce_events2s_2018'
-  level 'bounce_2_2018'
-endvariants
-variants
-  level 'courseD_bounce_events5s_2018'
-  level 'bounce_5_2018'
-endvariants
-variants
-  level 'courseD_bounce_events6s_2018'
-  level 'bounce_6_2018'
-endvariants
-variants
-  level 'courseD_bounce_events7s_2018'
-  level 'bounce_7_2018'
-endvariants
-variants
-  level 'courseD_bounce_events10s_2018'
-  level 'bounce_10_2018'
-endvariants
-variants
-  level 'courseD_bounce_events11s_2018'
-  level 'bounce_11_2018'
-endvariants
-variants
-  level 'courseD_bounce_events12s_2018'
-  level 'bounce_12_2018'
-endvariants
+level 'courseD_bounce_events1s_2018'
+level 'courseD_bounce_events2s_2018'
+level 'courseD_bounce_events5s_2018'
+level 'courseD_bounce_events6s_2018'
+level 'courseD_bounce_events7s_2018'
+level 'courseD_bounce_events10s_2018'
+level 'courseD_bounce_events11s_2018'
+level 'courseD_bounce_events12s_2018'
+
+stage 'Loops in Ice Age'
+level 'courseD_iceage_loops1'
+level 'courseD_iceage_loops2'
+level 'scrat_loops_C-F_video'
+level 'courseD_iceage_loops3'
+level 'courseD_iceage_loops4'
+level 'courseD_iceage_loops6'
+level 'courseD_iceage_loops7'
+level 'courseD_iceage_loops8'
+level 'courseD_iceage_loops9'
+level 'courseD_iceage_loops10', challenge: true
+level 'courseD_iceage_loops11'
+level 'courseD_iceage_loops12'
 
 stage 'Loops in Artist'
 level 'ramp_video_artistIntro_2018'
@@ -108,6 +102,14 @@ level 'courseD_artist_nestedLoopsFP_2018'
 bonus 'courseD_artist_nestedLoops_challenge1_2018'
 bonus 'courseD_artist_nestedLoops_challenge2_2018'
 
+stage 'Nested Loops in Frozen'
+level 'courseD_artist_1_2018'
+level 'courseD_artist_2_2018'
+level 'courseD_artist_3_2018'
+level 'courseD_artist_4_2018'
+level 'courseD_artist_5_2018'
+level 'courseD_artist_6_2018'
+
 stage 'While Loops in Farmer'
 level 'courseD_farmer_while1_2018'
 level 'courseD_farmer_while2_2018'
@@ -123,7 +125,19 @@ level 'courseD_farmer_while9_2018'
 level 'courseD_farmer_while10_2018'
 assessment 'courseD_farmer_while10_predict2_2018'
 bonus 'courseD_farmer_while_challenge1_2018'
-bonus 'courseD_farmer_while_challenge2_2018'
+
+stage 'Until Loops in Maze'
+level 'courseD_maze_until1_2018'
+level 'courseD_video_repeatUntil_2018'
+level 'courseD_maze_until2_predict1_2018'
+level 'courseD_maze_until3_2018'
+level 'courseD_maze_until4_2018'
+level 'courseD_maze_until5_2018'
+level 'courseD_maze_until6_2018'
+level 'courseD_maze_until7_2018'
+level 'courseD_maze_until9_2018', challenge: true
+level 'courseD_maze_until10_2018'
+assessment 'courseD_maze_until10_predict2_2018'
 
 stage 'Conditionals with Cards'
 level 'Conditionals_2018'
@@ -145,24 +159,8 @@ level 'courseD_bee_conditionals10_2018'
 bonus 'courseD_bee_conditionals_challenge1_2018'
 bonus 'courseD_bee_conditionals_challenge2_2018'
 
-stage 'Conditionals & Loops in Maze'
-level 'courseD_maze_until1_2018'
-level 'courseD_video_repeatUntil_2018'
-level 'courseD_maze_until2_predict1_2018'
-level 'courseD_maze_until3_2018'
-level 'courseD_maze_until4_2018'
-level 'courseD_maze_until5_2018'
-level 'courseD_maze_until6_2018'
-level 'courseD_maze_until7_2018'
-level 'courseD_video_ifElse_2018'
-level 'courseD_maze_until8_2018'
-level 'courseD_maze_until9_2018', challenge: true
-level 'courseD_maze_until10_2018'
-assessment 'courseD_maze_until10_predict2_2018'
-bonus 'courseD_maze_until_challenge1_2018'
-bonus 'courseD_farmer_until_challenge2_2018'
-
-stage 'Conditionals & Loops in Farmer'
+stage 'Conditionals & Loops in Harvester'
+level 'harvester_skinOverview_video'
 level 'courseD_farmer_condLoops1_2018'
 level 'courseD_farmer_condLoops2_2018'
 level 'courseD_farmer_condLoops3_2018'

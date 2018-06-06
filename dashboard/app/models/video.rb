@@ -17,6 +17,9 @@ class Video < ActiveRecord::Base
   default_scope {order(:key)}
 
   validates_uniqueness_of :key
+  validates_presence_of :download
+
+  before_save :fetch_thumbnail
 
   # YouTube video IDs must be 11 characters and contain no invalid characters, such as exclamation points or asterisks.
   # Ref: https://developers.google.com/youtube/iframe_api_reference (events|onError|2)
@@ -70,6 +73,21 @@ class Video < ActiveRecord::Base
 
   def self.youtube_base_url
     'https://www.youtube.com'
+  end
+
+  def self.s3_metadata(url)
+    key = url.sub(/^https?:\/\/videos.code.org\//, '')
+    AWS::S3.create_client.head_object(bucket: 'videos.code.org', key: key)
+  rescue Aws::S3::Errors::NoSuchKey
+    {}
+  end
+
+  def fetch_thumbnail
+    return unless Rails.application.config.levelbuilder_mode
+
+    path = dashboard_dir('public', 'c', 'video_thumbnails', "#{key}.jpg")
+    url = "http://img.youtube.com/vi/#{youtube_code}/mqdefault.jpg"
+    IO.copy_stream(open(url), path)
   end
 
   def youtube_url(args={})

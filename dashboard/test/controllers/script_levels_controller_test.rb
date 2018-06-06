@@ -1259,6 +1259,7 @@ class ScriptLevelsControllerTest < ActionController::TestCase
       )
     )
     assert_equal assigns(:level), level
+    experiment.destroy
   end
 
   test "should present experiment level if in the section experiment" do
@@ -1274,6 +1275,7 @@ class ScriptLevelsControllerTest < ActionController::TestCase
       )
     )
     assert_equal assigns(:level), level
+    experiment.destroy
   end
 
   test "should present experiment level if in one of the experiments" do
@@ -1290,6 +1292,8 @@ class ScriptLevelsControllerTest < ActionController::TestCase
       )
     )
     assert_equal assigns(:level), level
+    experiment1.destroy
+    experiment2.destroy
   end
 
   test "should not present experiment level if not in the experiment" do
@@ -1305,6 +1309,7 @@ class ScriptLevelsControllerTest < ActionController::TestCase
       )
     )
     assert_equal assigns(:level), level2
+    experiment.destroy
   end
 
   test "hidden_stage_ids for user not signed in" do
@@ -1479,7 +1484,29 @@ class ScriptLevelsControllerTest < ActionController::TestCase
     script.update(redirect_to: new_script.name)
 
     get :show, params: {script_id: script.name, stage_position: '1', id: '2'}
-    assert_redirected_to "/s/#{new_script.name}/stage/1/puzzle/1"
+    assert_redirected_to "/s/#{new_script.name}/stage/1/puzzle/2"
+  end
+
+  test 'should redirect to 2017 version in script family' do
+    cats1 = create :script, name: 'cats1', family_name: 'cats', version_year: '2017'
+
+    assert_raises ActiveRecord::RecordNotFound do
+      get :show, params: {script_id: 'cats', stage_position: 1, id: 1}
+    end
+
+    cats1.update!(is_stable: true)
+    get :show, params: {script_id: 'cats', stage_position: 1, id: 1}
+    assert_redirected_to "/s/cats1/stage/1/puzzle/1"
+
+    create :script, name: 'cats2', family_name: 'cats', version_year: '2018', is_stable: true
+    get :show, params: {script_id: 'cats', stage_position: 1, id: 1}
+    assert_redirected_to "/s/cats1/stage/1/puzzle/1"
+
+    # do not redirect within script family if the requested script exists
+    cats = create :script, name: 'cats'
+    create :script_level, script: cats
+    get :show, params: {script_id: 'cats', stage_position: 1, id: 1}
+    assert_response :success
   end
 
   test "should indicate challenge levels as challenge levels" do

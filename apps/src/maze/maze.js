@@ -3,14 +3,12 @@ const ReactDOM = require('react-dom');
 const Provider = require('react-redux').Provider;
 
 const timeoutList = require('../lib/util/timeoutList');
-const AppView = require('../templates/AppView');
+import AppView from '../templates/AppView';
 const CustomMarshalingInterpreter = require('../lib/tools/jsinterpreter/CustomMarshalingInterpreter');
 const codegen = require('../lib/tools/jsinterpreter/codegen');
 const dom = require('../dom');
 const utils = require('../utils');
-const constants = require('../constants');
-const TestResults = constants.TestResults;
-const ResultType = constants.ResultType;
+import {TestResults, ResultType} from '../constants';
 const generateCodeAliases = require('../dropletUtils').generateCodeAliases;
 const getStore = require('../redux').getStore;
 const studioApp = require('../StudioApp').singleton;
@@ -24,9 +22,10 @@ const MazeVisualizationColumn = require('./MazeVisualizationColumn');
 const api = require('./api');
 const dropletConfig = require('./dropletConfig');
 const mazeReducer = require('./redux');
-const tiles = require('./tiles');
 
-const MazeController = require('./mazeController');
+const maze = require('@code-dot-org/maze');
+const MazeController = maze.MazeController;
+const tiles = maze.tiles;
 
 const createResultsHandlerForSubtype = require('./results/utils').createResultsHandlerForSubtype;
 
@@ -268,6 +267,7 @@ module.exports = class Maze {
 
   reset_ = () => {
     this.animating_ = false;
+    timeoutList.clearTimeouts();
     this.controller.reset();
   };
 

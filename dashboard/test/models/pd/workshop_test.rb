@@ -60,7 +60,34 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
 
     workshops = Pd::Workshop.enrolled_in_by teacher
     assert_equal 1, workshops.length
-    assert_equal workshops.first, @workshop
+    assert_equal @workshop, workshops.first
+  end
+
+  test 'enrolled_in_by scope variations' do
+    teacher = create :teacher
+    enrollment = create :pd_enrollment, workshop: @workshop, full_name: teacher.name, email: 'nomatch@ex.net'
+    assert_empty Pd::Workshop.enrolled_in_by(teacher)
+
+    # Email match only
+    enrollment.update!(email: teacher.email)
+    assert_equal [@workshop], Pd::Workshop.enrolled_in_by(teacher)
+
+    # UserId only
+    enrollment.update!(email: 'nomatch@ex.net', user: teacher)
+    assert_equal [@workshop], Pd::Workshop.enrolled_in_by(teacher)
+
+    # Both email and user id. Should still find workshop exactly once
+    enrollment.update!(email: teacher.email, user: teacher)
+    assert_equal [@workshop], Pd::Workshop.enrolled_in_by(teacher)
+  end
+
+  test 'exclude_summer scope' do
+    summer_workshop = create :pd_workshop, :local_summer_workshop
+    teachercon = create :pd_workshop, :teachercon
+
+    assert Pd::Workshop.exclude_summer.exclude? summer_workshop
+    assert Pd::Workshop.exclude_summer.exclude? teachercon
+    assert Pd::Workshop.exclude_summer.include? @workshop
   end
 
   test 'managed_by' do
@@ -154,7 +181,7 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
     @workshop.end!
     assert_equal 'Ended', @workshop.state
     assert_equal 'Ended', @workshop.state
-    assert @workshop.sessions.first.code.nil?
+    assert_not_nil @workshop.sessions.first.code
   end
 
   test 'start is idempotent' do
@@ -986,6 +1013,42 @@ class Pd::WorkshopTest < ActiveSupport::TestCase
         "Expected #{params} funded_friendly_name to be #{expected}"
       )
     end
+  end
+
+  test 'nearest' do
+    target = create :pd_workshop, num_sessions: 1, sessions_from: Date.today + 1.week
+
+    create :pd_workshop, num_sessions: 1, sessions_from: Date.today + 2.weeks
+    create :pd_workshop, num_sessions: 1, sessions_from: Date.today - 2.weeks
+
+    assert_equal target, Pd::Workshop.nearest
+  end
+
+  test 'nearest with no matches returns nil' do
+    assert_nil Pd::Workshop.none.nearest
+  end
+
+  test 'nearest combined with subject and enrollment' do
+    user = create :teacher
+    target = create :pd_workshop, num_sessions: 1, sessions_from: Date.today + 1.day,
+      course: Pd::Workshop::COURSE_CSP, subject: Pd::Workshop::SUBJECT_SUMMER_WORKSHOP
+
+    create :pd_enrollment, :from_user, user: user, workshop: target
+
+    same_subject_farther = create :pd_workshop, num_sessions: 1, sessions_from: Date.today + 1.week,
+      course: Pd::Workshop::COURSE_CSP, subject: Pd::Workshop::SUBJECT_SUMMER_WORKSHOP
+    create :pd_enrollment, :from_user, user: user, workshop: same_subject_farther
+
+    different_subject_closer = create :pd_workshop, num_sessions: 1, sessions_from: Date.today,
+      course: Pd::Workshop::COURSE_CSP, subject: Pd::Workshop::SUBJECT_TEACHER_CON
+    create :pd_enrollment, :from_user, user: user, workshop: different_subject_closer
+
+    # closer, not enrolled
+    create :pd_workshop, num_sessions: 1, sessions_from: Date.today,
+      course: Pd::Workshop::COURSE_CSP, subject: Pd::Workshop::SUBJECT_SUMMER_WORKSHOP
+
+    found = Pd::Workshop.where(subject: Pd::Workshop::SUBJECT_SUMMER_WORKSHOP).enrolled_in_by(user).nearest
+    assert_equal target, found
   end
 
   private

@@ -11,10 +11,14 @@
 #  user_id         :integer
 #  login_required  :boolean          default(FALSE), not null
 #  properties      :text(65535)
+#  new_name        :string(255)
+#  family_name     :string(255)
 #
 # Indexes
 #
+#  index_scripts_on_family_name      (family_name)
 #  index_scripts_on_name             (name) UNIQUE
+#  index_scripts_on_new_name         (new_name) UNIQUE
 #  index_scripts_on_wrapup_video_id  (wrapup_video_id)
 #
 
@@ -132,6 +136,8 @@ class Script < ActiveRecord::Base
     has_verified_resources
     has_lesson_plan
     script_announcements
+    version_year
+    is_stable
   )
 
   def self.twenty_hour_script
@@ -190,18 +196,32 @@ class Script < ActiveRecord::Base
     Script.get_from_cache(Script::ARTIST_NAME)
   end
 
+  def self.stage_extras_script_ids
+    @@stage_extras_scripts ||= Script.all.select(&:stage_extras_available?).pluck(:id)
+  end
+
   # Get the set of scripts that are valid for the current user, ignoring those
   # that are hidden based on the user's permission.
   # @param [User] user
   # @return [Script[]]
   def self.valid_scripts(user)
-    with_hidden = user.permission?(UserPermission::HIDDEN_SCRIPT_ACCESS)
+    user_experiments_enabled = Course.has_any_course_experiments?(user)
+    with_hidden = !user_experiments_enabled && user.hidden_script_access?
     cache_key = "valid_scripts/#{with_hidden ? 'all' : 'valid'}"
-    Rails.cache.fetch(cache_key) do
+    scripts = Rails.cache.fetch(cache_key) do
       Script.
           all.
           select {|script| with_hidden || !script.hidden}
     end
+
+    if user_experiments_enabled
+      scripts = scripts.map do |script|
+        alternate_script = script.alternate_script(user)
+        alternate_script.present? ? alternate_script : script
+      end
+    end
+
+    scripts
   end
 
   # @param [User] user
@@ -334,22 +354,67 @@ class Script < ActiveRecord::Base
     self.class.get_from_cache(id)
   end
 
-  def self.get_without_cache(id_or_name)
+  def self.get_without_cache(id_or_name, version_year: nil)
+    # Also serve any script by its new_name, if it has one.
+    script = id_or_name && Script.find_by(new_name: id_or_name)
+    return script if script
+
     # a bit of trickery so we support both ids which are numbers and
     # names which are strings that may contain numbers (eg. 2-3)
-    find_by = (id_or_name.to_i.to_s == id_or_name.to_s) ? :id : :name
-    Script.find_by(find_by => id_or_name).tap do |s|
-      raise ActiveRecord::RecordNotFound.new("Couldn't find Script with id|name=#{id_or_name}") unless s
+    is_id = id_or_name.to_i.to_s == id_or_name.to_s
+    find_by = is_id ? :id : :name
+    script = Script.find_by(find_by => id_or_name)
+    return script if script
+
+    unless is_id
+      # We didn't find a script matching id_or_name. Next, look for a script
+      # in the id_or_name script family to redirect to, e.g. csp1 --> csp1-2017.
+      script_with_redirect = Script.get_script_family_redirect(id_or_name, version_year: version_year)
+      return script_with_redirect if script_with_redirect
+    end
+
+    raise ActiveRecord::RecordNotFound.new("Couldn't find Script with id|name|family_name=#{id_or_name}")
+  end
+
+  # Returns the script with the specified id, or a script with the specified
+  # name, or a redirect to the latest version of the script within the specified
+  # family. Also populates the script cache so that future responses will be cached.
+  # For example:
+  #   get_from_cache('11') --> script_cache['11'] = <Script id=11, name=...>
+  #   get_from_cache('frozen') --> script_cache['frozen'] = <Script name="frozen", id=...>
+  #   get_from_cache('csp1') --> script_cache['csp1'] = <Script redirect_to="csp1-2018">
+  #   get_from_cache('csp1', version_year: '2017') --> script_cache['csp1/2017'] = <Script redirect_to="csp1-2017">
+  #
+  # @param id_or_name [String|Integer] script id, script name, or script family name.
+  # @param version_year [String] If specified, when looking for a script to redirect
+  #   to within a script family, redirect to this version rather than the latest.
+  def self.get_from_cache(id_or_name, version_year: nil)
+    return get_without_cache(id_or_name, version_year: version_year) unless should_cache?
+    cache_key_suffix = version_year ? "/#{version_year}" : ''
+    cache_key = "#{id_or_name}#{cache_key_suffix}"
+    script_cache.fetch(cache_key) do
+      # Populate cache on miss.
+      script_cache[cache_key] = get_without_cache(id_or_name, version_year: version_year)
     end
   end
 
-  def self.get_from_cache(id_or_name)
-    return get_without_cache(id_or_name) unless should_cache?
-
-    script_cache.fetch(id_or_name.to_s) do
-      # Populate cache on miss.
-      script_cache[id_or_name.to_s] = get_without_cache(id_or_name)
-    end
+  # Given a script family name, return a dummy Script with redirect_to field
+  # pointing toward the latest stable script in that family, or to a specific
+  # version_year if one is specified.
+  # @param family_name [String] The name of the script family to search in.
+  # @param version_year [String] Version year to return. Optional.
+  # @return [Script|nil] A dummy script object, not persisted to the database,
+  #   with only the redirect_to field set.
+  def self.get_script_family_redirect(family_name, version_year: nil)
+    scripts =
+      Script.
+        where(family_name: family_name).
+        all.
+        select(&:is_stable).
+        sort_by(&:version_year)
+    scripts.select! {|s| s.version_year == version_year} if version_year
+    script_name = scripts.last.try(:name)
+    script_name ? Script.new(redirect_to: script_name) : nil
   end
 
   def text_response_levels
@@ -534,7 +599,7 @@ class Script < ActiveRecord::Base
     # Temporarily remove Course A-F banner (wrong size) - Josh L.
     return false if %w(coursea courseb coursec coursed coursee coursef express pre-express).include?(name)
 
-    k5_course? || %w(csp1 csp2 csp3 cspunit1 cspunit2 cspunit3).include?(name)
+    k5_course? || %w(csp1-2017 csp2-2017 csp3-2017 cspunit1 cspunit2 cspunit3).include?(name)
   end
 
   def freeplay_links
@@ -585,6 +650,8 @@ class Script < ActiveRecord::Base
           hidden: script_data[:hidden].nil? ? true : script_data[:hidden], # default true
           login_required: script_data[:login_required].nil? ? false : script_data[:login_required], # default false
           wrapup_video: script_data[:wrapup_video],
+          new_name: script_data[:new_name],
+          family_name: script_data[:family_name],
           properties: Script.build_property_hash(script_data)
         }, stages]
       end
@@ -674,6 +741,12 @@ class Script < ActiveRecord::Base
 
       stage_name = raw_script_level.delete(:stage)
       properties = raw_script_level.delete(:properties) || {}
+
+      if new_suffix && properties[:variants]
+        properties[:variants] = properties[:variants].map do |old_level_name, value|
+          ["#{old_level_name}_#{new_suffix}", value]
+        end.to_h
+      end
 
       script_level_attributes = {
         script_id: script.id,
@@ -786,15 +859,31 @@ class Script < ActiveRecord::Base
     File.write(scripts_yml, "# Autogenerated scripts locale file.\n" + i18n.to_yaml(line_width: -1))
   end
 
-  # script is found/created by 'id' (if provided) otherwise by 'name'
+  # script is found/created by 'id' (if provided), or by 'new_name' (if provided
+  # and found), otherwise by 'name'.
+  #
+  # Once a script's 'new_name' has been seeded into the database, the script file
+  # can then be renamed back and forth between its old name and its new_name (or to
+  # any other name), and the corresponding script row in the db will be renamed.
   def self.fetch_script(options)
     options.symbolize_keys!
     options[:wrapup_video] = options[:wrapup_video].blank? ? nil : Video.find_by!(key: options[:wrapup_video])
-    name = {name: options.delete(:name)}
-    script_key = ((id = options.delete(:id)) && {id: id}) || name
-    script = Script.includes(:levels, :script_levels, stages: :script_levels).create_with(name).find_or_create_by(script_key)
+    id = options.delete(:id)
+    name = options[:name]
+    new_name = options[:new_name]
+    script =
+      if id
+        Script.with_default_fields.create_with(name: name).find_or_create_by({id: id})
+      else
+        (new_name && Script.with_default_fields.find_by({new_name: new_name})) ||
+          Script.with_default_fields.find_or_create_by({name: name})
+      end
     script.update!(options.merge(skip_name_format_validation: true))
     script
+  end
+
+  def self.with_default_fields
+    Script.includes(:levels, :script_levels, stages: :script_levels)
   end
 
   # Update strings and serialize changes to .script file
@@ -904,7 +993,7 @@ class Script < ActiveRecord::Base
     nil
   end
 
-  def summarize(include_stages=true)
+  def summarize(include_stages = true, user = nil)
     if has_peer_reviews?
       levels = []
       peer_reviews_to_complete.times do |x|
@@ -950,6 +1039,7 @@ class Script < ActiveRecord::Base
       has_lesson_plan: has_lesson_plan?,
       script_announcements: script_announcements,
       age_13_required: logged_out_age_13_required?,
+      show_version_warning: course.try(:has_other_version_progress?, user),
     }
 
     summary[:stages] = stages.map(&:summarize) if include_stages
@@ -1037,6 +1127,8 @@ class Script < ActiveRecord::Base
       has_verified_resources: !!script_data[:has_verified_resources],
       has_lesson_plan: !!script_data[:has_lesson_plan],
       script_announcements: script_data[:script_announcements],
+      version_year: script_data[:version_year],
+      is_stable: script_data[:is_stable],
     }.compact
   end
 
@@ -1056,6 +1148,10 @@ class Script < ActiveRecord::Base
     path
   end
 
+  def course_title
+    course.try(:localized_title)
+  end
+
   # If there is an alternate version of this script which the user should be on
   # due to existing progress or a course experiment, return that script. Otherwise,
   # return nil.
@@ -1065,5 +1161,16 @@ class Script < ActiveRecord::Base
       return alternate_cs.script if cs != alternate_cs
     end
     nil
+  end
+
+  # @return {AssignableInfo} with strings translated
+  def assignable_info
+    info = ScriptConstants.assignable_info(self)
+    info[:name] = I18n.t("data.script.name.#{info[:name]}.title", default: info[:name])
+    info[:name] += " *" if hidden
+
+    info[:category] = I18n.t("data.script.category.#{info[:category]}_category_name", default: info[:category])
+
+    info
   end
 end

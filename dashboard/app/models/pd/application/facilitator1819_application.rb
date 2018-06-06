@@ -20,6 +20,7 @@
 #  decision_notification_email_sent_at :datetime
 #  accepted_at                         :datetime
 #  properties                          :text(65535)
+#  deleted_at                          :datetime
 #
 # Indexes
 #
@@ -44,6 +45,10 @@ module Pd::Application
       fit_workshop_id
       auto_assigned_fit_enrollment_id
     )
+
+    has_one :pd_fit_weekend1819_registration,
+      class_name: 'Pd::FitWeekend1819Registration',
+      foreign_key: 'pd_application_id'
 
     def send_decision_notification_email
       # Accepted, declined, and waitlisted are the only valid "final" states;
@@ -98,6 +103,7 @@ module Pd::Application
         where(type: name).
         where(status: [:accepted, :withdrawn]).
         where.not(locked_at: nil).
+        includes(:pd_fit_weekend1819_registration).
         select(&:fit_workshop_id?)
     end
 
@@ -108,6 +114,10 @@ module Pd::Application
       cache_fetch self.class.get_workshop_cache_key(fit_workshop_id) do
         Pd::Workshop.includes(:sessions, :enrollments).find_by(id: fit_workshop_id)
       end
+    end
+
+    def fit_workshop_date_and_location
+      fit_workshop.try(&:date_and_location_name)
     end
 
     def registered_fit_workshop?
@@ -481,9 +491,25 @@ module Pd::Application
     end
 
     # @override
-    def self.cohort_csv_header
+    def self.cohort_csv_header(optional_columns)
+      columns = [
+        'Date Accepted',
+        'Name',
+        'School District',
+        'School Name',
+        'Email',
+        'Status',
+        'Assigned Workshop'
+      ]
+      if optional_columns[:registered_workshop]
+        columns.push 'Registered Workshop'
+      end
+      if optional_columns[:accepted_teachercon]
+        columns.push 'Accepted Teachercon'
+      end
+
       CSV.generate do |csv|
-        csv << ['Date Accepted', 'Name', 'School District', 'School Name', 'Email', 'Status']
+        csv << columns
       end
     end
 
@@ -498,16 +524,33 @@ module Pd::Application
     end
 
     # @override
-    def to_cohort_csv_row
+    def to_cohort_csv_row(optional_columns)
+      columns = [
+        date_accepted,
+        applicant_name,
+        district_name,
+        school_name,
+        user.email,
+        status,
+        fit_workshop_date_and_location
+      ]
+      if optional_columns[:registered_workshop]
+        if workshop.try(:local_summer?)
+          columns.push(registered_workshop? ? 'Yes' : 'No')
+        else
+          columns.push nil
+        end
+      end
+      if optional_columns[:accepted_teachercon]
+        if workshop.try(:teachercon?)
+          columns.push(pd_teachercon1819_registration ? 'Yes' : 'No')
+        else
+          columns.push nil
+        end
+      end
+
       CSV.generate do |csv|
-        csv << [
-          date_accepted,
-          applicant_name,
-          district_name,
-          school_name,
-          user.email,
-          status
-        ]
+        csv << columns
       end
     end
 
@@ -589,6 +632,14 @@ module Pd::Application
         course: workshop_course,
         city: find_default_fit_teachercon[:city]
       )
+    end
+
+    def fit_weekend_registration
+      Pd::FitWeekend1819Registration.find_by_pd_application_id(id)
+    end
+
+    def teachercon_registration
+      Pd::Teachercon1819Registration.find_by_pd_application_id(id)
     end
 
     # override

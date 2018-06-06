@@ -572,7 +572,7 @@
         C3_computational_thinking: Arvutuslik mõtlemine
         C3_dice_race: Täringuralli
         C3_internet: Internet
-        C3_crowdsourcing: "Ühistegevused"
+        C3_crowdsourcing: Ühistegevused
         C3_functional_suncatchers: Funktsionaalsed päikesepüüdjad
         C3_songwriting_with_parameters: Laulukirjutamine parameetritega
         C4_intro: Sissejuhatus
@@ -708,9 +708,6 @@
         alg_15_biggame_update_player: CS in Algebra - Big Game Update Player
         alg_16_biggame_collision_detection: CS in Algebra - Big Game Collision Detection
         alg_17_sambat_compound_booleans: CS in Algebra - Compound Booleans
-        hoc2015_preview_blocks: Make your own game blocks
-        hoc2015_preview_typing: Make your own game typing
-        hoc2015_preview_conclusion: Make your own game conclusion
         starwars_intro: 'Star Wars: galaktika loomine koodiga – sissejuhatus'
         starwars_typing: 'Star Wars: galaktika loomine koodiga – JavaScript'
         starwars_events: 'Star Wars: galaktika loomine koodiga – sündmused'
@@ -768,6 +765,17 @@
         applab_intro_share: App Lab - Share Your App
         csd_applab_arrays: Introduction to Arrays
         CSF_skinOverview_Harvester: The Harvester
+        CSF_bb8_skinOverview_C-F: BB-8
+        CSF_bb8_skinOverview_K-1: BB-8
+        CSF_bb8_loops_C-F: Loops with BB-8
+        CSF_harvester_skinOverview_K-1: The Harvester
+        CSF_harvester_loops_K1: Loops in Harvester
+        CSF_scrat_loops_K1: Loops in Ice Age
+        CSF_scrat_loops_CF: Loops in Ice Age
+        CSF_if_allskins: The If Block
+        CSF_ifelse_allskins: Using If/Else Blocks
+        CSF_ifelseifelse_allskins: Using If/ElseIf/Else Blocks
+        CSF_loops_AB: Tsüklid
     callout:
       text:
         drag_blocks: Lohista plokki „liiguta“ ja kinnita see teise ploki alla
@@ -820,8 +828,8 @@
         length_parameter: Kas oskad seda funktsiooni uuendada, et see kasutaks parameetrit
           „pikkus“?
         frozen_diamond_repeat: Kasuta korduse plokki, et see kujund luua.
-        frozen_circle_function_in_circle_turn: "Ära unusta peale igat ringi loomist
-          keerata."
+        frozen_circle_function_in_circle_turn: Ära unusta peale igat ringi loomist
+          keerata.
         frozen_circle_function_with_parameter_circle: Kasuta " loo ring" plokki ja
           muuda suurus.
         frozen_snowflake_branch: Kasuta "joonista lumehelbe võrestik" plokki

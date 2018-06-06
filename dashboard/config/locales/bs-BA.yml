@@ -26,7 +26,7 @@
         parent_email: Parent/guardian email
         personal_email: Personal email address
         username: Korisničko ime
-        password: "Šifra"
+        password: Šifra
         password_confirmation: Potvrda šifre
         current_password: Trenutna šifra
         locale: Jezik
@@ -51,7 +51,7 @@
   add_teacher_form:
     code:
       label: 'Dodaj učitelja:'
-      placeholder: "Šifra Odjeljenja (ABCDEF)"
+      placeholder: Šifra Odjeljenja (ABCDEF)
       instructions: Molimo unesite kôd koji je sa vama podijelio vaš učitelj. To je
         kôd od 6 slova tipa "ABCDEF".
       instructions_short: Enter your 6 letter section code
@@ -138,6 +138,13 @@
     valid_password: Ispravna lozinka!
     invalid_password: Lozinka mora biti duga najmanje 6 znakova
     mismatch_password: Dvije lozinke koje ste unijeli se ne podudaraju
+    agree_tos_privacy: I agree to the <a href='http://code.org/tos'>Terms of Service</a>
+      and <a href='http://code.org/privacy'>Privacy Policy</a>.
+    under_13_consent: If I am under 13 years of age, I confirm that I have my parent
+      or legal guardian's permission to use the Code.org services.
+    agree_us_website: I agree to using a website based in the United States.
+    my_data_to_us: Data from my use of this site may be sent to and stored or processed
+      in the United States.
     student_terms: Slažem se da ću poštovati <a href='http://code.org/tos'>uvjete
       korištenja</a> Code.org. Ako imam manje od 13 godina, potvrđujem slanjem ovog
       obrasca da moj roditelj ili zakonski staratelj daje dozvolu za korištenje usluga
@@ -147,12 +154,19 @@
       Code.org.
     additional_information: Trebamo dodatne informacije kako bismo nastavili vašu
       prijavu.
+    user_type_button: Update Account Type
     user_type_label: Tip računa
     user_type_teacher: Učitelj
     user_type_student: Učenik
     field_is_required: je neophodno
     accept_terms: Morate pristati da bi napravili račun
     error: Došlo je do greške.
+    email_preference_question: Can we email you about updates to our courses, local
+      learning opportunities, or other computer science news?
+    email_preference_privacy: "(See our privacy policy)"
+    email_preference_yes: Da
+    email_preference_no: Ne
+    email_preference_required: You must specify an email preference.
   school_info:
     title: Informacije o školi (nije obavezno)
     school_country: School Country
@@ -167,7 +181,7 @@
     district: District
     other_district_not_listed: Other district not listed above
     district_name: District Name
-    school: "Škola"
+    school: Škola
     other_school_not_listed: Druga škola nije navedena iznad
     school_name: School Name
     school_zip: School Zip Code
@@ -178,11 +192,11 @@
     title: Već imate račun? Prijavite se
     login: E-mail ili korisničko ime
     login_username: Email or Username
-    password: "Šifra"
+    password: Šifra
     remember: Zapamti me
     submit: Prijava
   signin:
-    try_heading: "Želite probati kodiranje bez prijave?"
+    try_heading: Želite probati kodiranje bez prijave?
     try_hoc: Prvo isprobaj Sat Kodiranja
     try_20hours: Probaj naš 20-satni Uvod u Informatiku
   signinsection:
@@ -417,6 +431,7 @@
     confirm_secret_words: Confirm that it is you by entering your current secret words
     enter_parent_email: Unesi email adresu od svog roditelja ili staratelja (za obnovu
       lozinke)
+    update: Update Account
   user_level:
     completed: Kompletirano
     tried: Pokušano
@@ -594,6 +609,8 @@
       u vaše odjeljenje.
     already_enrolled_in_new_section: Ne možete premjestiti ove učenike zato što su
       oni već u novom odjeljenju.
+    third_party_login: You cannot move students to a section that is synced with a
+      third party tool.
   share:
     title: Naučite o Code Studiu
     description: Svako može naučiti računarske znanosti, te pisati kod za igre, aplikacije
@@ -601,7 +618,9 @@
     try_hour_of_code: Try an Hour of Code!
   gender:
     male: Muško
-    female: "Žensko"
+    female: Žensko
+    non_binary: Non-binary
+    not_listed: Preferred term not listed
     none: Radije ne bih odgovorio/la
   user_type:
     student: Učenik
@@ -724,8 +743,8 @@
       body: Isprobajte osnove informatike. Milijuni su im dali šansu.
     flappy:
       title: Flappy kôd
-      body: "Želite li napisati vlastitu igru u manje od 10 minuta? Isprobajte naš
-        tutorijal izrade Flappy kôda!"
+      body: Želite li napisati vlastitu igru u manje od 10 minuta? Isprobajte naš
+        tutorijal izrade Flappy kôda!
     20-hour:
       title: Ubrzani Kurs
       body: Ovaj 20-satni kurs objašnjava osnovne koncepte programiranja i nformatike.
@@ -808,7 +827,7 @@
     activity_count: U proteklih <b>%{days}</b> dana, učenici su napravili <b>%{count}</b>
       aplikacija i slika pisanjem vlastitih računalnih programa. Kliknite na slike
       i snimke ekrana da biste vidjeli svaki program na djelu.
-    want_to_make_your_own: "Želite li napraviti svoj vlastiti?"
+    want_to_make_your_own: Želite li napraviti svoj vlastiti?
     how_to_save: On the last level of these tutorials, click "Finish" and "Save" to
       save your work to the gallery.
     more: Više &rarr;
@@ -938,8 +957,8 @@
       updated terms.
     review_terms: Pregledajte ažurirane uslove
   school_info_interstitial:
-    title: "Želimo da donesemo računarstvo do svakog učenika - pomozite nam da pratimo
-      naš napredak!"
+    title: Želimo da donesemo računarstvo do svakog učenika - pomozite nam da pratimo
+      naš napredak!
     message: Molimo ispod unesite informacije o svojoj školi.
     message_with_suggestion: Molimo da potvrdite da je sljedeća informacija tačna,
       ili ažurirajte ako je potrebno.
@@ -1114,6 +1133,7 @@
     csd5_2: 'Poglavlje 2: Rješavanje problema podataka'
     csd6_1: 'Chapter 1: Hardware Output'
     csd6_2: 'Chapter 2: Hardware Input'
+    csd_survey: Post-Course Survey
     csp1_1: 'Chapter 1: Representing and Transmitting Information'
     csp1_2: 'Chapter 2: Inventing the Internet'
     csp2_1: 'Chapter 1: Encoding and Compressing Complex Information'
@@ -1127,6 +1147,11 @@
     csp_ap_1: 'Chapter 1: AP Tech Setup'
     csp_ap_2: 'Chapter 2: AP Explore Performance Task'
     csp_ap_3: 'Chapter 3: AP Create Performance Task'
+    csp_postap_1: 'Chapter 1: Manipulating and Visualizing Data'
+    csp_postap_2: 'Chapter 2: Apps and Databases'
+    csp2_1_2018: 'Unit 2: Digital Information'
+    csp3_1_2018: 'Unit 3: Intro to Programming'
+    csp4_1_2018: 'Unit 4: Big Data and Privacy'
     dlp: Reflection Prompts
   external_links:
     disclaimer: Disclaimer
@@ -1269,3 +1294,16 @@
       anything_else_s: Is there anything else you’d like to tell us about your experience
         at this workshop?
   courses_category: Full Courses
+  cookie_banner:
+    message: By continuing to browse our site or clicking "I agree," you agree to
+      the storing of cookies on your computer or device.
+    more_information: See Code.org's Privacy Policy.
+    accept: Slažem se
+  gdpr_dialog:
+    heading: Do you agree to using a web site based in the United States?
+    message: Data from your use of this site may be sent to and stored or processed
+      in the United States.
+    link_intro: For details see our
+    privacy_policy: privacy policy
+    logout: Logout
+    true: Da

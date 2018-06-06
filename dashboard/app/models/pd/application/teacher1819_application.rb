@@ -20,6 +20,7 @@
 #  decision_notification_email_sent_at :datetime
 #  accepted_at                         :datetime
 #  properties                          :text(65535)
+#  deleted_at                          :datetime
 #
 # Indexes
 #
@@ -421,7 +422,9 @@ module Pd::Application
     end
 
     def district_name
-      school.try(:school_district).try(:name).try(:titleize)
+      school ?
+        school.try(:school_district).try(:name).try(:titleize) :
+        sanitize_form_data_hash[:school_district_name]
     end
 
     def school_name
@@ -501,6 +504,10 @@ module Pd::Application
     # @override
     def check_idempotency
       Pd::Application::Teacher1819Application.find_by(user: user)
+    end
+
+    def teachercon_registration
+      Pd::Teachercon1819Registration.find_by_pd_application_id(id)
     end
 
     def meets_criteria
@@ -615,10 +622,25 @@ module Pd::Application
     end
 
     # @override
-    def self.cohort_csv_header
+    def self.cohort_csv_header(optional_columns)
+      columns = [
+        'Date Accepted',
+        'Applicant Name',
+        'District Name',
+        'School Name',
+        'Email',
+        'Status',
+        'Assigned Workshop'
+      ]
+      if optional_columns[:registered_workshop]
+        columns.push 'Registered Workshop'
+      end
+      if optional_columns[:accepted_teachercon]
+        columns.push 'Accepted Teachercon'
+      end
+
       CSV.generate do |csv|
-        csv << ['Date Accepted', 'Applicant Name', 'District Name', 'School Name',
-                'Email', 'Assigned Workshop', 'Registered Workshop']
+        csv << columns
       end
     end
 
@@ -650,17 +672,33 @@ module Pd::Application
     end
 
     # @override
-    def to_cohort_csv_row
+    def to_cohort_csv_row(optional_columns)
+      columns = [
+        date_accepted,
+        applicant_name,
+        district_name,
+        school_name,
+        user.email,
+        status,
+        workshop_date_and_location
+      ]
+      if optional_columns[:registered_workshop]
+        if workshop.try(:local_summer?)
+          columns.push(registered_workshop? ? 'Yes' : 'No')
+        else
+          columns.push nil
+        end
+      end
+      if optional_columns[:accepted_teachercon]
+        if workshop.try(:teachercon?)
+          columns.push(pd_teachercon1819_registration ? 'Yes' : 'No')
+        else
+          columns.push nil
+        end
+      end
+
       CSV.generate do |csv|
-        csv << [
-          date_accepted,
-          applicant_name,
-          district_name,
-          school_name,
-          user.email,
-          workshop_date_and_location,
-          registered_workshop? ? 'Yes' : 'No'
-        ]
+        csv << columns
       end
     end
 
@@ -776,8 +814,12 @@ module Pd::Application
       # Map back to actual workshops by reconstructing the friendly_date_range
       workshops = Pd::Workshop.where(id: workshop_ids)
       hash[:able_to_attend_multiple].each do |response|
-        selected_workshop = workshops.find {|w| response.start_with?(w.friendly_date_range)}
-        return selected_workshop if selected_workshop
+        workshops_for_date = workshops.select {|w| response.start_with?(w.friendly_date_range)}
+        return workshops_for_date.first if workshops_for_date.size == 1
+
+        location = response.scan(/in (.+) hosted/).first.try(:first) || ''
+        workshops_for_date_and_location = workshops_for_date.find {|w| w.location_address == location} || workshops_for_date.first
+        return workshops_for_date_and_location if workshops_for_date_and_location
       end
 
       # No match? Return the first workshop

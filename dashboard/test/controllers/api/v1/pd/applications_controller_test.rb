@@ -50,6 +50,8 @@ module Api::V1::Pd
           )
         )
       )
+
+      @markdown = Redcarpet::Markdown.new(Redcarpet::Render::StripDown)
     end
 
     test_redirect_to_sign_in_for :index
@@ -94,7 +96,7 @@ module Api::V1::Pd
 
     test "quick view returns applications with appropriate regional partner filter" do
       sign_in @workshop_admin
-      get :quick_view, params: {role: 'csd_teachers', regional_partner_filter: @regional_partner.id}
+      get :quick_view, params: {role: 'csd_teachers', regional_partner_value: @regional_partner.id}
       assert_response :success
       assert_equal [@csd_teacher_application_with_partner.id], JSON.parse(@response.body).map {|r| r['id']}
     end
@@ -108,7 +110,7 @@ module Api::V1::Pd
 
     test "quick view returns applications with regional partner filter set to no partner" do
       sign_in @workshop_admin
-      get :quick_view, params: {role: 'csd_teachers', regional_partner_filter: 'none'}
+      get :quick_view, params: {role: 'csd_teachers', regional_partner_value: 'none'}
       assert_response :success
       assert_equal [@csd_teacher_application.id], JSON.parse(@response.body).map {|r| r['id']}
     end
@@ -301,11 +303,14 @@ module Api::V1::Pd
 
     test 'workshop admins can update form_data' do
       sign_in @workshop_admin
-      updated_form_data = @csf_facilitator_application_no_partner.form_data_hash.merge('alternateEmail' => 'my.other@email.net')
-      put :update, params: {id: @csf_facilitator_application_no_partner.id, application: {form_data: updated_form_data}}
+      updated_form_data = @csf_facilitator_application_with_partner.form_data_hash.merge('alternateEmail' => 'my.other@email.net')
+      put :update, params: {id: @csf_facilitator_application_with_partner.id, application: {form_data: updated_form_data}}
       assert_response :success
       data = JSON.parse(response.body)
       assert_equal 'my.other@email.net', data['form_data']['alternateEmail']
+
+      # Make sure partner is retained
+      assert_equal @regional_partner, @csf_facilitator_application_with_partner.reload.regional_partner
     end
 
     # TODO: remove this test when workshop_organizer is deprecated
@@ -358,14 +363,9 @@ module Api::V1::Pd
       get :quick_view, format: 'csv', params: {role: 'csd_teachers'}
       assert_response :success
       response_csv = CSV.parse @response.body
-
       assert Teacher1819ApplicationConstants::ALL_LABELS_WITH_OVERRIDES.slice(
         :csd_which_grades, :csd_course_hours_per_week, :csd_course_hours_per_year, :csd_terms_per_year
-      ).values.all? {|x| response_csv.first.include?(x)}
-
-      assert Teacher1819ApplicationConstants::ALL_LABELS_WITH_OVERRIDES.slice(
-        :csp_which_grades, :csp_course_hours_per_week, :csp_course_hours_per_year, :csp_how_offer, :csp_ap_exam
-      ).values.any? {|x| response_csv.first.exclude?(x)}
+      ).values.map {|question| @markdown.render(question).strip}.all? {|x| response_csv.first.include?(x)}
     end
 
     test 'csv download for csp teacher returns expected columns' do
@@ -377,11 +377,11 @@ module Api::V1::Pd
 
       assert Teacher1819ApplicationConstants::ALL_LABELS_WITH_OVERRIDES.slice(
         :csp_which_grades, :csp_course_hours_per_week, :csp_course_hours_per_year, :csp_terms_per_year, :csp_how_offer, :csp_ap_exam
-      ).values.all? {|x| response_csv.first.include?(x)}
+      ).values.map {|question| @markdown.render(question).strip}.all? {|x| response_csv.first.include?(x)}
 
       assert Teacher1819ApplicationConstants::ALL_LABELS_WITH_OVERRIDES.slice(
         :csd_which_grades, :csd_course_hours_per_week, :csd_course_hours_per_year
-      ).values.any? {|x| response_csv.first.exclude?(x)}
+      ).values.map {|question| @markdown.render(question).strip}.any? {|x| response_csv.first.exclude?(x)}
     end
 
     test 'csv download for csf facilitator returns expected columns' do
@@ -427,7 +427,7 @@ module Api::V1::Pd
       end
 
       sign_in @workshop_admin
-      get :cohort_view, params: {role: 'csp_teachers', regional_partner_filter: 'none'}
+      get :cohort_view, params: {role: 'csp_teachers', regional_partner_value: 'none'}
       assert_response :success
 
       assert_equal(
@@ -441,7 +441,7 @@ module Api::V1::Pd
       time = Date.new(2017, 3, 15)
 
       Timecop.freeze(time) do
-        workshop = create :pd_workshop, num_sessions: 3, sessions_from: Date.new(2017, 1, 1), processed_location: {city: 'Orchard Park', state: 'NY'}.to_json
+        workshop = create :pd_workshop, :local_summer_workshop, num_sessions: 3, sessions_from: Date.new(2017, 1, 1), processed_location: {city: 'Orchard Park', state: 'NY'}.to_json
         create :pd_enrollment, workshop: workshop, user: @serializing_teacher
 
         application = create(
@@ -469,9 +469,10 @@ module Api::V1::Pd
             district_name: 'A School District',
             school_name: 'A Seattle Public School',
             email: 'minerva@hogwarts.edu',
-            status: 'accepted',
             assigned_workshop: 'January 1-3, 2017, Orchard Park NY',
-            registered_workshop: 'Yes'
+            registered_workshop: 'Yes',
+            accepted_teachercon: nil,
+            status: 'accepted'
           }.stringify_keys, JSON.parse(@response.body).first
         )
       end
@@ -506,9 +507,10 @@ module Api::V1::Pd
             district_name: 'A School District',
             school_name: 'A Seattle Public School',
             email: 'minerva@hogwarts.edu',
-            status: 'accepted',
             assigned_workshop: nil,
-            registered_workshop: 'No'
+            registered_workshop: nil,
+            accepted_teachercon: nil,
+            status: 'accepted'
           }.stringify_keys, JSON.parse(@response.body).first
         )
       end
@@ -543,12 +545,13 @@ module Api::V1::Pd
             district_name: 'A School District',
             school_name: 'Hogwarts',
             email: 'minerva@hogwarts.edu',
-            status: 'accepted',
-            locked: true,
             assigned_workshop: nil,
-            registered_workshop: 'No',
+            registered_workshop: nil,
+            accepted_teachercon: nil,
+            status: 'accepted',
             assigned_fit: nil,
-            registered_fit: 'No'
+            registered_fit: 'No',
+            locked: true
           }.stringify_keys, JSON.parse(@response.body).first
         )
       end
@@ -558,7 +561,7 @@ module Api::V1::Pd
       time = Date.new(2017, 3, 15)
 
       Timecop.freeze(time) do
-        workshop = create :pd_workshop, num_sessions: 3, sessions_from: Date.new(2017, 1, 1), processed_location: {city: 'Orchard Park', state: 'NY'}.to_json
+        workshop = create :pd_workshop, :local_summer_workshop, num_sessions: 3, sessions_from: Date.new(2017, 1, 1), processed_location: {city: 'Orchard Park', state: 'NY'}.to_json
         create :pd_enrollment, workshop: workshop, user: @serializing_teacher
 
         application = create(
@@ -588,6 +591,50 @@ module Api::V1::Pd
             email: 'minerva@hogwarts.edu',
             assigned_workshop: 'January 1-3, 2017, Orchard Park NY',
             registered_workshop: 'Yes',
+            accepted_teachercon: nil,
+            status: 'accepted'
+          }.stringify_keys, JSON.parse(@response.body).first
+        )
+      end
+    end
+
+    test 'cohort view returns expected columns for a teacher with teachercon' do
+      Pd::Application::Teacher1819Application.any_instance.stubs(:enroll_user)
+      time = Date.new(2017, 3, 15)
+
+      Timecop.freeze(time) do
+        Pd::Workshop.any_instance.stubs(:process_location)
+        workshop = create :pd_workshop, :teachercon, num_sessions: 5, sessions_from: Time.new(2017, 1, 1)
+        create :pd_enrollment, workshop: workshop, user: @serializing_teacher
+
+        application = create(
+          :pd_teacher1819_application,
+          course: 'csp',
+          regional_partner: @regional_partner,
+          user: @serializing_teacher,
+          pd_workshop_id: workshop.id
+        )
+
+        application.update_form_data_hash({first_name: 'Minerva', last_name: 'McGonagall'})
+        application.status = 'accepted'
+        application.save!
+        application.lock!
+
+        sign_in @program_manager
+        get :cohort_view, params: {role: 'csp_teachers'}
+        assert_response :success
+
+        assert_equal(
+          {
+            id: application.id,
+            date_accepted: '2017-03-15',
+            applicant_name: 'Minerva McGonagall',
+            district_name: 'A School District',
+            school_name: 'A Seattle Public School',
+            email: 'minerva@hogwarts.edu',
+            assigned_workshop: 'January 1-5, 2017, Location TBA TeacherCon',
+            registered_workshop: nil,
+            accepted_teachercon: 'No',
             status: 'accepted'
           }.stringify_keys, JSON.parse(@response.body).first
         )
@@ -623,7 +670,8 @@ module Api::V1::Pd
             school_name: 'A Seattle Public School',
             email: 'minerva@hogwarts.edu',
             assigned_workshop: nil,
-            registered_workshop: 'No',
+            registered_workshop: nil,
+            accepted_teachercon: nil,
             status: 'accepted'
           }.stringify_keys, JSON.parse(@response.body).first
         )
@@ -659,7 +707,8 @@ module Api::V1::Pd
             school_name: 'Hogwarts',
             email: 'minerva@hogwarts.edu',
             assigned_workshop: nil,
-            registered_workshop: 'No',
+            registered_workshop: nil,
+            accepted_teachercon: nil,
             assigned_fit: nil,
             registered_fit: 'No',
             status: 'accepted',
@@ -670,21 +719,47 @@ module Api::V1::Pd
     end
 
     test 'cohort csv download returns expected columns for teachers' do
+      create :pd_teacher1819_application, :locked, course: 'csd'
       sign_in @workshop_admin
       get :cohort_view, format: 'csv', params: {role: 'csd_teachers'}
       assert_response :success
       response_csv = CSV.parse @response.body
 
-      assert_equal ['Date Accepted', 'Applicant Name', 'District Name', 'School Name', 'Email', 'Assigned Workshop', 'Registered Workshop'], response_csv.first
+      expected_headers = [
+        'Date Accepted',
+        'Applicant Name',
+        'District Name',
+        'School Name',
+        'Email',
+        'Status',
+        'Assigned Workshop',
+        'Registered Workshop',
+        'Accepted Teachercon'
+      ]
+      assert_equal expected_headers, response_csv.first
+      assert_equal expected_headers.length, response_csv.second.length
     end
 
     test 'cohort csv download returns expected columns for facilitators' do
+      create :pd_facilitator1819_application, :locked, course: 'csf'
       sign_in @workshop_admin
       get :cohort_view, format: 'csv', params: {role: 'csf_facilitators'}
       assert_response :success
       response_csv = CSV.parse @response.body
 
-      assert_equal ['Date Accepted', 'Name', 'School District', 'School Name', 'Email', 'Status'], response_csv.first
+      expected_headers = [
+        'Date Accepted',
+        'Name',
+        'School District',
+        'School Name',
+        'Email',
+        'Status',
+        'Assigned Workshop',
+        'Registered Workshop',
+        'Accepted Teachercon'
+      ]
+      assert_equal expected_headers, response_csv.first
+      assert_equal expected_headers.length, response_csv.second.length
     end
 
     test 'search finds applications by email for workshop admins' do
@@ -742,6 +817,26 @@ module Api::V1::Pd
       assert_response :success
       result = JSON.parse response.body
       assert_equal [], result
+    end
+
+    test 'destroy deletes application' do
+      sign_in @workshop_admin
+      application = create :pd_teacher1819_application
+      assert_destroys(Pd::Application::Teacher1819Application) do
+        delete :destroy, params: {id: application.id}
+      end
+    end
+
+    test 'group 3 partner cannot call delete api' do
+      application = create :pd_teacher1819_application
+      group_3_partner = create :regional_partner, group: 3
+      group_3_program_manager = create :teacher
+      create :regional_partner_program_manager, regional_partner: group_3_partner, program_manager: group_3_program_manager
+
+      sign_in group_3_program_manager
+      assert_does_not_destroy(Pd::Application::Teacher1819Application) do
+        delete :destroy, params: {id: application.id}
+      end
     end
   end
 end

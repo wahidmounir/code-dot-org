@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import Radium from 'radium';
 import color from '@cdo/apps/util/color';
-import BaseDialog from '../BaseDialog';
 import FontAwesome from '@cdo/apps/templates/FontAwesome';
+import LegacyDialog from '../../code-studio/LegacyDialog';
 
 const styles = {
   textLink: {
@@ -35,10 +35,6 @@ const styles = {
   },
   resourceStyle: {
     margin: 8
-  },
-  linkFrame: {
-    width: '98%',
-    height: '94%'
   }
 };
 
@@ -55,15 +51,26 @@ class ResourceLink extends React.Component {
   };
 
   selectResource = () => {
-    this.setState({dialogSelected: true});
-  };
+    var dialog = new LegacyDialog({
+      body: $('<iframe>')
+        .addClass('instructions-container')
+        .width('100%')
+        .attr('src', this.props.reference),
+      autoResizeScrollableElement: '.instructions-container',
+      id: 'block-documentation-lightbox'
+    });
+    dialog.show();
 
-  closeResource = () => {
-    this.setState({dialogSelected: false});
+    // Forces the documentation in the iframe to be scrollable (our documentation
+    // is not consistent about overflow)
+    // TODO: EPEACH - explore removing this during transition away from legacy dialog
+    $('.instructions-container').load(() => {
+      $('.instructions-container').contents().find("body").css({overflow:'auto'});
+    });
   };
 
   render() {
-    const {icon, reference, text, highlight} = this.props;
+    const {icon, text, highlight} = this.props;
 
     const iconStyle = {
       ...styles.commonIcon,
@@ -86,14 +93,6 @@ class ResourceLink extends React.Component {
             {text}
           </a>
         </div>
-        <BaseDialog
-          isOpen={this.state.dialogSelected}
-          handleClose={this.closeResource}
-          fullWidth={true}
-          fullHeight={true}
-        >
-          <iframe style={styles.linkFrame} src={reference}/>
-        </BaseDialog>
       </div>
     );
   }

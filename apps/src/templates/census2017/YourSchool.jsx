@@ -38,6 +38,7 @@ class YourSchool extends Component {
     prefillData: censusFormPrefillDataShape,
     fusionTableId: PropTypes.string,
     hideMap: PropTypes.bool,
+    currentCensusYear: PropTypes.number,
   };
 
   state = {
@@ -53,6 +54,13 @@ class YourSchool extends Component {
       existingInaccuracy: existingInaccuracy
     });
     adjustScroll('form');
+  };
+
+  handleMapSchoolDropdownChange = (option) => {
+    this.handleSchoolDropdownChange(option);
+    if (option && option.value === '-1') {
+      adjustScroll('form');
+    }
   };
 
   handleSchoolDropdownChange = (option) => {
@@ -83,9 +91,14 @@ class YourSchool extends Component {
     const showExistingInaccuracy = this.state.showExistingInaccuracy;
     const existingInaccuracy = this.state.existingInaccuracy;
 
+    // Don't show the special announcement for now.
+    const showSpecialAnnouncement = false;
+
     return (
       <div>
-        <SpecialAnnouncementActionBlock/>
+        {showSpecialAnnouncement && (
+          <SpecialAnnouncementActionBlock/>
+        )}
         {this.props.alertHeading && this.props.alertText && this.props.alertUrl && (
           <Notification
             type={NotificationType.bullhorn}
@@ -118,14 +131,13 @@ class YourSchool extends Component {
                value={this.props.prefillData ? this.props.prefillData['schoolId'] : undefined}
                fieldName="census-map-school-dropdown"
                schoolDropdownOption={schoolDropdownOption}
-               onChange={this.handleSchoolDropdownChange}
+               onChange={this.handleMapSchoolDropdownChange}
                schoolFilter={this.hasLocation}
              />
              <br/>
              <CensusMap
                fusionTableId={this.props.fusionTableId}
                school={schoolForMap}
-               onSchoolChange={this.handleSchoolDropdownChange}
                onTakeSurveyClick={this.handleTakeSurveyClick}
              />
            </div>
@@ -137,6 +149,7 @@ class YourSchool extends Component {
           showExistingInaccuracy={showExistingInaccuracy}
           existingInaccuracy={existingInaccuracy}
           onExistingInaccuracyChange={this.handleExistingInaccuracyChange}
+          initialSchoolYear={this.props.currentCensusYear}
         />
       </div>
     );

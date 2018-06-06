@@ -266,41 +266,41 @@ lv:
         title: 'translation missing: en-US.data.unplugged.courseB_unplugged_MRF_2018.title'
         desc: 'translation missing: en-US.data.unplugged.courseB_unplugged_MRF_2018.desc'
       BuildingAFoundation_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       courseB_unplugged_loopyMRF_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       DiceRace_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       courseE_unplugged_privateInformation_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       SongwritingParameters_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       Internet_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       Crowdsourcing_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       TangramAlgorithms_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       courseF_unplugged_powerOfWords_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       EnvelopeVariables_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       ForLoopFun_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       SongwritingWithParameters_2018:
-        title: ""
-        desc: ""
+        title:
+        desc:
       PlantASeed_2018:
         title: 'Patiesas dzīves algoritms: Iestādi auga sēklas'
         desc: Šī nodarbība izceļ algoritmus, ko mēs lietojam ikdienā, kā piemēru rādot sēklu stādīšanu. Tā arī koncentrējas uz algoritmu nozīmīgumu un sniedz lielāku priekšstatu par datorzinātnēm kā kopumu.
@@ -316,3 +316,42 @@ lv:
       BigEvent_2018:
         title: Lielais notikums
         desc: Skolēni tiek iepazīstināti ar programmēšanas jēdzienu "notikums" (event), kas ir aktivitāte, kam dators visu laiku seko līdzi. Skolotājs spiež pogas uz papīra pults un skolēni reaģē atkarībā no tā, kāda poga ir piespiesta.
+      GraphPaperProgramming_2018:
+        title: Rūtiņpapīra programmēšana
+        desc: Skolēni raksta algoritmu (darbību secību), izmantojot noteiktas komandas, lai vadītu savus klasesbiedrus, kuri zīmē zīmējumu.
+      courseD_unplugged_digitalCitizenship_2018:
+        title: Atvienota aktivitāte
+        desc: Today you will learn what it means to be a Digital Citizen.
+      courseC_Unplugged_ScreenOutTheMean_2018:
+        title: Atvienota aktivitāte
+        desc: Today you will learn about what to do if someone is being mean online.
+      Conditionals_2018:
+        title: Sazarojumi
+        desc: Lai iemācītos nosacījuma apgalvojumus, skolēniem jāspēlē kāršu spēle un jāizveido tās noteikumi, piemēram, "Ja es izvelku sarkanu kārti, es iegūstu punktu" un "Ja es izvelku melnu kārti, tu iegūsti punktu."
+      DigitalFootprint_2018:
+        title: Tavs digitālais nospiedums
+        desc: Skolotājs liek skolēniem apzināties, ka informācija, ko par sevi publicējam tiešsaistē veido digitālu pēdas nospiedumu vai asti, kas var arī radīt sekas.
+      BinaryImages_2018:
+        title: Binārie Attēli
+        desc: Lai arī daudzi domā par bināro kodu tikai kā par vieniniekiem un nullītēm, mūsu iepriekšējās nodarbības iemācīja skolēniem to, ka informācija var tikt bināri atspoguļota dažādos veidos. Šajā nodarbība parādīts, kā dators arī sarežģītāku informāciju (kā, piemēram, attēlus un krāsas) var saglabāt binārajā kodā.
+      PaperPlanes_2018:
+        title: 'Reālās dzīves algoritmi: Papīra lidmašīnas'
+        desc: Šajā nodabrībā apskatīti veidi, kā algoritmus izmantojam savā sadzīvē, šoreiz - kā veidot papīra lidmašīnas. Šī nodarbība arī fokusējas uz datorzinību kopējo ainu un kādu lomu tajā spēlē algoritmi.
+      GettingLoopy_2018:
+        title: Kļūst ciklisks
+        desc: Šī nodarbība ievieš ciklu (atkārtošanās) ideju programmēšanā, lietojot deju aktivitātes. Skolēni iemācīsies vienkāršu horeogrāfiju, pēc tam saņems norādījumus to atkārtot.
+      BinaryBracelets_2018:
+        title: Binārās aproces
+        desc: Skolēni veido aproces kā sava vārdu pirmo burtu bināru attēlojumu. Skolēni apgūst, ka dati ir attēlojami un uzglabājāmi vairāk kā vienā veidā.
+      MoveItMoveIt_2018:
+        title: Ej, ej
+        desc: ''
+      courseB_unplugged_CnC_2018:
+        title: It's Great to Create and Play Fair
+        desc: Loaned to Computer Science Fundamentals by the team over at Copyright and Creativity, this lesson exists to help students understand the creative process of sharing and inspiration.  Along with that comes the promotion of creative expression and the need to be fair with creative work.
+      courseE_unplugged_CnC_2018:
+        title: Digital Sharing
+        desc: Loaned to Computer Science Fundamentals by the team over at Copyright and Creativity, this lesson exists to help students understand the challenges and beneﬁts of respecting ownership and copyright, particularly in digital environments. Students should be encouraged to respect artists’ rights as an important part of being an ethical digital citizen.
+      RelayProgramming_2018:
+        title: Releju programmēšana
+        desc: This activity will begin with a short lesson on debugging and persistence, then will quickly move to a race against the clock as students break into teams and work together to write a program one instruction at a time.
