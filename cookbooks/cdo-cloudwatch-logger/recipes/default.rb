@@ -26,7 +26,7 @@ end
 poise_service 'cloudwatch-logger' do
   command cloudwatch_logger
 
-  environment AWS_REGION: node[:ec2][:region]
+  environment AWS_REGION: node[:ec2][:region] || node[:ec2][:placement_availability_zone][0...-1]
   subscribes :restart, 'file[cloudwatch-logger]', :delayed
   subscribes :restart, 'ark[cloudwatch-logger]', :delayed
 end
