@@ -449,7 +449,7 @@ const LABELED_INPUTS_REGEX = /.*?({[^}]*}|\n|$)/gm;
  * 2: the input (a named input like '{VALUE}', a newline, or nothing)
  * 3: the input's name (e.g. 'VALUE')
  */
-const LABELED_INPUT_PARTS_REGEX = /(.*?)({([^}]*)}|\n|$)/m;
+const LABELED_INPUT_PARTS_REGEX = /\s*(.*?)\s*({([^}]*)}|\n|$)/m;
 
 /**
  * Finds the input config for the given input name, and removes it from args.
