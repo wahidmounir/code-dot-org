@@ -1,21 +1,19 @@
 /** @file Button that continues to the next puzzle when clicked */
-import React from 'react';
+import React, {Component} from 'react';
 import i18n from '@cdo/locale';
 import {processResults} from '../code-studio/levels/dialogHelper';
 
-const ContinueButton = React.createClass({
-  getInitialState() {
-    return {submitting: false};
-  },
+export default class ContinueButton extends Component {
+  state = {submitting: false};
 
-  onClick() {
+  onClick = () => {
     this.setState({submitting: true});
     processResults(willRedirect => {
       if (!willRedirect) {
         this.setState({submitting: false});
       }
     });
-  },
+  };
 
   render() {
     return (
@@ -28,5 +26,4 @@ const ContinueButton = React.createClass({
       </button>
     );
   }
-});
-export default ContinueButton;
+}
